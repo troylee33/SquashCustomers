@@ -84,6 +84,9 @@
 			<fileset dir="${src.dir}">
 				<include name="se/**/*.properties"/>
 			</fileset>
+			<fileset dir="${src.dir}">
+				<include name="se/**/*.gif"/>
+			</fileset>
 			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
 		</jar>
 		

@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -27,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -60,7 +61,7 @@ public class MainGUI extends JFrame {
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
 
-    private static final int WINDOW_PIXEL_WIDTH = 1200;
+    private static final int WINDOW_PIXEL_WIDTH = 1160;
     private static final int WINDOW_PIXEL_HEIGTH = 800;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
@@ -491,16 +492,24 @@ public class MainGUI extends JFrame {
         @Override
         public void run() {
 
-            final JProgressBar progressBar = new JProgressBar(0, 10);
-
             final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturor...", true);
-            waitingDialog.add(BorderLayout.CENTER, progressBar);
             waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            waitingDialog.setSize(300, 100);
+            waitingDialog.setSize(300, 160);
+
+            URL spinnerImageUrl = this
+                .getClass()
+                .getClassLoader()
+                .getResource("se/osdsquash/gui/Spinner.gif");
+            JLabel imageLabel = new JLabel(new ImageIcon(spinnerImageUrl));
+            imageLabel.setMinimumSize(new Dimension(70, 70));
+            imageLabel.setMaximumSize(new Dimension(70, 70));
+
+            waitingDialog.add(BorderLayout.CENTER, imageLabel);
+
+            waitingDialog.setResizable(false);
             waitingDialog.setLocationRelativeTo(MainGUI.this);
 
             // Poll for the execution thread to finish
-            int progressValue = 1;
             while (MainGUI.this.executionThread.isAlive()) {
 
                 // We must show the dialog in a new thread,
@@ -515,8 +524,6 @@ public class MainGUI extends JFrame {
                 showProgressThread.start();
 
                 try {
-                    progressBar.setValue(progressValue);
-
                     MainGUI.this.executionThread.join(500);
 
                     // Check if finished, then clear and quit this progress bar
@@ -533,9 +540,6 @@ public class MainGUI extends JFrame {
 
                         return;
                     }
-
-                    progressValue++;
-
                 } catch (Exception exception) {
                     // Try to just continue...
                     System.err.println(
@@ -543,6 +547,8 @@ public class MainGUI extends JFrame {
                     exception.printStackTrace();
                 }
             }
+
+            waitingDialog.setVisible(false);
         }
     }
 

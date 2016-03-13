@@ -34,7 +34,7 @@
 		<pathelement location="${poi.lib.dir}/ooxml-lib/xmlbeans-2.6.0.jar" />
 	</path>
 	
-	<target name="create.package">
+	<target name="create.package" description="Compiles and creates the application jar">
 		
 		<!-- 1. Remove old stuff first -->
 		<echo message="Preparing for a new build..." />
@@ -48,7 +48,9 @@
 		
 		<!-- 2. Generate from XSD schema -->
 		<echo message="Generates JAXB files from XSD..." />
-		<xjc destdir="${src.gen.dir}" package="se.osdsquash.xml.jaxb" removeOldOutput="yes" extension="true">
+		<xjc destdir="${src.gen.dir}" 
+			 package="se.osdsquash.xml.jaxb" 
+			 removeOldOutput="yes">
 			<schema dir="${src.dir}/se/osdsquash/xml">
 		    	<include name="Customers.xsd"/>
 		    </schema>

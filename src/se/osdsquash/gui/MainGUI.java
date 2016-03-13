@@ -455,12 +455,15 @@ public class MainGUI extends JFrame {
 
         waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         waitingDialog.setSize(300, 160);
+        waitingDialog.setBackground(Color.WHITE);
 
         URL spinnerImageUrl = this
             .getClass()
             .getClassLoader()
             .getResource("se/osdsquash/gui/Spinner.gif");
         JLabel imageLabel = new JLabel(new ImageIcon(spinnerImageUrl));
+        imageLabel.setBackground(Color.WHITE);
+        imageLabel.setOpaque(true);
         imageLabel.setMinimumSize(new Dimension(70, 70));
         imageLabel.setMaximumSize(new Dimension(70, 70));
 
@@ -469,25 +472,13 @@ public class MainGUI extends JFrame {
         waitingDialog.setResizable(false);
         waitingDialog.setLocationRelativeTo(MainGUI.this);
 
-        Thread showProgressThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                waitingDialog.setVisible(true);
-            }
-        });
-        showProgressThread.start();
-
         // Start new invoice creator worker, e.g. in a new thread
         InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable(waitingDialog);
         invoiceCreator.execute();
-        while (!invoiceCreator.isDone()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException exception) {
-                Thread.interrupted();
-            }
-        }
+
+        // Important to display the (blocking) progress bar after work is started.
+        // The worker thread will close it when done.
+        waitingDialog.setVisible(true);
     }
 
     // Swing thread that executes the invoice file creation task

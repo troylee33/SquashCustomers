@@ -1,0 +1,4 @@
+src-generated/*
+build/*
+bin/*
+*/.DS_Store

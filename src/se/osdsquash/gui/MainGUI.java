@@ -240,10 +240,20 @@ public class MainGUI extends JFrame {
 
         components.add(this.createEmptyRow());
 
+        // The function buttons is X aligned into one panel
+        JPanel customerButtonsPanel = new JPanel();
+        customerButtonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        customerButtonsPanel.setLayout(new BoxLayout(customerButtonsPanel, BoxLayout.X_AXIS));
+        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(4, 16, 16, 16));
+        customerButtonsPanel.setSize(500, 40);
+        customerButtonsPanel.setMinimumSize(new Dimension(500, 40));
+        customerButtonsPanel.setMaximumSize(new Dimension(500, 40));
+
         // Action buttons for the customers
         this.newCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.newCustomerButton.setMaximumSize(new Dimension(130, 22));
-        components.add(this.newCustomerButton);
+        customerButtonsPanel.add(this.newCustomerButton);
 
         this.newCustomerButton.addActionListener(new ActionListener() {
 
@@ -270,9 +280,11 @@ public class MainGUI extends JFrame {
             }
         });
 
+        customerButtonsPanel.add(this.createEmptyRow());
+
         this.deleteCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.deleteCustomerButton.setMaximumSize(new Dimension(130, 22));
-        components.add(this.deleteCustomerButton);
+        customerButtonsPanel.add(this.deleteCustomerButton);
 
         // Disable this until a customer is selected
         MainGUI.this.deleteCustomerButton.setEnabled(false);
@@ -307,11 +319,11 @@ public class MainGUI extends JFrame {
             }
         });
 
-        components.add(this.createEmptyRow());
+        customerButtonsPanel.add(this.createEmptyRow());
 
         this.generateInvoicesButton.setMinimumSize(new Dimension(130, 22));
         this.generateInvoicesButton.setMaximumSize(new Dimension(130, 22));
-        components.add(this.generateInvoicesButton);
+        customerButtonsPanel.add(this.generateInvoicesButton);
 
         this.generateInvoicesButton.addActionListener(new ActionListener() {
 
@@ -361,6 +373,9 @@ public class MainGUI extends JFrame {
             }
         });
 
+        // Add the buttons panel
+        components.add(customerButtonsPanel);
+
         // Draw all components to the panel
         this.drawLayout(components);
     }
@@ -373,19 +388,19 @@ public class MainGUI extends JFrame {
         topPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         for (JComponent component : components) {
             component.setAlignmentX(Component.LEFT_ALIGNMENT);
             topPanel.add(component);
         }
 
-        // Add exit and help buttons at a bottom panel:
+        // Add common exit and help buttons at a bottom panel:
         JPanel bottomPanel = new JPanel();
-        bottomPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        bottomPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(4, 16, 16, 16));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         bottomPanel.setSize(1000, 50);
         bottomPanel.setMinimumSize(new Dimension(1000, 50));
         bottomPanel.setMaximumSize(new Dimension(1000, 50));
@@ -401,8 +416,6 @@ public class MainGUI extends JFrame {
                 MainGUI.this.handleProgramExitEvent();
             }
         });
-
-        bottomPanel.add(this.createEmptyRow());
 
         final JButton infoButton = new JButton("Info");
         infoButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -422,7 +435,7 @@ public class MainGUI extends JFrame {
         // Finally "draw" the panels on the JFrame's ContentPane
         Container contentPane = this.getContentPane();
         contentPane.add(topPanel, BorderLayout.NORTH);
-        contentPane.add(bottomPanel, BorderLayout.SOUTH);
+        contentPane.add(bottomPanel, BorderLayout.EAST);
     }
 
     // Creates a filler component, e.g. empty space

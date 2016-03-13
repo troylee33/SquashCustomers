@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE buildscript>
+
+<!-- The project build file for Ostersund SquashCustomers. 
+     Some how-to-run info:
+     Just run the Ant target to package the program into a runnable jar.
+	 Just run the Jar with Java 8. All data will be stored under the squashdata-folder, parallel to the jar.
+	 In the data folder, there is an XML file for all the customers and all the invoice files.
+-->
+<project name="SquashCustomers" default="create.package">
+	
+	<property name="src.dir" location="${basedir}/src" />
+	<property name="src.gen.dir" location="${basedir}/src-generated" />
+	<property name="lib.dir" location="${basedir}/lib" />
+	<property name="poi.lib.dir" location="${basedir}/lib/apache-poi-3.14" />
+	
+	<property name="ant.build.dir" location="${basedir}/build" />
+	<property name="ant.classes.dir" location="${ant.build.dir}/ant-classes" />
+	<property name="resources.dir" location="${basedir}/resources" />
+	<property name="dist.jar.file" location="${ant.build.dir}/SquashCustomers.jar" />
+	
+	<!-- Include JAXB task to generate classes from XSD -->
+	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+		<classpath>
+			<fileset dir="${lib.dir}/jaxb-ri-2.2.11" includes="*.jar" />
+		</classpath>
+	</taskdef>
+	
+	<!-- Classpath to compile everything -->
+	<path id="compile.classpath">
+		<pathelement location="${poi.lib.dir}/poi-3.14-20160307.jar" />
+		<pathelement location="${poi.lib.dir}/poi-ooxml-3.14-20160307.jar" />
+		<pathelement location="${poi.lib.dir}/poi-ooxml-schemas-3.14-20160307.jar" />
+		<pathelement location="${poi.lib.dir}/ooxml-lib/xmlbeans-2.6.0.jar" />
+	</path>
+	
+	<target name="create.package">
+		
+		<!-- 1. Remove old stuff first -->
+		<echo message="Preparing for a new build..." />
+		<delete includeemptydirs="true">
+			<fileset dir="${src.gen.dir}" includes="**/*.java" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${ant.classes.dir}" includes="**/*.class" />
+		</delete>
+		<delete file="${dist.jar.file}" failonerror="false" />
+		
+		<!-- 2. Generate from XSD schema -->
+		<echo message="Generates JAXB files from XSD..." />
+		<xjc destdir="${src.gen.dir}" package="se.osdsquash.xml.jaxb" removeOldOutput="yes" extension="true">
+			<schema dir="${src.dir}/se/osdsquash/xml">
+		    	<include name="Customers.xsd"/>
+		    </schema>
+		</xjc>
+		
+		<!-- 3. Compile the Java code -->
+		<echo message="Compiles all Java classes..." />
+		<javac destdir="${ant.classes.dir}" 
+				includeantruntime="false"
+				fork="true" 
+				classpathref="compile.classpath" 
+				debug="on" 
+				debuglevel="lines,vars,source" 
+				source="1.8" 
+				memoryinitialsize="64m"
+		        memorymaximumsize="256m">
+			<src path="${src.dir}" />
+			<src path="${src.gen.dir}" />
+		</javac>
+		
+		<!-- 4. Package the code into a runnable Jar file. We also include 
+		        Apache POI class files from the POI jars, into this jar. -->
+		<echo message="Creates the Jar package..." />
+		<jar jarfile="${dist.jar.file}" manifest="${resources.dir}/MANIFEST.MF">
+			<fileset dir="${ant.classes.dir}">
+				<include name="se/**/*.class"/>
+			</fileset>
+			<fileset dir="${src.dir}">
+				<include name="se/**/*.xsd"/>
+			</fileset>
+			<fileset dir="${src.dir}">
+				<include name="se/**/*.properties"/>
+			</fileset>
+			<zipgroupfileset dir="${lib.dir}/apache-poi-3.14" includes="**/*.jar" />
+		</jar>
+		
+		<echo message=" " />
+		<echo message="BUILD COMPLETE! The executable jar file is ready: ${dist.jar.file}" />
+		<echo message=" " />
+		
+	</target>
+	
+</project>

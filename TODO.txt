@@ -1,0 +1,16 @@
+
+
+  ARBETSLOGG och TODO för projektet
+ -----------------------------------
+ 
+ TODOs 2016-03-12:
+ 
+  - Fundera på det exakta innehållet i faktura-listan...
+  - Ordna all layout snyggare !!!
+ 
+ 
+ Senare features att införa:
+ 
+ - Undersök möjlighet att generera faktura-mail
+ - Inför loggning till fil för tekniska fel, etc.
+ 

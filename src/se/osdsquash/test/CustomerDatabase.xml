@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Customers xmlns="http://xsd.customer.ostersundssquash.se">
+    <Customer>
+        <CustomerInfo>
+            <CustomerUUID>cb7a6a7a-85c7-4449-9a37-276c74dd6df2</CustomerUUID>
+            <CustomerNumber>790</CustomerNumber>
+            <Company>false</Company>
+            <Firstname>Christian</Firstname>
+            <Lastname>Långnamnet-Efternamnet</Lastname>
+            <Street>asd</Street>
+            <PostalCode>1234</PostalCode>
+            <City>Ort: </City>
+            <Telephone>asds</Telephone>
+            <Email>dsasd</Email>
+        </CustomerInfo>
+        <Subscriptions>
+            <Subscription>
+                <TrackNumber>1</TrackNumber>
+                <Weekday>Saturday</Weekday>
+                <StartTime>2011-12-13T12:12:12</StartTime>
+            </Subscription>
+            <Subscription>
+                <TrackNumber>2</TrackNumber>
+                <Weekday>Friday</Weekday>
+                <StartTime>2012-12-13T12:12:12</StartTime>
+            </Subscription>
+        </Subscriptions>
+    </Customer>
+    <Customer>
+        <CustomerInfo>
+            <CustomerUUID>2726e444-178e-4845-b7fa-d32078924c5b</CustomerUUID>
+            <CustomerNumber>1703</CustomerNumber>
+            <Company>false</Company>
+            <Firstname>Bosse</Firstname>
+            <Lastname></Lastname>
+            <Street></Street>
+            <PostalCode></PostalCode>
+            <City>Ort: </City>
+            <Telephone></Telephone>
+            <Email></Email>
+        </CustomerInfo>
+        <Subscriptions/>
+    </Customer>
+    <Customer>
+        <CustomerInfo>
+            <CustomerUUID>bc881448-93f9-479c-954f-2c5005bf16f4</CustomerUUID>
+            <CustomerNumber>123</CustomerNumber>
+            <Company>false</Company>
+            <Firstname>ok</Firstname>
+            <Lastname></Lastname>
+            <Street></Street>
+            <PostalCode></PostalCode>
+            <City>Ort: </City>
+            <Telephone></Telephone>
+            <Email></Email>
+        </CustomerInfo>
+        <Subscriptions/>
+    </Customer>
+    <CurrentCustomerNr>1707</CurrentCustomerNr>
+    <CurrentInvoiceNr>1878</CurrentInvoiceNr>
+</Customers>

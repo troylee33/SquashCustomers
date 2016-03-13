@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://xsd.customer.ostersundssquash.se"
+			xmlns="http://xsd.customer.ostersundssquash.se"
+			elementFormDefault="qualified" 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- This schema defines all Customers: -->
+	<xs:element name="Customers" type="CustomersType"/>
+	
+	<xs:complexType name="CustomersType">
+		<xs:sequence>
+			<xs:element name="Customer" type="CustomerType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CurrentCustomerNr" type="xs:int" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CurrentInvoiceNr" type="xs:int" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="CustomerType">
+		<xs:annotation>
+			<xs:documentation>The complete Customer, having: Always customer data.
+					May have multiple subscriptions and may have invoices. The invoices includes historical ones.
+					We keep invoices separate from the active subscriptions, so we can store a full invoice history.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomerInfo" type="CustomerInfoType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Subscriptions" type="SubscriptionsType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Invoices" type="InvoicesType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="CustomerInfoType">
+		<xs:sequence>
+			<xs:element name="CustomerUUID" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CustomerNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Company" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Firstname" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Lastname" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Street" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PostalCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="City" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Telephone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="SubscriptionsType">
+		<xs:annotation>
+			<xs:documentation>One subscription is for a certain track, on a certain weekday and time (always one hour).
+					One customer may have multiple subscriptions.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Subscription" type="SubscriptionType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="SubscriptionType">
+		<xs:sequence>
+			<xs:element name="TrackNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Weekday" type="WeekdayType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="StartTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="InvoicesType">
+		<xs:sequence>
+			<xs:element name="Invoice" type="InvoiceType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="InvoiceType">
+		<xs:annotation>
+			<xs:documentation>This holds invoice meta-data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="InvoiceNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="RelativeFilePath" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="CreatedDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DueDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="InvoiceStatus" type="InvoiceStatusType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SentDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ReminderSentDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Notes" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="WeekdayType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Monday"/>
+			<xs:enumeration value="Tuesday"/>
+			<xs:enumeration value="Wednesday"/>
+			<xs:enumeration value="Thursday"/>
+			<xs:enumeration value="Friday"/>
+			<xs:enumeration value="Saturday"/>
+			<xs:enumeration value="Sunday"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="InvoiceStatusType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="New"/>
+			<xs:enumeration value="Sent"/>
+			<xs:enumeration value="Paid"/>
+			<xs:enumeration value="Overdue"/>
+			<xs:enumeration value="Cancelled"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

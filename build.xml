@@ -82,7 +82,7 @@
 			<fileset dir="${src.dir}">
 				<include name="se/**/*.properties"/>
 			</fileset>
-			<zipgroupfileset dir="${lib.dir}/apache-poi-3.14" includes="**/*.jar" />
+			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
 		</jar>
 		
 		<echo message=" " />

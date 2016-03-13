@@ -80,7 +80,7 @@ public class CustomerMasterPanel extends JPanel {
             xmlRepository,
             this.subscriptionsTable,
             this.invoicesTable);
-        this.customerDetailsPanel.setMinimumSize(new Dimension(600, 400));
+        this.customerDetailsPanel.setMinimumSize(new Dimension(600, 300));
         this.customerDetailsPanel.setMaximumSize(new Dimension(600, 400));
         this.add(this.customerDetailsPanel);
 

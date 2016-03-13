@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import se.osdsquash.common.SquashUtil;
 import se.osdsquash.common.SubscriptionPeriod;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
@@ -59,7 +60,7 @@ public class MainGUI extends JFrame {
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
 
-    private static final int WINDOW_PIXEL_WIDTH = 1320;
+    private static final int WINDOW_PIXEL_WIDTH = 1200;
     private static final int WINDOW_PIXEL_HEIGTH = 800;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
@@ -131,8 +132,6 @@ public class MainGUI extends JFrame {
         final JLabel procJavaUrlLabel = new JLabel("Kunder");
         components.add(procJavaUrlLabel);
 
-        components.add(this.createEmptyRow());
-
         // Load the customer list, which is a list box with single selection mode
         this.customerListModel = new DefaultListModel<>();
         for (CustomerType customerType : this.xmlRepository.getAllCustomers()) {
@@ -196,15 +195,18 @@ public class MainGUI extends JFrame {
 
         // The list goes into a scrollable container
         JScrollPane customerListScroller = new JScrollPane(this.customerList);
-        customerListScroller.setPreferredSize(new Dimension(220, 340));
-        customerListScroller.setMaximumSize(new Dimension(220, 340));
+        customerListScroller.setAlignmentY(SwingConstants.NORTH);
+        customerListScroller.setPreferredSize(new Dimension(220, 400));
+        customerListScroller.setMaximumSize(new Dimension(220, 400));
 
         // Create the customer master panel, showing a selected customer
         this.customerMasterPanel = new CustomerMasterPanel(this.xmlRepository);
 
         // The customer list and details panel goes into a single component,
         // showing the two components side-by-side:
-        JPanel customerAreaPanel = new JPanel(new FlowLayout());
+        JPanel customerAreaPanel = new JPanel();
+        customerAreaPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 16));
+        customerAreaPanel.setAlignmentY(SwingConstants.NORTH);
         customerAreaPanel.setSize(new Dimension(600, 600));
         customerAreaPanel.add(customerListScroller);
         customerAreaPanel.add(this.customerMasterPanel);
@@ -382,9 +384,9 @@ public class MainGUI extends JFrame {
 
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(4, 16, 16, 16));
-        bottomPanel.setSize(1140, 50);
-        bottomPanel.setMinimumSize(new Dimension(1140, 50));
-        bottomPanel.setMaximumSize(new Dimension(1140, 50));
+        bottomPanel.setSize(1000, 50);
+        bottomPanel.setMinimumSize(new Dimension(1000, 50));
+        bottomPanel.setMaximumSize(new Dimension(1000, 50));
 
         final JButton quitButton = new JButton("Avsluta");
         quitButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -538,6 +540,10 @@ public class MainGUI extends JFrame {
             this.infoLabel.setForeground(Color.BLUE);
         }
 
+        if (!SquashUtil.isSet(text)) {
+            text = "   ";
+        }
+
         this.infoLabel.setText(text);
 
         // If notice, clear the text in 5 seconds...
@@ -561,6 +567,11 @@ public class MainGUI extends JFrame {
 
     // Sets an error text
     protected void printValidationErrorText(String text) {
+
+        // Always have something in the text, to make it take up space
+        if (!SquashUtil.isSet(text)) {
+            text = "   ";
+        }
         this.validationErrorLabel.setText(text);
     }
 

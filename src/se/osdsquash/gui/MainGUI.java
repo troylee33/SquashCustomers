@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
@@ -54,9 +55,6 @@ public class MainGUI extends JFrame {
      * Serial UID
      */
     private static final long serialVersionUID = 1418443841032535316L;
-
-    // Execution thread for long running tasks
-    private Thread executionThread;
 
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
@@ -363,13 +361,9 @@ public class MainGUI extends JFrame {
                         return;
                     }
 
-                    // Start new invoice creator thread
-                    InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable();
-                    MainGUI.this.executionThread = new Thread(invoiceCreator);
-                    MainGUI.this.executionThread.start();
-
-                    // Start a progress bar thread until the invoice thread is done
-                    new ProgressDrawerRunnable(invoiceCreator).run();
+                    // Execute the invoice creator in a new thread
+                    // and with a waiting indicator:
+                    MainGUI.this.runInvoiceCreatorWithProgressBar();
                 }
             }
         });
@@ -454,13 +448,65 @@ public class MainGUI extends JFrame {
         this.customerList.repaint();
     }
 
-    // Thread that executes the invoice file creation task
-    protected class InvoiceCreatorRunnable implements Runnable {
+    private void runInvoiceCreatorWithProgressBar() {
+
+        // Prepare a progress indicator dialog
+        final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturor...", true);
+
+        waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        waitingDialog.setSize(300, 160);
+
+        URL spinnerImageUrl = this
+            .getClass()
+            .getClassLoader()
+            .getResource("se/osdsquash/gui/Spinner.gif");
+        JLabel imageLabel = new JLabel(new ImageIcon(spinnerImageUrl));
+        imageLabel.setMinimumSize(new Dimension(70, 70));
+        imageLabel.setMaximumSize(new Dimension(70, 70));
+
+        waitingDialog.add(BorderLayout.CENTER, imageLabel);
+
+        waitingDialog.setResizable(false);
+        waitingDialog.setLocationRelativeTo(MainGUI.this);
+
+        Thread showProgressThread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                waitingDialog.setVisible(true);
+            }
+        });
+        showProgressThread.start();
+
+        // Start new invoice creator worker, e.g. in a new thread
+        InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable(waitingDialog);
+        invoiceCreator.execute();
+        while (!invoiceCreator.isDone()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException exception) {
+                Thread.interrupted();
+            }
+        }
+    }
+
+    // Swing thread that executes the invoice file creation task
+    protected class InvoiceCreatorRunnable extends SwingWorker<String, String> {
 
         private StringBuilder filesResult;
+        private final JDialog waitingDialog;
+
+        protected InvoiceCreatorRunnable(JDialog waitingDialog) {
+            this.waitingDialog = waitingDialog;
+        }
+
+        // Returns the invoice creation results
+        protected String getResultMessage() {
+            return this.filesResult.toString();
+        }
 
         @Override
-        public void run() {
+        protected String doInBackground() throws Exception {
 
             // Loop all customers and generate invoices as Excel-files
             this.filesResult = new StringBuilder(128);
@@ -470,85 +516,25 @@ public class MainGUI extends JFrame {
                 this.filesResult.append(filename + "\n");
             }
 
-            return;
-        }
-
-        // Returns the invoice creation results
-        protected String getResultMessage() {
             return this.filesResult.toString();
-        }
-    }
-
-    // Thread that shows a progress bar until the execution thread is done
-    protected class ProgressDrawerRunnable implements Runnable {
-
-        // Reference to the running invoice creation task
-        private InvoiceCreatorRunnable invoiceCreator;
-
-        protected ProgressDrawerRunnable(InvoiceCreatorRunnable invoiceCreator) {
-            this.invoiceCreator = invoiceCreator;
         }
 
         @Override
-        public void run() {
+        protected void done() {
 
-            final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturor...", true);
-            waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            waitingDialog.setSize(300, 160);
+            try {
+                this.waitingDialog.setVisible(false);
 
-            URL spinnerImageUrl = this
-                .getClass()
-                .getClassLoader()
-                .getResource("se/osdsquash/gui/Spinner.gif");
-            JLabel imageLabel = new JLabel(new ImageIcon(spinnerImageUrl));
-            imageLabel.setMinimumSize(new Dimension(70, 70));
-            imageLabel.setMaximumSize(new Dimension(70, 70));
+                // Show the results from the execution
+                JOptionPane.showMessageDialog(
+                    MainGUI.this,
+                    this.filesResult.toString(),
+                    "Resultat",
+                    JOptionPane.PLAIN_MESSAGE);
 
-            waitingDialog.add(BorderLayout.CENTER, imageLabel);
-
-            waitingDialog.setResizable(false);
-            waitingDialog.setLocationRelativeTo(MainGUI.this);
-
-            // Poll for the execution thread to finish
-            while (MainGUI.this.executionThread.isAlive()) {
-
-                // We must show the dialog in a new thread,
-                // or it will just block the current thread until closed.
-                Thread showProgressThread = new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        waitingDialog.setVisible(true);
-                    }
-                });
-                showProgressThread.start();
-
-                try {
-                    MainGUI.this.executionThread.join(500);
-
-                    // Check if finished, then clear and quit this progress bar
-                    if (!MainGUI.this.executionThread.isAlive()) {
-
-                        waitingDialog.setVisible(false);
-
-                        // Show the result from the execution thread
-                        JOptionPane.showMessageDialog(
-                            MainGUI.this,
-                            this.invoiceCreator.getResultMessage(),
-                            "Resultat",
-                            JOptionPane.PLAIN_MESSAGE);
-
-                        return;
-                    }
-                } catch (Exception exception) {
-                    // Try to just continue...
-                    System.err.println(
-                        "Varning: Exception i progress-indikatorn, försöker fortsätta ändå...");
-                    exception.printStackTrace();
-                }
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
             }
-
-            waitingDialog.setVisible(false);
         }
     }
 
@@ -624,7 +610,7 @@ public class MainGUI extends JFrame {
         System.exit(0);
     }
 
-    // List renderer that displays the customer text
+    // List renderer that displays the customer text on a list's row
     private static class CustomerCellRenderer extends DefaultListCellRenderer {
 
         /**

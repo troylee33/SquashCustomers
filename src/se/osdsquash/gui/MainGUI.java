@@ -216,24 +216,26 @@ public class MainGUI extends JFrame {
         // ------------------------------  CREATE GENERIC COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------
 
-        components.add(this.createEmptyRow());
+        //components.add(this.createEmptyRow());
 
         // This label is a text field for displaying
         // validation error messages to the user.
         this.validationErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.validationErrorLabel.setForeground(Color.RED);
-        this.validationErrorLabel.setSize(630, 22); // X, Y
-        this.validationErrorLabel.setMinimumSize(new Dimension(630, 22));
-        this.validationErrorLabel.setMaximumSize(new Dimension(630, 22));
+        this.validationErrorLabel.setSize(400, 32); // X, Y
+        this.validationErrorLabel.setMinimumSize(new Dimension(400, 32));
+        this.validationErrorLabel.setMaximumSize(new Dimension(400, 32));
+        this.validationErrorLabel.setPreferredSize(new Dimension(400, 32));
         components.add(this.validationErrorLabel);
 
         // This label is a generic text field for displaying
         // any kind of information, of error or info type.
         this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.infoLabel.setForeground(Color.BLUE);
-        this.infoLabel.setSize(630, 22); // X, Y
-        this.infoLabel.setMinimumSize(new Dimension(630, 22));
-        this.infoLabel.setMaximumSize(new Dimension(630, 22));
+        this.infoLabel.setSize(400, 32); // X, Y
+        this.infoLabel.setMinimumSize(new Dimension(400, 32));
+        this.infoLabel.setMaximumSize(new Dimension(400, 32));
+        this.infoLabel.setPreferredSize(new Dimension(400, 32));
         components.add(this.infoLabel);
 
         components.add(this.createEmptyRow());

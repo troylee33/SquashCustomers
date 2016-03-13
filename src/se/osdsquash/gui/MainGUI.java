@@ -205,7 +205,7 @@ public class MainGUI extends JFrame {
         // The customer list and details panel goes into a single component,
         // showing the two components side-by-side:
         JPanel customerAreaPanel = new JPanel(new FlowLayout());
-        customerAreaPanel.setSize(new Dimension(1300, 600));
+        customerAreaPanel.setSize(new Dimension(600, 600));
         customerAreaPanel.add(customerListScroller);
         customerAreaPanel.add(this.customerMasterPanel);
 

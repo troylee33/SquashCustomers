@@ -159,8 +159,8 @@ public class CustomerDetailsPanel extends JPanel {
         // Action buttons:
 
         this.saveButton = new JButton("Spara uppgifter");
-        this.saveButton.setMinimumSize(new Dimension(60, 22));
-        this.saveButton.setMaximumSize(new Dimension(60, 22));
+        this.saveButton.setMinimumSize(new Dimension(120, 22));
+        this.saveButton.setMaximumSize(new Dimension(120, 22));
         this.add(this.saveButton);
 
         this.saveButton.addActionListener(new ActionListener() {
@@ -505,7 +505,7 @@ public class CustomerDetailsPanel extends JPanel {
          */
         private static final long serialVersionUID = -4963309556324245707L;
 
-        private static final int defaultNrOfColumns = 30;
+        private static final int defaultNrOfColumns = 20;
 
         protected CustomerTextField(String textValue) {
             super(textValue, defaultNrOfColumns);

@@ -50,7 +50,7 @@ public class CustomerMasterPanel extends JPanel {
     protected CustomerMasterPanel(XmlRepository xmlRepository) {
 
         super(new FlowLayout());
-        this.setSize(new Dimension(980, 420));
+        this.setSize(new Dimension(600, 420));
 
         this.xmlRepository = xmlRepository;
 

@@ -84,7 +84,7 @@ public class SpringLayoutUtil {
 
         // FIXME: Ugly hack to make the input fields more
         // left aligned, closer to the labels:
-        Spring leftAdjust = Spring.constant(230);
+        Spring leftAdjust = Spring.constant(120);
 
         //Then adjust the x/y constraints of all the cells so that they
         //are aligned in a grid.

@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -15,6 +18,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.xml.jaxb.InvoiceStatusType;
 import se.osdsquash.xml.jaxb.InvoiceType;
 
 /**
@@ -28,8 +32,7 @@ public class InvoicesTable extends JTable {
      */
     private static final long serialVersionUID = 6855240729945090702L;
 
-    private TableCellEditor invoiceNrEditor;
-    private TableCellEditor filenameEditor;
+    private TableCellEditor invoiceStatusEditor;
 
     /**
      * Constructor, taking existing invoice references, null is OK as well
@@ -42,37 +45,30 @@ public class InvoicesTable extends JTable {
         super.setCellSelectionEnabled(true);
         super.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+        TableColumn statusColumn = super.getColumnModel().getColumn(TableColumnEnum.STATUS.index);
+        statusColumn.setMaxWidth(90);
+        statusColumn.setCellRenderer(new SmallerFontRenderer());
+
         TableColumn invoiceNrColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.INVOICE_NR.index);
-        invoiceNrColumn.setMaxWidth(80);
+        invoiceNrColumn.setMaxWidth(70);
         invoiceNrColumn.setCellRenderer(new SmallerFontRenderer());
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(278);
+        filenameColumn.setMaxWidth(290);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
 
-        // TODO OLLE, what to display and edit ???
-
-        // All cell values are selected through combo boxes, define those editors:
-        /*{
-            final Vector<Integer> trackOptions = new Vector<Integer>();
-            for (Integer trackNr : SquashUtil.getAllTracks()) {
-                trackOptions.addElement(trackNr);
-            }
-            JComboBox<Integer> tracksComboBox = new JComboBox<>(trackOptions);
-            this.trackEditor = new DefaultCellEditor(tracksComboBox);
-        }
-        
+        // Use a combobox editor to set the invoice status
         {
-            final Vector<String> weekdayOptions = new Vector<String>();
-            for (WeekdayType weekdayType : WeekdayType.values()) {
-                String weekdayString = SquashUtil.weekdayTypeToString(weekdayType);
-                weekdayOptions.addElement(weekdayString);
+            final Vector<String> statusOptions = new Vector<String>();
+            for (InvoiceStatusType statusType : InvoiceStatusType.values()) {
+                String statusString = SquashUtil.invoiceStatusTypeToString(statusType);
+                statusOptions.addElement(statusString);
             }
-            JComboBox<String> weekdaysComboBox = new JComboBox<>(weekdayOptions);
-            this.weekdayEditor = new DefaultCellEditor(weekdaysComboBox);
-        }*/
+            JComboBox<String> statusesComboBox = new JComboBox<>(statusOptions);
+            this.invoiceStatusEditor = new DefaultCellEditor(statusesComboBox);
+        }
     }
 
     protected void addInvoice(InvoiceType invoiceType) {
@@ -93,10 +89,8 @@ public class InvoicesTable extends JTable {
 
         int modelColumn = this.convertColumnIndexToModel(column);
 
-        if (modelColumn == TableColumnEnum.INVOICE_NR.index) {
-            return this.invoiceNrEditor;
-        } else if (modelColumn == TableColumnEnum.FILENAME.index) {
-            return this.filenameEditor;
+        if (modelColumn == TableColumnEnum.STATUS.index) {
+            return this.invoiceStatusEditor;
         } else {
             // This will default to a simple string editor
             return super.getCellEditor(row, column);
@@ -119,7 +113,10 @@ public class InvoicesTable extends JTable {
 
         private String[] columnNames = TableColumnEnum.getNames();
 
-        private static final Class<?>[] COLUMN_CLASSES = new Class[]{Integer.class, String.class};
+        private static final Class<?>[] COLUMN_CLASSES = new Class[]{
+            String.class,
+            Integer.class,
+            String.class};
 
         /**
          * Constructor taking the invoices, if any
@@ -153,10 +150,10 @@ public class InvoicesTable extends JTable {
             return this.invoices;
         }
 
-        // No cells can be edited
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
+            // Status can be edited:
+            return TableColumnEnum.STATUS.index == columnIndex;
         }
 
         @Override
@@ -167,9 +164,12 @@ public class InvoicesTable extends JTable {
 
             // Set value depending on what column we're at
             if (columnIndex == TableColumnEnum.INVOICE_NR.index) {
-                invoice.setInvoiceNumber((Integer) aValue);
+                // No edit allowed!
             } else if (columnIndex == TableColumnEnum.FILENAME.index) {
                 // No edit allowed!
+            } else if (columnIndex == TableColumnEnum.STATUS.index) {
+                // Status can be edited:
+                invoice.setInvoiceStatus(SquashUtil.invoiceStatusStringToType((String) aValue));
             } else {
                 // Something is wrong...
                 throw new RuntimeException("Unknown rowIndex:" + rowIndex);
@@ -213,6 +213,8 @@ public class InvoicesTable extends JTable {
                     return Integer.valueOf(invoice.getInvoiceNumber());
                 case FILENAME :
                     return SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath());
+                case STATUS :
+                    return SquashUtil.invoiceStatusTypeToString(invoice.getInvoiceStatus());
                 default :
                     return null;
             }
@@ -222,7 +224,7 @@ public class InvoicesTable extends JTable {
     // Table column definitions, with index and display name
     private static enum TableColumnEnum {
 
-        INVOICE_NR(0, "FakturaNr"), FILENAME(1, "Filnamn");
+        STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), FILENAME(2, "Filnamn");
 
         private TableColumnEnum(int index, String name) {
             this.index = index;

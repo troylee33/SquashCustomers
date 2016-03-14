@@ -13,6 +13,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import se.osdsquash.xml.jaxb.InvoiceStatusType;
 import se.osdsquash.xml.jaxb.WeekdayType;
 
 /**
@@ -68,7 +69,7 @@ public abstract class SquashUtil {
     /**
      * Converts a Swedish weekday presentation string to XML weekday type
      * @param weekdayString String type
-     * @return A presentation string for the weekday
+     * @return A type for the weekday
      */
     public static WeekdayType weekdayStringToType(String weekdayString) {
 
@@ -105,6 +106,78 @@ public abstract class SquashUtil {
 
         // Should not happen...
         throw new RuntimeException("Unknown weekday string: " + weekdayString);
+    }
+
+    /**
+     * Converts an XML invoice status type to a Swedish string
+     * @param statusType XML type
+     * @return A presentation string for the status
+     */
+    public static String invoiceStatusTypeToString(InvoiceStatusType statusType) {
+
+        if (statusType == null) {
+            // Should not happen...
+            throw new RuntimeException("statusType is null");
+        }
+
+        switch (statusType) {
+            case CANCELLED : {
+                return "Avbruten";
+            }
+            case NEW : {
+                return "Ny";
+            }
+            case OVERDUE : {
+                return "Obetald";
+            }
+            case PAID : {
+                return "Betald";
+            }
+            case SENT : {
+                return "Skickad";
+            }
+            default :
+                // Ignore...
+        }
+
+        // Should not happen...
+        throw new RuntimeException("Unknown InvoiceStatusType value: " + statusType.toString());
+    }
+
+    /**
+     * Converts a Swedish invoice status presentation string to XML status type
+     * @param invoiceStatusString String type
+     * @return A type for the status
+     */
+    public static InvoiceStatusType invoiceStatusStringToType(String invoiceStatusString) {
+
+        if (invoiceStatusString == null) {
+            // Should not happen...
+            throw new RuntimeException("invoiceStatusString is null");
+        }
+
+        switch (invoiceStatusString) {
+            case "Avbruten" : {
+                return InvoiceStatusType.CANCELLED;
+            }
+            case "Ny" : {
+                return InvoiceStatusType.NEW;
+            }
+            case "Obetald" : {
+                return InvoiceStatusType.OVERDUE;
+            }
+            case "Betald" : {
+                return InvoiceStatusType.PAID;
+            }
+            case "Skickad" : {
+                return InvoiceStatusType.SENT;
+            }
+            default :
+                // Ignore...
+        }
+
+        // Should not happen...
+        throw new RuntimeException("Unknown invoice status string: " + invoiceStatusString);
     }
 
     /**

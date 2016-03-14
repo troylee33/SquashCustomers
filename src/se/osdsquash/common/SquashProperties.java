@@ -90,7 +90,7 @@ public abstract class SquashProperties {
     public static String INVOICE_EMAIL = "ollesiphone@gmail.com";
 
     /**
-     * Number of days until invoice payment due
+     * Number of days until invoice payment due, from the day it was sent
      */
     public static int INVOICE_DAYS_DUE = 30;
 

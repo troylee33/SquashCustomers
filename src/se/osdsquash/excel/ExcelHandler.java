@@ -499,12 +499,8 @@ public class ExcelHandler {
             } catch (DatatypeConfigurationException exception) {
                 throw new RuntimeException(exception);
             }
-
             gregorialCal.setTimeInMillis(invoiceCreationCal.getTimeInMillis());
             invoice.setCreatedDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
-
-            gregorialCal.setTimeInMillis(dueCal.getTimeInMillis());
-            invoice.setDueDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
 
             invoice.setInvoiceNumber(invoiceNr);
             invoice.setInvoiceStatus(InvoiceStatusType.NEW);

@@ -6,6 +6,7 @@
  TODOs 2016-03-12:
  
   - Gör klart alla valmöjligheter i fakturalistan och bredda den!
+  - Implementera faktura-overdue-varningar vid uppstart, highlists i kundlistan?
   - Ordna all layout snyggare !!!
  
  

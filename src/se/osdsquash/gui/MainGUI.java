@@ -588,6 +588,13 @@ public class MainGUI extends JFrame {
             try {
                 this.waitingDialog.setVisible(false);
 
+                // If there is a customer showing, refresh it so that the
+                // new invoice file list will display the new file(s).
+                if (!MainGUI.this.customerList.isSelectionEmpty()) {
+                    CustomerType customerType = MainGUI.this.customerList.getSelectedValue();
+                    MainGUI.this.customerMasterPanel.setCustomer(customerType);
+                }
+
                 // Show the results from the execution
                 JOptionPane.showMessageDialog(
                     MainGUI.this,

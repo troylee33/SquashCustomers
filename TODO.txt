@@ -5,7 +5,7 @@
  
  TODOs 2016-03-12:
  
-  - Fundera på det exakta innehållet i faktura-listan...
+  - Gör klart alla valmöjligheter i fakturalistan och bredda den!
   - Ordna all layout snyggare !!!
  
  

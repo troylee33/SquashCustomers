@@ -42,6 +42,7 @@ import se.osdsquash.xml.jaxb.SubscriptionsType;
  */
 public class XmlRepository {
 
+    // We start at 3000, to avoid duplicates with the club's historical data
     private static final int DEFAULT_START_NR = 3000;
 
     private static final String XSD_SCHEMA_PATH = "se/osdsquash/xml/Customers.xsd";
@@ -256,12 +257,13 @@ public class XmlRepository {
      */
     public synchronized int getNewCustomerNr() {
 
-        // Increment, set and return a new nr
+        // Increment, set and return a new nr.
+        // This is never null, since we always initialize the repository.
         CustomersType customersType = this.customersJaxbXml.getValue();
-        int customerNr = customersType.getCurrentCustomerNr();
+        Integer customerNr = customersType.getCurrentCustomerNr();
         customerNr++;
 
-        // This new customer nr will be saved whenever something in the repository is saved
+        // This new customer nr will be saved whenever the repository is saved
         customersType.setCurrentCustomerNr(customerNr);
 
         return customerNr;
@@ -361,9 +363,10 @@ public class XmlRepository {
      */
     public synchronized int getNewInvoiceNr() {
 
-        // Increment, set and return a new nr
+        // Increment, set and return a new nr.
+        // This is never null, since we always initialize the repository.
         CustomersType customersType = this.customersJaxbXml.getValue();
-        int invoiceNr = customersType.getCurrentInvoiceNr();
+        Integer invoiceNr = customersType.getCurrentInvoiceNr();
         invoiceNr++;
 
         // There could be a scenario where a new invoice is created with this nr, but the repository
@@ -372,6 +375,18 @@ public class XmlRepository {
         this.saveRepository();
 
         return invoiceNr;
+    }
+
+    /**
+     * Returns the current/last used customer nr.
+     * 
+     * @return The latest customer nr used
+     */
+    public synchronized int getCurrentCustomerNr() {
+
+        // This is never null, since we always initialize the repository.
+        CustomersType customersType = this.customersJaxbXml.getValue();
+        return customersType.getCurrentCustomerNr().intValue();
     }
 
     /**

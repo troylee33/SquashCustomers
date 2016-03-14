@@ -60,7 +60,7 @@ public class MainGUI extends JFrame {
     private XmlRepository xmlRepository;
 
     private static final int WINDOW_PIXEL_WIDTH = 1160;
-    private static final int WINDOW_PIXEL_HEIGTH = 800;
+    private static final int WINDOW_PIXEL_HEIGTH = 780;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -142,7 +142,6 @@ public class MainGUI extends JFrame {
         this.customerList.setCellRenderer(new CustomerCellRenderer());
 
         this.customerList.setFixedCellWidth(198);
-        this.customerList.setPreferredSize(new Dimension(200, 300));
         this.customerList.setMaximumSize(new Dimension(200, 300));
         this.customerList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.customerList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -244,10 +243,10 @@ public class MainGUI extends JFrame {
         customerButtonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         customerButtonsPanel.setLayout(new BoxLayout(customerButtonsPanel, BoxLayout.X_AXIS));
-        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(4, 16, 16, 16));
-        customerButtonsPanel.setSize(500, 40);
-        customerButtonsPanel.setMinimumSize(new Dimension(500, 40));
-        customerButtonsPanel.setMaximumSize(new Dimension(500, 40));
+        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(2, 16, 2, 16));
+        customerButtonsPanel.setSize(500, 32);
+        customerButtonsPanel.setMinimumSize(new Dimension(500, 32));
+        customerButtonsPanel.setMaximumSize(new Dimension(500, 32));
 
         // Action buttons for the customers
         this.newCustomerButton.setMinimumSize(new Dimension(130, 22));
@@ -395,10 +394,10 @@ public class MainGUI extends JFrame {
         bottomPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        bottomPanel.setSize(1000, 50);
-        bottomPanel.setMinimumSize(new Dimension(1000, 50));
-        bottomPanel.setMaximumSize(new Dimension(1000, 50));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 40));
+        bottomPanel.setSize(1000, 32);
+        bottomPanel.setMinimumSize(new Dimension(1000, 32));
+        bottomPanel.setMaximumSize(new Dimension(1000, 32));
 
         final JButton quitButton = new JButton("Avsluta");
         quitButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -448,6 +447,7 @@ public class MainGUI extends JFrame {
         this.customerList.repaint();
     }
 
+    // Handles the whole invoice creation execution
     private void runInvoiceCreatorWithProgressBar() {
 
         // Prepare a progress indicator dialog
@@ -481,54 +481,6 @@ public class MainGUI extends JFrame {
         waitingDialog.setVisible(true);
     }
 
-    // Swing thread that executes the invoice file creation task
-    protected class InvoiceCreatorRunnable extends SwingWorker<String, String> {
-
-        private StringBuilder filesResult;
-        private final JDialog waitingDialog;
-
-        protected InvoiceCreatorRunnable(JDialog waitingDialog) {
-            this.waitingDialog = waitingDialog;
-        }
-
-        // Returns the invoice creation results
-        protected String getResultMessage() {
-            return this.filesResult.toString();
-        }
-
-        @Override
-        protected String doInBackground() throws Exception {
-
-            // Loop all customers and generate invoices as Excel-files
-            this.filesResult = new StringBuilder(128);
-            this.filesResult.append("Följande fakturafiler har skapats:\n\n");
-
-            for (String filename : MainGUI.this.xmlRepository.generateAndStoreInvoices()) {
-                this.filesResult.append(filename + "\n");
-            }
-
-            return this.filesResult.toString();
-        }
-
-        @Override
-        protected void done() {
-
-            try {
-                this.waitingDialog.setVisible(false);
-
-                // Show the results from the execution
-                JOptionPane.showMessageDialog(
-                    MainGUI.this,
-                    this.filesResult.toString(),
-                    "Resultat",
-                    JOptionPane.PLAIN_MESSAGE);
-
-            } catch (Exception exception) {
-                throw new RuntimeException(exception);
-            }
-        }
-    }
-
     // Sets an info text, either as error marked or just info.
     // The text can be shown as a short notice, or permanent.
     protected void printInfoText(String text, boolean errorText, boolean shortNotice) {
@@ -550,7 +502,7 @@ public class MainGUI extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    MainGUI.this.infoLabel.setText(" ");
+                    MainGUI.this.infoLabel.setText("   ");
                 }
             });
             timer.setRepeats(false);
@@ -599,6 +551,54 @@ public class MainGUI extends JFrame {
 
         // Nothing dirty here, just exit
         System.exit(0);
+    }
+
+    // Swing thread that executes the invoice file creation task
+    protected class InvoiceCreatorRunnable extends SwingWorker<String, String> {
+
+        private StringBuilder filesResult;
+        private final JDialog waitingDialog;
+
+        protected InvoiceCreatorRunnable(JDialog waitingDialog) {
+            this.waitingDialog = waitingDialog;
+        }
+
+        // Returns the invoice creation results
+        protected String getResultMessage() {
+            return this.filesResult.toString();
+        }
+
+        @Override
+        protected String doInBackground() throws Exception {
+
+            // Loop all customers and generate invoices as Excel-files
+            this.filesResult = new StringBuilder(128);
+            this.filesResult.append("Följande fakturafiler har skapats:\n\n");
+
+            for (String filename : MainGUI.this.xmlRepository.generateAndStoreInvoices()) {
+                this.filesResult.append(filename + "\n");
+            }
+
+            return this.filesResult.toString();
+        }
+
+        @Override
+        protected void done() {
+
+            try {
+                this.waitingDialog.setVisible(false);
+
+                // Show the results from the execution
+                JOptionPane.showMessageDialog(
+                    MainGUI.this,
+                    this.filesResult.toString(),
+                    "Resultat",
+                    JOptionPane.PLAIN_MESSAGE);
+
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        }
     }
 
     // List renderer that displays the customer text on a list's row

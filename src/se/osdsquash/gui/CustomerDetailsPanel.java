@@ -46,6 +46,9 @@ public class CustomerDetailsPanel extends JPanel {
     // The current customer shown in the panel:
     private UUID customerUUID;
 
+    // Original CustomerNr, before an edit is made
+    private String customerNr;
+
     // All components in the Panel:
     private JLabel kundNrLabel;
     private JTextField kundNrTextField;
@@ -80,18 +83,16 @@ public class CustomerDetailsPanel extends JPanel {
     /**
      * Constructor initializing an empty and disabled customer details panel
      * 
-     * @param xmlRepository A repository instance
      * @param subscriptionsTable Reference to the subscriptions
      * @param invoicesTable Reference to the invoices
      * @param mainGUI The parent "owner" panel
      */
     protected CustomerDetailsPanel(
-        XmlRepository xmlRepository,
         SubscriptionsTable subscriptionsTable,
         InvoicesTable invoicesTable) {
 
         super();
-        this.xmlRepository = xmlRepository;
+        this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
         this.invoicesTable = invoicesTable;
         this.initPanel();
@@ -156,8 +157,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.add(new JLabel(" "));
         this.add(new JLabel(" "));
 
-        // Action buttons:
-
+        // The validate and save button:
         this.saveButton = new JButton("Spara uppgifter");
         this.saveButton.setMinimumSize(new Dimension(120, 22));
         this.saveButton.setMaximumSize(new Dimension(120, 22));
@@ -172,10 +172,13 @@ public class CustomerDetailsPanel extends JPanel {
                 String errorMessage = MainGUI.getInstance().getValidationErrorTextLabel().getText();
 
                 if (SquashUtil.isSet(errorMessage)) {
-                    JOptionPane.showMessageDialog(CustomerDetailsPanel.this, "\n"
-                        + "Kunduppgifterna kan inte sparas eftersom det finns felaktiga uppgifter:"
-                        + "\n\n"
-                        + errorMessage, "Ogiltiga uppgifter", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                        CustomerDetailsPanel.this,
+                        "Kunduppgifterna kan inte sparas eftersom det finns felaktiga uppgifter:"
+                            + "\n\n"
+                            + errorMessage,
+                        "Ogiltiga uppgifter",
+                        JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -195,9 +198,12 @@ public class CustomerDetailsPanel extends JPanel {
                             .getInputVerifier()
                             .shouldYieldFocus(CustomerDetailsPanel.this.fornamnTextField))) {
 
-                        JOptionPane.showMessageDialog(CustomerDetailsPanel.this, "\n"
-                            + "Kunden kan inte skapas eftersom det saknas obligatoriska uppgifter!"
-                            + "\n", "Ogiltiga uppgifter", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                            CustomerDetailsPanel.this,
+                            "Kunden kan inte skapas eftersom det saknas obligatoriska uppgifter!"
+                                + "\n",
+                            "Ogiltiga uppgifter",
+                            JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -244,7 +250,7 @@ public class CustomerDetailsPanel extends JPanel {
                 // We must add the new customer to the customer list...
                 if (newCustomer) {
                     MainGUI.getInstance().addCustomerToList(customer);
-                    saveMessage = "Kund sparad";
+                    saveMessage = "Ny kund sparad";
                 } else {
                     // ...or just repaint the list
                     MainGUI.getInstance().repaintCustomerList();
@@ -325,6 +331,7 @@ public class CustomerDetailsPanel extends JPanel {
     protected void clearCustomer() {
 
         this.customerUUID = null;
+        this.customerNr = null;
 
         // Clear all inputs and disable them
         this.toggleFields(true, false);
@@ -341,6 +348,7 @@ public class CustomerDetailsPanel extends JPanel {
 
         CustomerInfoType customerInfo = customerType.getCustomerInfo();
         this.customerUUID = UUID.fromString(customerInfo.getCustomerUUID());
+        this.customerNr = String.valueOf(customerInfo.getCustomerNumber());
 
         // Enable all inputs
         this.toggleFields(false, true);
@@ -412,10 +420,13 @@ public class CustomerDetailsPanel extends JPanel {
         this.toggleFields(true, true);
 
         this.customerUUID = null;
+        this.customerNr = null;
         this.kundNrTextField.setText(String.valueOf(customerNr));
 
         // Sets all input field validators
         this.initValidators();
+
+        this.kundNrTextField.requestFocus();
 
         // Make customer not dirty after everything is set
         this.customerDirty = false;
@@ -472,8 +483,8 @@ public class CustomerDetailsPanel extends JPanel {
         MainGUI mainGui = MainGUI.getInstance();
 
         this.kundNrTextField.setInputVerifier(
-            new ValidatorHelper.NumericalJTextFieldVerifier(
-                "Kundnr",
+            new ValidatorHelper.CustomerNrJTextFieldVerifier(
+                this.customerNr,
                 mainGui.getValidationErrorTextLabel()));
 
         this.fornamnTextField.setInputVerifier(

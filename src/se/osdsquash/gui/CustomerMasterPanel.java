@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -52,7 +54,7 @@ public class CustomerMasterPanel extends JPanel {
         super(new FlowLayout());
         this.setSize(new Dimension(600, 420));
 
-        this.xmlRepository = xmlRepository;
+        this.xmlRepository = XmlRepository.getInstance();
 
         Border border = BorderFactory.createTitledBorder(
             BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK),
@@ -63,21 +65,16 @@ public class CustomerMasterPanel extends JPanel {
             Color.DARK_GRAY);
         this.setBorder(border);
 
-        // The subscriptions and invoices are presented in tables
+        // The subscriptions and invoices are presented in tables:
 
         this.subscriptionsTable = new SubscriptionsTable(null);
-        this.subscriptionsTable.setPreferredSize(new Dimension(220, 110));
-        this.subscriptionsTable.setMinimumSize(new Dimension(220, 110));
-        this.subscriptionsTable.setMaximumSize(new Dimension(220, 110));
+        this.subscriptionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         this.invoicesTable = new InvoicesTable(null);
-        this.invoicesTable.setPreferredSize(new Dimension(360, 110));
-        this.invoicesTable.setMinimumSize(new Dimension(360, 110));
-        this.invoicesTable.setMaximumSize(new Dimension(360, 110));
+        this.invoicesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         // Add customer details first, aligned to left
         this.customerDetailsPanel = new CustomerDetailsPanel(
-            xmlRepository,
             this.subscriptionsTable,
             this.invoicesTable);
         this.customerDetailsPanel.setMinimumSize(new Dimension(600, 300));
@@ -190,7 +187,10 @@ public class CustomerMasterPanel extends JPanel {
             .add(new JLabel("                                         "));
 
         // Now add the invoices table, shown below the subscriptions
-        JScrollPane invoicesScrollPane = new JScrollPane(this.invoicesTable);
+        JScrollPane invoicesScrollPane = new JScrollPane(
+            this.invoicesTable,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         invoicesScrollPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
         Border invoicesBorder = BorderFactory.createTitledBorder(

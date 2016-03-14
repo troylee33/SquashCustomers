@@ -252,7 +252,13 @@ public class InvoicesTable extends JTable {
         }
     }
 
+    // Cell renderer using a smaller, size 10 font
     private static class SmallerFontRenderer extends DefaultTableCellRenderer {
+
+        /**
+         * Serial UID
+         */
+        private static final long serialVersionUID = -8063226768847279359L;
 
         @Override
         public Component getTableCellRendererComponent(

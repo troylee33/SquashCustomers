@@ -18,6 +18,7 @@
 	<property name="ant.classes.dir" location="${ant.build.dir}/ant-classes" />
 	<property name="resources.dir" location="${basedir}/resources" />
 	<property name="dist.jar.file" location="${ant.build.dir}/SquashCustomers.jar" />
+	<property name="dist.macapp.dir" location="${ant.build.dir}/MacApp" />
 	
 	<!-- Include JAXB task to generate classes from XSD -->
 	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
@@ -26,11 +27,12 @@
 		</classpath>
 	</taskdef>
 	
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
+	<!-- Include Oracles Java utility for Mac to create OS X Java applications -->
+	<taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask">
 		<classpath>
 			<fileset dir="${lib.dir}" includes="*.jar" />
 		</classpath>
-	</taskdef>	
+	</taskdef>
              
 	<!-- Classpath to compile everything -->
 	<path id="compile.classpath">
@@ -49,6 +51,9 @@
 		</delete>
 		<delete includeemptydirs="true">
 			<fileset dir="${ant.classes.dir}" includes="**/*.class" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.macapp.dir}" includes="**/*" />
 		</delete>
 		<delete file="${dist.jar.file}" failonerror="false" />
 		
@@ -96,36 +101,27 @@
 			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
 		</jar>
 		
-		<jarbundler dir="build/MacApp"
-	              name="Squash Customers"
-	              shortname="SquashCustomers"
-	              signature="SqCs"
-	              mainclass="se.osdsquash.SquashCustomers"
-	              jar="build/SquashCustomers.jar"
-	              icon="resources/Racket.icns"
-	              jvmversion="1.8+"
-	              version="1.0"
-	              infostring="Squash Customers, copyright Olle Bergstrom 2016"
-	              build="1"
-	              bundleid="se.osdsquash.SquashCustomers"
-	              verbose="true"> 
-	                
-	    		<!-- Adjust the look, feel and behavior -->
-	      		<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
-	      		<javaproperty name="apple.awt.brushMetal" value="true"/>
-	      		<javaproperty name="apple.awt.showGrowBox" value="false"/>
-
-	    		<!-- Uncomment this to add a file into the package
-	      		<resourcefilelist dir=".." files="myfile"/> -->
-	 
-	    		<!-- Copy the HelpBook JNI library into the Java directory -->
-	      		<!--<javafilelist dir="./build" files="libHelpBookJNI.jnilib"/> -->
-		</jarbundler>
+		<!-- 5. Also create a Mac OS X application package based on the jar -->
+		<echo message="Creates the Jar package..." />
+	    <bundleapp outputdirectory="${dist.macapp.dir}"
+	        	   name="SquashKunder"
+	        	   displayname="SquashKunder"
+	    		   icon="${resources.dir}/Racket.icns"
+	        	   identifier="se.osdsquash.SquashKunder"
+	        	   shortversion="1.0"
+	        	   applicationCategory="public.app-category.developer-tools"
+	        	   mainclassname="se/osdsquash/SquashKunder">
+	    	<classpath file="${dist.jar.file}"/>
+	        <option value="-Dapple.laf.useScreenMenuBar=true"/>
+	    </bundleapp>
 		
-		<echo message=" " />
-		<echo message="BUILD COMPLETE! The executable jar file is ready: ${dist.jar.file}" />
-		<echo message=" " />
-		
+		<echo level="info" message=" " />
+		<echo level="info" message="BUILD COMPLETE!" />
+		<echo level="info" message="The executable jar file is here: ${dist.jar.file}" />
+		<echo level="info" message="The Mac OS X application is here: ${dist.macapp.dir}/Squash Customers" />
+		<echo level="info" message=" " />
+		<echo level="info" message="Use the OS X app for Mac and the jar file for other platforms." />
+		<echo level="info" message=" " />
 	</target>
 	
 </project>

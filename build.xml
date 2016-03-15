@@ -26,6 +26,12 @@
 		</classpath>
 	</taskdef>
 	
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
+		<classpath>
+			<fileset dir="${lib.dir}" includes="*.jar" />
+		</classpath>
+	</taskdef>	
+             
 	<!-- Classpath to compile everything -->
 	<path id="compile.classpath">
 		<pathelement location="${poi.lib.dir}/poi-3.14-20160307.jar" />
@@ -89,6 +95,31 @@
 			</fileset>
 			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
 		</jar>
+		
+		<jarbundler dir="build/MacApp"
+	              name="Squash Customers"
+	              shortname="Squash"
+	              signature="Squash"
+	              mainclass="se.osdsquash.SquashCustomers"
+	              jar="build/SquashCustomers.jar"
+	              icon="icons/SquashCustomers.icns"
+	              jvmversion="1.8+"
+	              version="1.0"
+	              infostring="Hello World, copyright 2006"
+	              build="1"
+	              bundleid="se.osdsquash.SquashCustomers"> 
+	                
+	    		<!-- Adjust the look, feel and behavior -->
+	      		<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
+	      		<javaproperty name="apple.awt.brushMetal" value="true"/>
+	      		<javaproperty name="apple.awt.showGrowBox" value="false"/>
+
+	    		<!-- Uncomment this to add a file into the package
+	      		<resourcefilelist dir=".." files="myfile"/> -->
+	 
+	    		<!-- Copy the HelpBook JNI library into the Java directory -->
+	      		<!--<javafilelist dir="./build" files="libHelpBookJNI.jnilib"/> -->
+		</jarbundler>
 		
 		<echo message=" " />
 		<echo message="BUILD COMPLETE! The executable jar file is ready: ${dist.jar.file}" />

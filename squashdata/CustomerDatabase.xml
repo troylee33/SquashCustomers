@@ -47,18 +47,25 @@
         </Subscriptions>
         <Invoices>
             <Invoice>
-                <InvoiceNumber>1975</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/790_Christian_Långnamnet-Efternamnet_Faktura_1975_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:44:57.054+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:44:57.054+02:00</DueDate>
+                <InvoiceNumber>1981</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/790_Christian_Långnamnet-Efternamnet_Faktura_1981_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:51.807+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
+                <InvoiceNumber>1975</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/790_Christian_Långnamnet-Efternamnet_Faktura_1975_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:44:57.054+01:00</CreatedDate>
+                <DueDate>2016-03-12T19:44:57.054+02:00</DueDate>
+                <InvoiceStatus>DebtDue</InvoiceStatus>
+            </Invoice>
+            <Invoice>
                 <InvoiceNumber>1978</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/790_Christian_Långnamnet-Efternamnet_Faktura_1978_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:46:14.830+01:00</CreatedDate>
+                <RelativeFilePath>./squashdata/invoices/2014-01-07/790_Christian_Långnamnet-Efternamnet_Faktura_1978_20140107.xlsx</RelativeFilePath>
+                <CreatedDate>2014-01-07T19:46:14.830+01:00</CreatedDate>
                 <DueDate>2016-04-12T19:46:14.830+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
+                <InvoiceStatus>Cancelled</InvoiceStatus>
             </Invoice>
         </Invoices>
     </Customer>
@@ -78,192 +85,24 @@
         <Subscriptions/>
         <Invoices>
             <Invoice>
-                <InvoiceNumber>1889</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-12/1703_Bosse_Faktura_1889_20160312.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-12T21:21:22.085+01:00</CreatedDate>
-                <DueDate>2016-04-11T21:21:22.085+02:00</DueDate>
+                <InvoiceNumber>1979</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1979_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:46:16.040+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:46:16.040+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>1892</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1892_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:45:05.787+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:45:05.787+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
+                <InvoiceNumber>1976</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1976_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:44:58.259+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:44:58.259+02:00</DueDate>
+                <InvoiceStatus>DebtDue</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>1895</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1895_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:46:20.730+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:46:20.730+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1898</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1898_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:46:27.030+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:46:27.030+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1901</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1901_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:47:55.322+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:47:55.322+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1904</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1904_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:48:49.502+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:48:49.502+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1907</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1907_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:49:38.785+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:49:38.785+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1910</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1910_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:51:01.959+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:51:01.959+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1913</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1913_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:58:06.564+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:58:06.564+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1916</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1916_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T16:59:14.602+01:00</CreatedDate>
-                <DueDate>2016-04-12T16:59:14.602+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1919</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1919_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:01:14.392+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:01:14.392+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1922</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1922_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:05:09.159+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:05:09.159+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1925</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1925_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:12:06.667+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:12:06.667+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1928</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1928_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:13:25.420+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:13:25.420+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1931</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1931_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:14:37.039+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:14:37.039+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1934</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1934_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T17:15:43.299+01:00</CreatedDate>
-                <DueDate>2016-04-12T17:15:43.299+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1937</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1937_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:01:50.998+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:01:50.998+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1940</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1940_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:03:31.011+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:03:31.011+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1943</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1943_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:21:33.731+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:21:33.731+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1946</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1946_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:22:36.111+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:22:36.111+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1949</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1949_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:25:00.091+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:25:00.091+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1952</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1952_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:25:39.298+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:25:39.298+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1955</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1955_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:42:02.444+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:42:02.444+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1958</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1958_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T18:43:08.116+01:00</CreatedDate>
-                <DueDate>2016-04-12T18:43:08.116+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1961</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1961_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:28:25.054+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:28:25.054+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1964</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1964_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:38:51.762+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:38:51.762+02:00</DueDate>
-                <InvoiceStatus>New</InvoiceStatus>
-            </Invoice>
-            <Invoice>
-                <InvoiceNumber>1967</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1967_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:42:00.296+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:42:00.296+02:00</DueDate>
+                <InvoiceNumber>1973</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1973_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:44:12.572+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:44:12.572+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
@@ -274,24 +113,199 @@
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>1973</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1973_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:44:12.572+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:44:12.572+02:00</DueDate>
+                <InvoiceNumber>1967</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1967_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:42:00.296+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:42:00.296+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>1976</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1976_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:44:58.259+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:44:58.259+02:00</DueDate>
+                <InvoiceNumber>1964</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1964_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:38:51.762+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:38:51.762+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>1979</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1979_20160313.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-13T19:46:16.040+01:00</CreatedDate>
-                <DueDate>2016-04-12T19:46:16.040+02:00</DueDate>
+                <InvoiceNumber>1961</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1961_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T19:28:25.054+01:00</CreatedDate>
+                <DueDate>2016-04-12T19:28:25.054+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1958</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1958_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:43:08.116+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:43:08.116+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1955</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1955_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:42:02.444+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:42:02.444+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1952</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1952_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:25:39.298+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:25:39.298+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1949</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1949_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:25:00.091+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:25:00.091+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1946</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1946_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:22:36.111+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:22:36.111+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1943</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1943_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:21:33.731+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:21:33.731+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1940</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1940_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:03:31.011+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:03:31.011+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1937</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1937_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T18:01:50.998+01:00</CreatedDate>
+                <DueDate>2016-04-12T18:01:50.998+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1934</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1934_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:15:43.299+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:15:43.299+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1931</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1931_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:14:37.039+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:14:37.039+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1928</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1928_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:13:25.420+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:13:25.420+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1925</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1925_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:12:06.667+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:12:06.667+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1922</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1922_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:05:09.159+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:05:09.159+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1919</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1919_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T17:01:14.392+01:00</CreatedDate>
+                <DueDate>2016-04-12T17:01:14.392+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1916</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1916_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:59:14.602+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:59:14.602+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1913</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1913_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:58:06.564+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:58:06.564+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1910</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1910_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:51:01.959+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:51:01.959+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1907</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1907_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:49:38.785+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:49:38.785+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1904</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1904_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:48:49.502+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:48:49.502+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1901</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1901_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:47:55.322+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:47:55.322+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1898</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1898_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:46:27.030+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:46:27.030+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1895</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1895_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:46:20.730+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:46:20.730+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1892</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-13/1703_Johannes_Hendrixxxsson_Faktura_1892_20160313.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-13T16:45:05.787+01:00</CreatedDate>
+                <DueDate>2016-04-12T16:45:05.787+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1889</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-12/1703_Bosse_Faktura_1889_20160312.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-12T21:21:22.085+01:00</CreatedDate>
+                <DueDate>2016-04-11T21:21:22.085+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+            <Invoice>
+                <InvoiceNumber>1982</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1703_Johannes_Hendrixxxsson_Faktura_1982_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:53.052+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
         </Invoices>
@@ -528,6 +542,13 @@
                 <DueDate>2016-04-12T19:46:16.846+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
+            <Invoice>
+                <InvoiceNumber>1983</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/123_s_Faktura_1983_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:53.874+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
         </Invoices>
     </Customer>
     <Customer>
@@ -544,7 +565,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1984</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1708_eee_Faktura_1984_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:54.470+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -560,7 +589,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1985</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1709_as_Faktura_1985_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:54.860+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -576,7 +613,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1986</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1710_ob_Faktura_1986_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:55.213+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -592,7 +637,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1987</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1711_hej_Faktura_1987_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:55.695+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -608,7 +661,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1988</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1712_as_Faktura_1988_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:56.001+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -624,7 +685,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1989</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1713_23as_Faktura_1989_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:56.308+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -640,7 +709,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1990</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1714_as1221_Faktura_1990_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:56.593+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -656,7 +733,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1991</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1715_asd23_Faktura_1991_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:56.823+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -672,7 +757,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1992</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1717_w2s2ew_Faktura_1992_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.089+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -688,7 +781,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1993</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1718_asd32e_Faktura_1993_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.330+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -704,7 +805,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1994</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1719_s1231_Faktura_1994_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.574+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -720,7 +829,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1995</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1721_zsdasa_Faktura_1995_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.789+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -736,7 +853,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1996</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1722_asd23ev_Faktura_1996_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:58.046+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -752,7 +877,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1997</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1723_cwer2_Faktura_1997_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:58.268+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -768,7 +901,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1998</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1725_aca3_Faktura_1998_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:58.530+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -784,7 +925,15 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>1999</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1726_oso_Faktura_1999_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:58.814+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <Customer>
         <CustomerInfo>
@@ -800,8 +949,16 @@
             <Email></Email>
         </CustomerInfo>
         <Subscriptions/>
-        <Invoices/>
+        <Invoices>
+            <Invoice>
+                <InvoiceNumber>2000</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1732_x_Faktura_2000_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:59.139+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceStatus>New</InvoiceStatus>
+            </Invoice>
+        </Invoices>
     </Customer>
     <CurrentCustomerNr>1733</CurrentCustomerNr>
-    <CurrentInvoiceNr>1980</CurrentInvoiceNr>
+    <CurrentInvoiceNr>2000</CurrentInvoiceNr>
 </Customers>

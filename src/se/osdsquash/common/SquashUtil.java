@@ -336,6 +336,7 @@ public abstract class SquashUtil {
 
     /**
      * Returns true if the invoice is overdue and must be paid
+     * @param invoice Invoice to check
      * @return True if overdue
      */
     public static boolean isOverdue(InvoiceType invoice) {

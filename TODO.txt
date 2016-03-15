@@ -5,8 +5,7 @@
  
  TODOs 2016-03-12:
  
-  - Gör klart alla valmöjligheter i fakturalistan och bredda den!
-  - Implementera faktura-overdue-varningar vid uppstart, highlight i kundlistan?
+  - Gör klart alla valmöjligheter i fakturalistan och bredda den. Lägg till DueDate!
   - Ordna all layout snyggare !!!
  
  

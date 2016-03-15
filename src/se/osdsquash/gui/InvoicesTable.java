@@ -2,7 +2,14 @@ package se.osdsquash.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +22,7 @@ import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -74,6 +82,47 @@ public class InvoicesTable extends JTable {
             statusesComboBox.setFont(new Font(null, Font.PLAIN, 10));
             this.invoiceStatusEditor = new DefaultCellEditor(statusesComboBox);
         }
+
+        // The filename cell is a clickable link that opens it
+        super.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                // If a filename cell has been clicked, open the file
+                if (e.getClickCount() > 0) {
+                    int selectedRow = InvoicesTable.this.getSelectedRow();
+                    if (InvoicesTable.this.getSelectedColumn() == TableColumnEnum.FILENAME.index
+                        && selectedRow >= 0) {
+                        InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this.getModel())
+                            .getInvoices()
+                            .get(selectedRow);
+                        if (invoice != null) {
+                            InvoicesTable.this.openFile(invoice.getRelativeFilePath());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // This works as a mouse over event for cells
+    @Override
+    protected void processMouseMotionEvent(MouseEvent e) {
+
+        // Set hand cursor for filename links, otherwise standard cursor
+        Point point = e.getPoint();
+        int column = InvoicesTable.this.columnAtPoint(point);
+        int row = InvoicesTable.this.rowAtPoint(point);
+        if (TableColumnEnum.FILENAME.index == column && row >= 0) {
+            InvoicesTable.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            JLabel labelRenderer = (JLabel) InvoicesTable.this.getCellRenderer(row, column);
+            labelRenderer.setText("<html><u>)" + labelRenderer.getText() + "</u></html>");
+        } else {
+            InvoicesTable.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+
+        super.processMouseMotionEvent(e);
     }
 
     protected void setInvoices(List<InvoiceType> invoices) {
@@ -262,6 +311,48 @@ public class InvoicesTable extends JTable {
         }
     }
 
+    private void openFile(String filePath) {
+
+        String errorMessage = null;
+
+        File file = new File(filePath);
+        if (!file.isFile()) {
+            errorMessage = "Filen "
+                + filePath
+                + " kunde inte öppnas."
+                + "\n"
+                + "Filen kanske är borttagen?";
+        }
+
+        if (errorMessage == null) {
+            if (!Desktop.isDesktopSupported()) {
+                errorMessage = "Kan inte initiera filöppning på denna plattform, hittar ingen Desktop.";
+            }
+        }
+
+        if (errorMessage == null) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.open(file);
+
+            } catch (UnsupportedOperationException uoException) {
+                errorMessage = "Kan inte initiera filöppning på denna plattform. Felmeddelande: "
+                    + uoException.getMessage();
+            } catch (IOException ioException) {
+                errorMessage = "Kan inte öppna filen."
+                    + " Kontrollera att det finns ett program som hanterar Excel-filer. Felmeddelande: "
+                    + ioException.getMessage();
+            } catch (Exception exception) {
+                errorMessage = "Kan inte öppna filen, ett okänt fel inträffade. Felmeddelande: "
+                    + exception.getMessage();
+            }
+        }
+
+        if (errorMessage != null) {
+            JOptionPane.showMessageDialog(null, errorMessage, "Fel", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     // Cell renderer using a smaller, size 10 font
     private static class SmallerFontRenderer extends DefaultTableCellRenderer {
 
@@ -301,8 +392,12 @@ public class InvoicesTable extends JTable {
             } else if (column == TableColumnEnum.FILENAME.index) {
                 InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
                 if (invoice != null) {
-                    label.setToolTipText(
-                        SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath()));
+                    // Set the font style as a link
+                    String filename = SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath());
+                    label.setText("<html><u>" + filename + "</u></html>");
+                    label.setToolTipText(filename);
+                    label.setForeground(Color.BLUE);
+                    return label;
                 }
             }
 

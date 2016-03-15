@@ -75,6 +75,7 @@
 			<xs:element name="InvoiceNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="RelativeFilePath" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="CreatedDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="DueDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="InvoiceStatus" type="InvoiceStatusType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="SentDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Notes" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -98,7 +99,7 @@
 			<xs:enumeration value="New"/>
 			<xs:enumeration value="Sent"/>
 			<xs:enumeration value="Paid"/>
-			<xs:enumeration value="Overdue"/>
+			<xs:enumeration value="DebtDue"/>
 			<xs:enumeration value="Cancelled"/>
 		</xs:restriction>
 	</xs:simpleType>

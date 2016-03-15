@@ -191,7 +191,12 @@ public class XmlRepository {
      * @return The customers, empty list if none
      */
     public List<CustomerType> getAllCustomers() {
-        return this.customersJaxbXml.getValue().getCustomer();
+
+        List<CustomerType> customerItems = new ArrayList<>();
+        for (CustomerType customerType : this.customersJaxbXml.getValue().getCustomer()) {
+            customerItems.add(customerType);
+        }
+        return customerItems;
     }
 
     /**

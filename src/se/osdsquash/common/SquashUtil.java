@@ -13,7 +13,10 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.InvoiceStatusType;
+import se.osdsquash.xml.jaxb.InvoiceType;
+import se.osdsquash.xml.jaxb.InvoicesType;
 import se.osdsquash.xml.jaxb.WeekdayType;
 
 /**
@@ -127,8 +130,8 @@ public abstract class SquashUtil {
             case NEW : {
                 return "Ny";
             }
-            case OVERDUE : {
-                return "Obetald";
+            case DEBT_DUE : {
+                return "Skyldig";
             }
             case PAID : {
                 return "Betald";
@@ -163,8 +166,8 @@ public abstract class SquashUtil {
             case "Ny" : {
                 return InvoiceStatusType.NEW;
             }
-            case "Obetald" : {
-                return InvoiceStatusType.OVERDUE;
+            case "Skyldig" : {
+                return InvoiceStatusType.DEBT_DUE;
             }
             case "Betald" : {
                 return InvoiceStatusType.PAID;
@@ -216,6 +219,27 @@ public abstract class SquashUtil {
         } catch (ParseException | DatatypeConfigurationException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    /**
+     * Zeroes given calendar instance from time parts
+     * param calendar A calendar to time-zero
+     */
+    public static void timeZeroCalendar(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    /**
+     * Returns a calendar for "today" without any time parts
+     * @return A calendar for the start of today
+     */
+    public static Calendar getTimeZeroedCalendar() {
+        Calendar today = Calendar.getInstance();
+        timeZeroCalendar(today);
+        return today;
     }
 
     /**
@@ -290,5 +314,50 @@ public abstract class SquashUtil {
             return fileName.toString();
         }
         return null;
+    }
+
+    /**
+     * Returns true if customer have unpaid invoice(s) overdue
+     * @param customer Customer to check
+     * @return True if there are payment overdue(s)
+     */
+    public static boolean hasOverdueInvoices(CustomerType customer) {
+
+        InvoicesType invoicesType = customer.getInvoices();
+        if (invoicesType != null) {
+            for (InvoiceType invoice : invoicesType.getInvoice()) {
+                if (isOverdue(invoice)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the invoice is overdue and must be paid
+     * @return True if overdue
+     */
+    public static boolean isOverdue(InvoiceType invoice) {
+
+        GregorianCalendar todayCal = new GregorianCalendar();
+        todayCal.setTimeInMillis(SquashUtil.getTimeZeroedCalendar().getTimeInMillis());
+
+        InvoiceStatusType status = invoice.getInvoiceStatus();
+
+        // If the invoice is "active", check for a passed due date
+        if (InvoiceStatusType.NEW.equals(status)
+            || InvoiceStatusType.SENT.equals(status)
+            || InvoiceStatusType.DEBT_DUE.equals(status)) {
+            XMLGregorianCalendar dueDateXmlCal = invoice.getDueDate();
+            if (dueDateXmlCal != null) {
+                if (todayCal.after(dueDateXmlCal.toGregorianCalendar())) {
+                    // Due date passed, mark as overdue
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

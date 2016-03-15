@@ -1,8 +1,12 @@
 package se.osdsquash.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +50,7 @@ public class InvoicesTable extends JTable {
         super.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         TableColumn statusColumn = super.getColumnModel().getColumn(TableColumnEnum.STATUS.index);
-        statusColumn.setMaxWidth(90);
+        statusColumn.setMaxWidth(70);
         statusColumn.setCellRenderer(new SmallerFontRenderer());
 
         TableColumn invoiceNrColumn = super.getColumnModel()
@@ -67,12 +71,13 @@ public class InvoicesTable extends JTable {
                 statusOptions.addElement(statusString);
             }
             JComboBox<String> statusesComboBox = new JComboBox<>(statusOptions);
+            statusesComboBox.setFont(new Font(null, Font.PLAIN, 10));
             this.invoiceStatusEditor = new DefaultCellEditor(statusesComboBox);
         }
     }
 
-    protected void addInvoice(InvoiceType invoiceType) {
-        this.getInvoicesTableModel().addInvoice(invoiceType);
+    protected void setInvoices(List<InvoiceType> invoices) {
+        this.getInvoicesTableModel().setInvoices(invoices);
     }
 
     protected void clearInvoices() {
@@ -125,14 +130,17 @@ public class InvoicesTable extends JTable {
         protected InvoiceTableModel(List<InvoiceType> invoices) {
             super();
             if (invoices == null) {
-                this.invoices = new ArrayList<>(0);
+                this.invoices = new ArrayList<>();
             } else {
                 this.invoices = invoices;
+                Collections.sort(this.invoices, new InvoiceComparator());
             }
         }
 
-        protected void addInvoice(InvoiceType invoice) {
-            this.invoices.add(invoice);
+        protected void setInvoices(List<InvoiceType> invoices) {
+            this.invoices.clear();
+            this.invoices.addAll(invoices);
+            Collections.sort(this.invoices, new InvoiceComparator());
             int rowIndex = this.invoices.size() - 1;
             super.fireTableRowsInserted(rowIndex, rowIndex);
         }
@@ -283,7 +291,37 @@ public class InvoicesTable extends JTable {
 
             JLabel label = new JLabel(value.toString());
             label.setFont(new Font(null, Font.PLAIN, 10));
+
+            if (column == TableColumnEnum.INVOICE_NR.index) {
+                InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
+                if (invoice != null && SquashUtil.isOverdue(invoice)) {
+                    label.setForeground(Color.RED);
+                    label.setToolTipText("Fakturan verkar ha förfallit obetald");
+                }
+            } else if (column == TableColumnEnum.FILENAME.index) {
+                InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
+                if (invoice != null) {
+                    label.setToolTipText(
+                        SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath()));
+                }
+            }
+
             return label;
         }
     };
+
+    // Sorts newest created invoice first
+    private static final class InvoiceComparator implements Comparator<InvoiceType>, Serializable {
+
+        /**
+         * Serial UID
+         */
+        private static final long serialVersionUID = -1835375418064528868L;
+
+        @Override
+        public int compare(InvoiceType o1, InvoiceType o2) {
+            return o2.getCreatedDate().toGregorianCalendar().compareTo(
+                o1.getCreatedDate().toGregorianCalendar());
+        }
+    }
 }

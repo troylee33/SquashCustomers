@@ -156,7 +156,7 @@ public class CustomerMasterPanel extends JPanel {
 
                     int dialogResult = JOptionPane.showConfirmDialog(
                         CustomerMasterPanel.this,
-                        "Vill du verkligen radera detta abonnemang?",
+                        "Vill du verkligen radera abonnemanget?",
                         "Radera?",
                         JOptionPane.YES_NO_OPTION);
 

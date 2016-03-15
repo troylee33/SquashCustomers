@@ -420,9 +420,10 @@ public class ExcelHandler {
             XSSFRow ammountToPayRow = this.fakturaSheet.createRow(rowCounter.next());
             cellCounter = rowCounter.getCellCounter();
 
-            // Add the payment due date, relative from "now", just below the BG nr
+            // Add the payment due date (no time parts), relative from "now", just below the BG nr
             Calendar dueCal = (Calendar) invoiceCreationCal.clone();
             dueCal.add(Calendar.DATE, SquashProperties.INVOICE_DAYS_DUE);
+            SquashUtil.timeZeroCalendar(dueCal);
             String dueDateString = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(dueCal.getTime());
 
@@ -501,6 +502,9 @@ public class ExcelHandler {
             }
             gregorialCal.setTimeInMillis(invoiceCreationCal.getTimeInMillis());
             invoice.setCreatedDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
+
+            gregorialCal.setTimeInMillis(dueCal.getTimeInMillis());
+            invoice.setDueDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
 
             invoice.setInvoiceNumber(invoiceNr);
             invoice.setInvoiceStatus(InvoiceStatusType.NEW);

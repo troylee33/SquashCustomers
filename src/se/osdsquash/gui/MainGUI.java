@@ -150,8 +150,8 @@ public class MainGUI extends JFrame {
 
         // Load the customer list, which is a list box with single selection mode
         this.customerListModel = new DefaultListModel<>();
-        for (CustomerType customerType : this.xmlRepository.getAllCustomers()) {
-            this.customerListModel.addElement(customerType);
+        for (CustomerType customer : this.xmlRepository.getAllCustomers()) {
+            this.customerListModel.addElement(customer);
         }
         this.customerList = new JList<>(this.customerListModel);
 
@@ -202,8 +202,8 @@ public class MainGUI extends JFrame {
                     MainGUI.this.deleteCustomerButton.setEnabled(true);
                     MainGUI.this.customerMasterPanel.toggleEnabled(true);
 
-                    CustomerType customerType = MainGUI.this.customerList.getSelectedValue();
-                    MainGUI.this.customerMasterPanel.setCustomer(customerType);
+                    CustomerType customer = MainGUI.this.customerList.getSelectedValue();
+                    MainGUI.this.customerMasterPanel.setCustomer(customer);
                 }
             }
         });
@@ -314,7 +314,7 @@ public class MainGUI extends JFrame {
                 } else {
                     int dialogResult = JOptionPane.showConfirmDialog(
                         MainGUI.this.customerMasterPanel,
-                        "Vill du verkligen radera denna kund?",
+                        "Vill du verkligen radera kunden?",
                         "Radera?",
                         JOptionPane.YES_NO_OPTION);
 
@@ -323,11 +323,11 @@ public class MainGUI extends JFrame {
                     }
 
                     // Remove customer from repository and GUI list
-                    CustomerType customerType = MainGUI.this.customerList.getSelectedValue();
+                    CustomerType customer = MainGUI.this.customerList.getSelectedValue();
                     MainGUI.this.customerListModel
                         .remove(MainGUI.this.customerList.getSelectedIndex());
                     MainGUI.this.xmlRepository.deleteCustomer(
-                        UUID.fromString(customerType.getCustomerInfo().getCustomerUUID()));
+                        UUID.fromString(customer.getCustomerInfo().getCustomerUUID()));
 
                     MainGUI.this.printInfoText("Kund raderad", false, true);
                 }
@@ -610,8 +610,8 @@ public class MainGUI extends JFrame {
                 // If there is a customer showing, refresh it so that the
                 // new invoice file list will display the new file(s).
                 if (!MainGUI.this.customerList.isSelectionEmpty()) {
-                    CustomerType customerType = MainGUI.this.customerList.getSelectedValue();
-                    MainGUI.this.customerMasterPanel.setCustomer(customerType);
+                    CustomerType customer = MainGUI.this.customerList.getSelectedValue();
+                    MainGUI.this.customerMasterPanel.setCustomer(customer);
                 }
 
                 // Show the results from the execution
@@ -652,7 +652,10 @@ public class MainGUI extends JFrame {
                 cellHasFocus);
 
             // We know the list value is a Customer object
-            CustomerInfoType customerInfoType = ((CustomerType) value).getCustomerInfo();
+            CustomerType customerType = ((CustomerType) value);
+            CustomerInfoType customerInfoType = customerType.getCustomerInfo();
+            boolean paymentOverdue = SquashUtil.hasOverdueInvoices(customerType);
+
             String customerText = String.valueOf(customerInfoType.getCustomerNumber())
                 + " ("
                 + (customerInfoType.getFirstname() == null ? "" : customerInfoType.getFirstname())
@@ -661,6 +664,13 @@ public class MainGUI extends JFrame {
                     : " " + customerInfoType.getLastname())
                 + ")";
             label.setText(customerText);
+
+            if (paymentOverdue) {
+                label.setForeground(Color.RED);
+                label.setToolTipText("Det finns obetalda fakturor");
+            } else {
+                label.setToolTipText(null);
+            }
 
             return label;
         }

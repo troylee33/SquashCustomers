@@ -104,6 +104,23 @@ public class MainGUI extends JFrame {
         UIManager.put("OptionPane.okButtonText", "OK");
         UIManager.put("OptionPane.yesButtonText", "Ja");
 
+        // Present a small loading dialog, while starting up the whole program
+        final JDialog waitForInitDialog = new JDialog(MainGUI.this, "Startar programmet...", true);
+        waitForInitDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        waitForInitDialog.setResizable(false);
+        waitForInitDialog.setSize(260, 140);
+        waitForInitDialog.add(new JLabel("Startar programmet..."));
+        waitForInitDialog.setLocationRelativeTo(null);
+        waitForInitDialog.setBackground(Color.LIGHT_GRAY);
+        Thread initDialogStarter = new Thread() {
+
+            @Override
+            public void run() {
+                waitForInitDialog.setVisible(true);
+            }
+        };
+        initDialogStarter.start();
+
         this.setTitle("Östersunds Squashförening - Kunder och Fakturor");
         this.setSize(WINDOW_PIXEL_WIDTH, WINDOW_PIXEL_HEIGTH); // X, Y size for the program window
         this.setLocationRelativeTo(null);
@@ -372,6 +389,8 @@ public class MainGUI extends JFrame {
 
         // Draw all components to the panel
         this.drawLayout(components);
+
+        waitForInitDialog.setVisible(false);
     }
 
     // Creates a basic layout panel and add all given components to it

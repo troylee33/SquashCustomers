@@ -98,16 +98,17 @@
 		
 		<jarbundler dir="build/MacApp"
 	              name="Squash Customers"
-	              shortname="Squash"
-	              signature="Squash"
+	              shortname="SquashCustomers"
+	              signature="SqCs"
 	              mainclass="se.osdsquash.SquashCustomers"
 	              jar="build/SquashCustomers.jar"
-	              icon="icons/SquashCustomers.icns"
+	              icon="resources/Racket.icns"
 	              jvmversion="1.8+"
 	              version="1.0"
-	              infostring="Hello World, copyright 2006"
+	              infostring="Squash Customers, copyright Olle Bergstrom 2016"
 	              build="1"
-	              bundleid="se.osdsquash.SquashCustomers"> 
+	              bundleid="se.osdsquash.SquashCustomers"
+	              verbose="true"> 
 	                
 	    		<!-- Adjust the look, feel and behavior -->
 	      		<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>

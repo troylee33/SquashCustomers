@@ -109,7 +109,9 @@
 	    		   icon="${resources.dir}/Racket.icns"
 	        	   identifier="se.osdsquash.SquashKunder"
 	        	   shortversion="1.0"
-	        	   applicationCategory="public.app-category.developer-tools"
+	    		   signature="OSSF"
+	    		   copyright="Östersunds Squashförening 2016"
+	        	   applicationCategory="public.app-category.sports"
 	        	   mainclassname="se/osdsquash/SquashKunder">
 	    	<classpath file="${dist.jar.file}"/>
 	        <option value="-Dapple.laf.useScreenMenuBar=true"/>
@@ -118,7 +120,7 @@
 		<echo level="info" message=" " />
 		<echo level="info" message="BUILD COMPLETE!" />
 		<echo level="info" message="The executable jar file is here: ${dist.jar.file}" />
-		<echo level="info" message="The Mac OS X application is here: ${dist.macapp.dir}/Squash Customers" />
+		<echo level="info" message="The Mac OS X application is here: ${dist.macapp.dir}/SquashKunder" />
 		<echo level="info" message=" " />
 		<echo level="info" message="Use the OS X app for Mac and the jar file for other platforms." />
 		<echo level="info" message=" " />

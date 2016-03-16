@@ -1,6 +1,4 @@
 src-generated/*
-build/*
-build/MacApp/*
-build/ant-classes/*
+build
 bin/*
 */.DS_Store

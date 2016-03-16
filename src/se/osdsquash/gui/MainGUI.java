@@ -64,10 +64,12 @@ public class MainGUI extends JFrame {
     private XmlRepository xmlRepository;
 
     private static final int WINDOW_PIXEL_WIDTH = 1020;
-    private static final int WINDOW_PIXEL_HEIGTH = 960;
+    private static final int WINDOW_PIXEL_HEIGTH = 970;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
+
+    private static final Color INFO_MESSAGE_COLOR = new Color(120, 65, 30);
 
     // The list of customers data model and list:
     private DefaultListModel<CustomerType> customerListModel;
@@ -149,7 +151,7 @@ public class MainGUI extends JFrame {
         // --------------------------------------------------------------------------------------
 
         // The customer list label
-        final JLabel procJavaUrlLabel = new JLabel("Kunder");
+        final JLabel procJavaUrlLabel = new JLabel("     Kunder");
         components.add(procJavaUrlLabel);
 
         // Load the customer list, which is a list box with single selection mode
@@ -235,7 +237,8 @@ public class MainGUI extends JFrame {
         components.add(customerAreaPanel);
 
         JPanel invoicesSouthPanel = new JPanel();
-        invoicesSouthPanel.setAlignmentY(SwingConstants.SOUTH_EAST);
+        //invoicesSouthPanel.setAlignmentY(SwingConstants.SOUTH_EAST);
+        invoicesSouthPanel.setAlignmentX(SwingConstants.RIGHT);
         invoicesSouthPanel.setPreferredSize(new Dimension(640, 280));
 
         // Now prepare all graphics for the invoice table, draw it below the customer details
@@ -253,32 +256,32 @@ public class MainGUI extends JFrame {
             new Font("Arial", Font.PLAIN, 12),
             Color.DARK_GRAY);
         invoicesScrollPane.setBorder(invoicesBorder);
-        invoicesScrollPane.setPreferredSize(new Dimension(640, 256));
-
+        invoicesScrollPane.setPreferredSize(new Dimension(600, 256));
         invoicesSouthPanel.add(invoicesScrollPane);
+
         components.add(invoicesSouthPanel);
 
         // ------------------------------  CREATE GENERIC COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------
 
         // This label is a text field for displaying
-        // validation error messages to the user.
+        // input validation error messages to the user.
         this.validationErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.validationErrorLabel.setForeground(Color.RED);
-        this.validationErrorLabel.setSize(400, 32); // X, Y
-        this.validationErrorLabel.setMinimumSize(new Dimension(400, 32));
-        this.validationErrorLabel.setMaximumSize(new Dimension(400, 32));
-        this.validationErrorLabel.setPreferredSize(new Dimension(400, 32));
+        this.validationErrorLabel.setSize(350, 32); // X, Y
+        this.validationErrorLabel.setMinimumSize(new Dimension(350, 32));
+        this.validationErrorLabel.setMaximumSize(new Dimension(350, 32));
+        this.validationErrorLabel.setPreferredSize(new Dimension(350, 32));
         components.add(this.validationErrorLabel);
 
         // This label is a generic text field for displaying
         // any kind of information, of error or info type.
         this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.infoLabel.setForeground(Color.BLUE);
-        this.infoLabel.setSize(400, 32); // X, Y
-        this.infoLabel.setMinimumSize(new Dimension(400, 32));
-        this.infoLabel.setMaximumSize(new Dimension(400, 32));
-        this.infoLabel.setPreferredSize(new Dimension(400, 32));
+        this.infoLabel.setSize(350, 32); // X, Y
+        this.infoLabel.setMinimumSize(new Dimension(350, 32));
+        this.infoLabel.setMaximumSize(new Dimension(350, 32));
+        this.infoLabel.setPreferredSize(new Dimension(350, 32));
         components.add(this.infoLabel);
 
         components.add(this.createEmptyRow());
@@ -289,9 +292,7 @@ public class MainGUI extends JFrame {
 
         customerButtonsPanel.setLayout(new BoxLayout(customerButtonsPanel, BoxLayout.X_AXIS));
         customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(2, 16, 2, 16));
-        customerButtonsPanel.setSize(500, 32);
-        customerButtonsPanel.setMinimumSize(new Dimension(500, 32));
-        customerButtonsPanel.setMaximumSize(new Dimension(500, 32));
+        customerButtonsPanel.setPreferredSize(new Dimension(500, 40));
 
         // Action buttons for the customers
         this.newCustomerButton.setMinimumSize(new Dimension(130, 22));
@@ -424,10 +425,8 @@ public class MainGUI extends JFrame {
     // Creates a basic layout panel and add all given components to it
     private void drawLayout(List<JComponent> components) {
 
-        // The topPanel contains all the customer components
+        // The topPanel contains customer components
         JPanel topPanel = new JPanel();
-        topPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
@@ -436,18 +435,13 @@ public class MainGUI extends JFrame {
             topPanel.add(component);
         }
 
-        // Add common exit and help buttons at a bottom panel:
+        // Add common exit and help buttons as a very bottom panel:
         JPanel bottomPanel = new JPanel();
         bottomPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 40));
-        bottomPanel.setSize(1000, 32);
-        bottomPanel.setMinimumSize(new Dimension(1000, 32));
-        bottomPanel.setMaximumSize(new Dimension(1000, 32));
 
         final JButton quitButton = new JButton("Avsluta");
-        quitButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         bottomPanel.add(quitButton);
         quitButton.addActionListener(new ActionListener() {
 
@@ -457,6 +451,8 @@ public class MainGUI extends JFrame {
                 MainGUI.this.handleProgramExitEvent();
             }
         });
+
+        bottomPanel.add(Box.createRigidArea(new Dimension(16, 10)));
 
         final StringBuilder infoMessage = new StringBuilder(1024);
         infoMessage.append("<html>");
@@ -485,7 +481,6 @@ public class MainGUI extends JFrame {
         infoMessage.append("</html>");
 
         final JButton infoButton = new JButton("Hjälp");
-        infoButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         bottomPanel.add(infoButton);
         infoButton.addActionListener(new ActionListener() {
 
@@ -500,7 +495,7 @@ public class MainGUI extends JFrame {
             }
         });
 
-        // Finally "draw" the panels on the JFrame's ContentPane
+        // Finally draw the panels on the JFrame's ContentPane
         Container contentPane = this.getContentPane();
         contentPane.add(topPanel, BorderLayout.NORTH);
         contentPane.add(bottomPanel, BorderLayout.EAST);
@@ -561,7 +556,7 @@ public class MainGUI extends JFrame {
         if (errorText) {
             this.infoLabel.setForeground(Color.RED);
         } else {
-            this.infoLabel.setForeground(Color.BLUE);
+            this.infoLabel.setForeground(INFO_MESSAGE_COLOR);
         }
 
         if (!SquashUtil.isSet(text)) {

@@ -74,12 +74,11 @@ public class CustomerMasterPanel extends JPanel {
         this.add(this.customerDetailsPanel);
 
         // Hack to get some horizontal space
-        this.add(new JLabel("    "));
+        this.add(new JLabel("       "));
 
-        // Create a panel holding subscriptions first, then invoices below
-        JPanel subscriptionsAndInvoicesOuterPanel = new JPanel(
-            new FlowLayout(FlowLayout.CENTER, 10, 10));
-        subscriptionsAndInvoicesOuterPanel.setPreferredSize(new Dimension(330, 370));
+        // Create a panel holding the subscriptions table and buttons
+        JPanel subscriptionsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        subscriptionsPanel.setPreferredSize(new Dimension(310, 370));
 
         // Now add subscriptions inside a border:ed scroller, aligned to the right.
         // We must use a scroller to get the headers in the table correct!
@@ -95,11 +94,11 @@ public class CustomerMasterPanel extends JPanel {
         subscriptionsScrollPane.setBorder(subscriptionsBorder);
         subscriptionsScrollPane.setPreferredSize(new Dimension(240, 150));
 
-        subscriptionsAndInvoicesOuterPanel.add(subscriptionsScrollPane);
+        subscriptionsPanel.add(subscriptionsScrollPane);
 
         // Hack to cause a line break:
-        subscriptionsAndInvoicesOuterPanel.add(new JLabel("                    "));
-        subscriptionsAndInvoicesOuterPanel.add(new JLabel("               "));
+        subscriptionsPanel.add(new JLabel("                    "));
+        subscriptionsPanel.add(new JLabel("               "));
 
         // Create add/remove buttons below
         this.addSubscriptionButton = new JButton("+");
@@ -128,7 +127,7 @@ public class CustomerMasterPanel extends JPanel {
             }
         });
 
-        subscriptionsAndInvoicesOuterPanel.add(this.addSubscriptionButton);
+        subscriptionsPanel.add(this.addSubscriptionButton);
 
         this.deleteSubscriptionButton = new JButton("-");
         this.deleteSubscriptionButton.setEnabled(false);
@@ -165,10 +164,10 @@ public class CustomerMasterPanel extends JPanel {
             }
         });
 
-        subscriptionsAndInvoicesOuterPanel.add(this.deleteSubscriptionButton);
+        subscriptionsPanel.add(this.deleteSubscriptionButton);
 
         // Draw the subscriptions as one panel to the right
-        this.add(subscriptionsAndInvoicesOuterPanel);
+        this.add(subscriptionsPanel);
 
         // Hack to get some horizontal space
         this.add(new JLabel("  "));

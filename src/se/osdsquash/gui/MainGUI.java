@@ -236,10 +236,8 @@ public class MainGUI extends JFrame {
 
         components.add(customerAreaPanel);
 
-        JPanel invoicesSouthPanel = new JPanel();
-        //invoicesSouthPanel.setAlignmentY(SwingConstants.SOUTH_EAST);
-        invoicesSouthPanel.setAlignmentX(SwingConstants.RIGHT);
-        invoicesSouthPanel.setPreferredSize(new Dimension(640, 280));
+        JPanel invoicesSouthPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        invoicesSouthPanel.setPreferredSize(new Dimension(640, 220));
 
         // Now prepare all graphics for the invoice table, draw it below the customer details
         JScrollPane invoicesScrollPane = new JScrollPane(
@@ -256,8 +254,11 @@ public class MainGUI extends JFrame {
             new Font("Arial", Font.PLAIN, 12),
             Color.DARK_GRAY);
         invoicesScrollPane.setBorder(invoicesBorder);
-        invoicesScrollPane.setPreferredSize(new Dimension(600, 256));
+        invoicesScrollPane.setPreferredSize(new Dimension(600, 210));
         invoicesSouthPanel.add(invoicesScrollPane);
+
+        // This adds some margin to the right
+        invoicesSouthPanel.add(Box.createRigidArea(new Dimension(14, 14)));
 
         components.add(invoicesSouthPanel);
 

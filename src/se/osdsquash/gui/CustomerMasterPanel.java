@@ -52,7 +52,7 @@ public class CustomerMasterPanel extends JPanel {
         this.xmlRepository = XmlRepository.getInstance();
 
         Border border = BorderFactory.createTitledBorder(
-            BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK),
+            BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY),
             "  Kunduppgifter  ",
             TitledBorder.LEFT,
             TitledBorder.DEFAULT_POSITION,

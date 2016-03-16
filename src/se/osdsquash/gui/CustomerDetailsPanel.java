@@ -78,7 +78,7 @@ public class CustomerDetailsPanel extends JPanel {
     private JButton saveButton;
 
     // True if there are unsaved changes made to the customer
-    private boolean customerDirty;
+    private DirtyMarker customerDirty;
 
     /**
      * Constructor initializing an empty and disabled customer details panel
@@ -92,6 +92,8 @@ public class CustomerDetailsPanel extends JPanel {
         InvoicesTable invoicesTable) {
 
         super();
+        this.customerDirty = new DirtyMarker();
+
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
         this.invoicesTable = invoicesTable;
@@ -259,7 +261,7 @@ public class CustomerDetailsPanel extends JPanel {
 
                 MainGUI.getInstance().printInfoText(saveMessage, false, true);
 
-                CustomerDetailsPanel.this.customerDirty = false;
+                CustomerDetailsPanel.this.customerDirty.setClean();
             }
         });
 
@@ -284,7 +286,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.registerDirtyListeners();
 
         // Start with customer not dirty
-        this.customerDirty = false;
+        this.customerDirty.setClean();
     }
 
     private void registerDirtyListeners() {
@@ -298,7 +300,7 @@ public class CustomerDetailsPanel extends JPanel {
 
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        CustomerDetailsPanel.this.customerDirty = true;
+                        CustomerDetailsPanel.this.customerDirty.setDirty();
                     }
                 });
             }
@@ -311,7 +313,7 @@ public class CustomerDetailsPanel extends JPanel {
 
                 @Override
                 public void tableChanged(TableModelEvent evt) {
-                    CustomerDetailsPanel.this.customerDirty = true;
+                    CustomerDetailsPanel.this.customerDirty.setDirty();
                 }
             });
 
@@ -320,7 +322,7 @@ public class CustomerDetailsPanel extends JPanel {
 
             @Override
             public void tableChanged(TableModelEvent evt) {
-                CustomerDetailsPanel.this.customerDirty = true;
+                CustomerDetailsPanel.this.customerDirty.setDirty();
             }
         });
     }
@@ -337,7 +339,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.toggleFields(true, false);
 
         // Make customer not dirty after everything is set
-        this.customerDirty = false;
+        this.customerDirty.setClean();
     }
 
     /**
@@ -403,7 +405,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.invoicesTable.repaint();
 
         // Make customer not dirty after everything is set
-        this.customerDirty = false;
+        this.customerDirty.setClean();
     }
 
     /**
@@ -425,7 +427,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.kundNrTextField.requestFocus();
 
         // Make customer not dirty after everything is set
-        this.customerDirty = false;
+        this.customerDirty.setClean();
     }
 
     /**
@@ -435,7 +437,7 @@ public class CustomerDetailsPanel extends JPanel {
      * @return True if there are unsaved changes to the customer
      */
     protected boolean isCustomerDirty() {
-        return this.customerDirty;
+        return this.customerDirty.isDirty();
     }
 
     // Optional clearing of all input fields and enable or disable them
@@ -524,17 +526,17 @@ public class CustomerDetailsPanel extends JPanel {
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty = true;
+            CustomerDetailsPanel.this.customerDirty.setDirty();
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty = true;
+            CustomerDetailsPanel.this.customerDirty.setDirty();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty = true;
+            CustomerDetailsPanel.this.customerDirty.setDirty();
         }
     }
 }

@@ -63,8 +63,8 @@ public class MainGUI extends JFrame {
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
 
-    private static final int WINDOW_PIXEL_WIDTH = 1040;
-    private static final int WINDOW_PIXEL_HEIGTH = 1040;
+    private static final int WINDOW_PIXEL_WIDTH = 1020;
+    private static final int WINDOW_PIXEL_HEIGTH = 960;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -236,7 +236,7 @@ public class MainGUI extends JFrame {
 
         JPanel invoicesSouthPanel = new JPanel();
         invoicesSouthPanel.setAlignmentY(SwingConstants.SOUTH_EAST);
-        invoicesSouthPanel.setPreferredSize(new Dimension(680, 280));
+        invoicesSouthPanel.setPreferredSize(new Dimension(640, 280));
 
         // Now prepare all graphics for the invoice table, draw it below the customer details
         JScrollPane invoicesScrollPane = new JScrollPane(
@@ -253,7 +253,7 @@ public class MainGUI extends JFrame {
             new Font("Arial", Font.PLAIN, 12),
             Color.DARK_GRAY);
         invoicesScrollPane.setBorder(invoicesBorder);
-        invoicesScrollPane.setPreferredSize(new Dimension(660, 256));
+        invoicesScrollPane.setPreferredSize(new Dimension(640, 256));
 
         invoicesSouthPanel.add(invoicesScrollPane);
         components.add(invoicesSouthPanel);

@@ -79,7 +79,7 @@ public class CustomerMasterPanel extends JPanel {
         // Create a panel holding subscriptions first, then invoices below
         JPanel subscriptionsAndInvoicesOuterPanel = new JPanel(
             new FlowLayout(FlowLayout.CENTER, 10, 10));
-        subscriptionsAndInvoicesOuterPanel.setPreferredSize(new Dimension(330, 460));
+        subscriptionsAndInvoicesOuterPanel.setPreferredSize(new Dimension(330, 370));
 
         // Now add subscriptions inside a border:ed scroller, aligned to the right.
         // We must use a scroller to get the headers in the table correct!

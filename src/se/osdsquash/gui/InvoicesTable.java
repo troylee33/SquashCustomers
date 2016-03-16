@@ -68,7 +68,7 @@ public class InvoicesTable extends JTable {
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(290);
+        filenameColumn.setMaxWidth(400);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
 
         // Use a combobox editor to set the invoice status

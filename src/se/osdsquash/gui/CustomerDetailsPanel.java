@@ -101,8 +101,8 @@ public class CustomerDetailsPanel extends JPanel {
     private void initPanel() {
 
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.setMinimumSize(new Dimension(620, 400));
-        this.setMaximumSize(new Dimension(620, 400));
+        this.setMinimumSize(new Dimension(580, 400));
+        this.setMaximumSize(new Dimension(580, 400));
 
         SpringLayout springLayout = new SpringLayout();
         this.setLayout(springLayout);

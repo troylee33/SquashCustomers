@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -30,11 +31,15 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.common.SubscriptionPeriod;
@@ -59,8 +64,8 @@ public class MainGUI extends JFrame {
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
 
-    private static final int WINDOW_PIXEL_WIDTH = 1160;
-    private static final int WINDOW_PIXEL_HEIGTH = 780;
+    private static final int WINDOW_PIXEL_WIDTH = 1040;
+    private static final int WINDOW_PIXEL_HEIGTH = 1040;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -214,24 +219,50 @@ public class MainGUI extends JFrame {
         customerListScroller.setPreferredSize(new Dimension(220, 400));
         customerListScroller.setMaximumSize(new Dimension(220, 400));
 
+        InvoicesTable invoicesTable = new InvoicesTable(null);
+
         // Create the customer master panel, showing a selected customer
-        this.customerMasterPanel = new CustomerMasterPanel(this.xmlRepository);
+        this.customerMasterPanel = new CustomerMasterPanel(invoicesTable);
 
         // The customer list and details panel goes into a single component,
         // showing the two components side-by-side:
         JPanel customerAreaPanel = new JPanel();
         customerAreaPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 16));
         customerAreaPanel.setAlignmentY(SwingConstants.NORTH);
-        customerAreaPanel.setSize(new Dimension(600, 600));
+        customerAreaPanel.setSize(new Dimension(540, 420));
         customerAreaPanel.add(customerListScroller);
         customerAreaPanel.add(this.customerMasterPanel);
 
         components.add(customerAreaPanel);
 
+        JPanel invoicesSouthPanel = new JPanel();
+        invoicesSouthPanel.setAlignmentY(SwingConstants.SOUTH_EAST);
+        invoicesSouthPanel.setPreferredSize(new Dimension(680, 280));
+
+        // Now prepare all graphics for the invoice table, draw it below the customer details
+        invoicesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
+        JScrollPane invoicesScrollPane = new JScrollPane(
+            invoicesTable,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        invoicesScrollPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        Border invoicesBorder = BorderFactory.createTitledBorder(
+            BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY),
+            " Fakturor ",
+            TitledBorder.LEFT,
+            TitledBorder.DEFAULT_POSITION,
+            new Font("Arial", Font.PLAIN, 12),
+            Color.DARK_GRAY);
+        invoicesScrollPane.setBorder(invoicesBorder);
+        invoicesScrollPane.setPreferredSize(new Dimension(660, 256));
+
+        invoicesSouthPanel.add(invoicesScrollPane);
+        components.add(invoicesSouthPanel);
+
         // ------------------------------  CREATE GENERIC COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------
-
-        //components.add(this.createEmptyRow());
 
         // This label is a text field for displaying
         // validation error messages to the user.

@@ -1,7 +1,6 @@
 package se.osdsquash.gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,10 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -30,8 +26,9 @@ import se.osdsquash.xml.jaxb.SubscriptionType;
 import se.osdsquash.xml.jaxb.WeekdayType;
 
 /**
- * Panel grouping all customer sub-components for one customer:
- * The customer details, it's subscriptions and invoices
+ * Panel grouping customer details and subscriptions, layout-wise.
+ * 
+ * It also have a logic object reference to the Invoices table.
  */
 public class CustomerMasterPanel extends JPanel {
 
@@ -49,10 +46,9 @@ public class CustomerMasterPanel extends JPanel {
     private JButton addSubscriptionButton;
     private JButton deleteSubscriptionButton;
 
-    protected CustomerMasterPanel(XmlRepository xmlRepository) {
+    protected CustomerMasterPanel(InvoicesTable invoicesTable) {
 
         super(new FlowLayout());
-        this.setSize(new Dimension(600, 420));
 
         this.xmlRepository = XmlRepository.getInstance();
 
@@ -70,15 +66,13 @@ public class CustomerMasterPanel extends JPanel {
         this.subscriptionsTable = new SubscriptionsTable(null);
         this.subscriptionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
-        this.invoicesTable = new InvoicesTable(null);
-        this.invoicesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        // We only have a reference to the invoices, we don't draw it within this panel
+        this.invoicesTable = invoicesTable;
 
         // Add customer details first, aligned to left
         this.customerDetailsPanel = new CustomerDetailsPanel(
             this.subscriptionsTable,
             this.invoicesTable);
-        this.customerDetailsPanel.setMinimumSize(new Dimension(600, 300));
-        this.customerDetailsPanel.setMaximumSize(new Dimension(600, 400));
         this.add(this.customerDetailsPanel);
 
         // Hack to get some horizontal space
@@ -87,9 +81,7 @@ public class CustomerMasterPanel extends JPanel {
         // Create a panel holding subscriptions first, then invoices below
         JPanel subscriptionsAndInvoicesOuterPanel = new JPanel(
             new FlowLayout(FlowLayout.CENTER, 10, 10));
-        subscriptionsAndInvoicesOuterPanel.setPreferredSize(new Dimension(400, 460));
-        subscriptionsAndInvoicesOuterPanel.setMinimumSize(new Dimension(400, 460));
-        subscriptionsAndInvoicesOuterPanel.setMaximumSize(new Dimension(400, 460));
+        subscriptionsAndInvoicesOuterPanel.setPreferredSize(new Dimension(330, 460));
 
         // Now add subscriptions inside a border:ed scroller, aligned to the right.
         // We must use a scroller to get the headers in the table correct!
@@ -104,13 +96,12 @@ public class CustomerMasterPanel extends JPanel {
             Color.DARK_GRAY);
         subscriptionsScrollPane.setBorder(subscriptionsBorder);
         subscriptionsScrollPane.setPreferredSize(new Dimension(240, 150));
-        subscriptionsScrollPane.setMinimumSize(new Dimension(240, 150));
-        subscriptionsScrollPane.setMaximumSize(new Dimension(240, 150));
 
         subscriptionsAndInvoicesOuterPanel.add(subscriptionsScrollPane);
 
         // Hack to cause a line break:
-        subscriptionsAndInvoicesOuterPanel.add(new JLabel("              "));
+        subscriptionsAndInvoicesOuterPanel.add(new JLabel("                    "));
+        subscriptionsAndInvoicesOuterPanel.add(new JLabel("               "));
 
         // Create add/remove buttons below
         this.addSubscriptionButton = new JButton("+");
@@ -178,36 +169,7 @@ public class CustomerMasterPanel extends JPanel {
 
         subscriptionsAndInvoicesOuterPanel.add(this.deleteSubscriptionButton);
 
-        subscriptionsAndInvoicesOuterPanel
-            .add(new JLabel("___________________________________________________"));
-        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-        separator.setPreferredSize(new Dimension(390, 2));
-        subscriptionsAndInvoicesOuterPanel.add(separator);
-        subscriptionsAndInvoicesOuterPanel
-            .add(new JLabel("                                         "));
-
-        // Now add the invoices table, shown below the subscriptions
-        JScrollPane invoicesScrollPane = new JScrollPane(
-            this.invoicesTable,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        invoicesScrollPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-        Border invoicesBorder = BorderFactory.createTitledBorder(
-            BorderFactory.createMatteBorder(1, 1, 1, 1, Color.LIGHT_GRAY),
-            " Fakturor ",
-            TitledBorder.LEFT,
-            TitledBorder.DEFAULT_POSITION,
-            new Font("Arial", Font.PLAIN, 12),
-            Color.DARK_GRAY);
-        invoicesScrollPane.setBorder(invoicesBorder);
-        invoicesScrollPane.setPreferredSize(new Dimension(370, 150));
-        invoicesScrollPane.setMinimumSize(new Dimension(370, 150));
-        invoicesScrollPane.setMaximumSize(new Dimension(370, 150));
-
-        subscriptionsAndInvoicesOuterPanel.add(invoicesScrollPane);
-
-        // Draw the subscriptions and invoices as one panel to the right
+        // Draw the subscriptions as one panel to the right
         this.add(subscriptionsAndInvoicesOuterPanel);
 
         // Hack to get some horizontal space

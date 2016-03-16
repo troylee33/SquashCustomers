@@ -64,7 +64,7 @@ public class MainGUI extends JFrame {
     private XmlRepository xmlRepository;
 
     private static final int WINDOW_PIXEL_WIDTH = 1080;
-    private static final int WINDOW_PIXEL_HEIGTH = 970;
+    private static final int WINDOW_PIXEL_HEIGTH = 840;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -236,10 +236,36 @@ public class MainGUI extends JFrame {
 
         components.add(customerAreaPanel);
 
-        JPanel invoicesSouthPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        invoicesSouthPanel.setPreferredSize(new Dimension(640, 220));
+        // Below, we have message fields to the left and invoices table to the right
+        JPanel messagesAndInvoicesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        messagesAndInvoicesPanel.setPreferredSize(new Dimension(1020, 220));
 
-        // Now prepare all graphics for the invoice table, draw it below the customer details
+        // Add two labels that we use as input validation error display,
+        // and one for generic messages for info and errors.
+        // Place the two messages on separate rows in one panel.
+        JPanel messagesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        messagesPanel.setPreferredSize(new Dimension(416, 220));
+
+        this.validationErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.validationErrorLabel.setForeground(Color.RED);
+        this.validationErrorLabel.setSize(400, 32); // X, Y
+        this.validationErrorLabel.setMinimumSize(new Dimension(400, 32));
+        this.validationErrorLabel.setMaximumSize(new Dimension(400, 32));
+        this.validationErrorLabel.setPreferredSize(new Dimension(400, 32));
+        messagesPanel.add(this.validationErrorLabel);
+
+        this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.infoLabel.setForeground(Color.BLUE);
+        this.infoLabel.setSize(400, 32); // X, Y
+        this.infoLabel.setMinimumSize(new Dimension(400, 32));
+        this.infoLabel.setMaximumSize(new Dimension(400, 32));
+        this.infoLabel.setPreferredSize(new Dimension(400, 32));
+        messagesPanel.add(this.infoLabel);
+
+        // Add the messages to the left
+        messagesAndInvoicesPanel.add(messagesPanel);
+
+        // Prepare all graphics for the invoices table, to the right of the messages
         JScrollPane invoicesScrollPane = new JScrollPane(
             invoicesTable,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -255,45 +281,25 @@ public class MainGUI extends JFrame {
             Color.DARK_GRAY);
         invoicesScrollPane.setBorder(invoicesBorder);
         invoicesScrollPane.setPreferredSize(new Dimension(600, 210));
-        invoicesSouthPanel.add(invoicesScrollPane);
+        messagesAndInvoicesPanel.add(invoicesScrollPane);
 
         // This adds some margin to the right
-        invoicesSouthPanel.add(Box.createRigidArea(new Dimension(14, 14)));
+        messagesAndInvoicesPanel.add(Box.createRigidArea(new Dimension(14, 14)));
 
-        components.add(invoicesSouthPanel);
+        components.add(messagesAndInvoicesPanel);
 
         // ------------------------------  CREATE GENERIC COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------
 
-        // This label is a text field for displaying
-        // input validation error messages to the user.
-        this.validationErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        this.validationErrorLabel.setForeground(Color.RED);
-        this.validationErrorLabel.setSize(350, 32); // X, Y
-        this.validationErrorLabel.setMinimumSize(new Dimension(350, 32));
-        this.validationErrorLabel.setMaximumSize(new Dimension(350, 32));
-        this.validationErrorLabel.setPreferredSize(new Dimension(350, 32));
-        components.add(this.validationErrorLabel);
-
-        // This label is a generic text field for displaying
-        // any kind of information, of error or info type.
-        this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        this.infoLabel.setForeground(Color.BLUE);
-        this.infoLabel.setSize(350, 32); // X, Y
-        this.infoLabel.setMinimumSize(new Dimension(350, 32));
-        this.infoLabel.setMaximumSize(new Dimension(350, 32));
-        this.infoLabel.setPreferredSize(new Dimension(350, 32));
-        components.add(this.infoLabel);
-
         components.add(this.createEmptyRow());
 
-        // The function buttons is X aligned into one panel
+        // The function buttons are X aligned as one panel, on one row
         JPanel customerButtonsPanel = new JPanel();
         customerButtonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         customerButtonsPanel.setLayout(new BoxLayout(customerButtonsPanel, BoxLayout.X_AXIS));
-        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(2, 16, 2, 16));
-        customerButtonsPanel.setPreferredSize(new Dimension(500, 40));
+        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 16, 10, 16));
+        customerButtonsPanel.setPreferredSize(new Dimension(500, 50));
 
         // Action buttons for the customers
         this.newCustomerButton.setMinimumSize(new Dimension(130, 22));
@@ -366,6 +372,8 @@ public class MainGUI extends JFrame {
 
         customerButtonsPanel.add(this.createEmptyRow());
 
+        this.generateInvoicesButton
+            .setToolTipText("Skapa fakturor för alla kunder för nästkommande abonnemangsperiod");
         this.generateInvoicesButton.setMinimumSize(new Dimension(130, 22));
         this.generateInvoicesButton.setMaximumSize(new Dimension(130, 22));
         customerButtonsPanel.add(this.generateInvoicesButton);
@@ -436,7 +444,7 @@ public class MainGUI extends JFrame {
             topPanel.add(component);
         }
 
-        // Add common exit and help buttons as a very bottom panel:
+        // Add common exit and help buttons as the very bottom panel:
         JPanel bottomPanel = new JPanel();
         bottomPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -709,8 +717,10 @@ public class MainGUI extends JFrame {
 
             String customerText = String.valueOf(customerInfoType.getCustomerNumber())
                 + " ("
-                + (customerInfoType.getFirstname() == null ? "" : customerInfoType.getFirstname())
-                + (customerInfoType.getLastname() == null
+                + (!SquashUtil.isSet(customerInfoType.getFirstname())
+                    ? ""
+                    : customerInfoType.getFirstname())
+                + (!SquashUtil.isSet(customerInfoType.getLastname())
                     ? ""
                     : " " + customerInfoType.getLastname())
                 + ")";

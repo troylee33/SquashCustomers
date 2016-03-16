@@ -102,6 +102,7 @@ public class CustomerMasterPanel extends JPanel {
 
         // Create add/remove buttons below
         this.addSubscriptionButton = new JButton("+");
+        this.addSubscriptionButton.setToolTipText("Lägg till ny rad");
         this.addSubscriptionButton.setEnabled(false);
         this.addSubscriptionButton.setMinimumSize(new Dimension(80, 22));
         this.addSubscriptionButton.setMaximumSize(new Dimension(80, 22));
@@ -130,6 +131,7 @@ public class CustomerMasterPanel extends JPanel {
         subscriptionsPanel.add(this.addSubscriptionButton);
 
         this.deleteSubscriptionButton = new JButton("-");
+        this.deleteSubscriptionButton.setToolTipText("Ta bort markerad rad");
         this.deleteSubscriptionButton.setEnabled(false);
         this.deleteSubscriptionButton.setMinimumSize(new Dimension(80, 22));
         this.deleteSubscriptionButton.setMaximumSize(new Dimension(80, 22));

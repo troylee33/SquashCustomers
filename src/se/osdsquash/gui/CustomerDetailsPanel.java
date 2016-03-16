@@ -397,7 +397,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.toggleFields(true, true);
 
         this.customerUUID = null;
-        this.customerNr = null;
+        this.customerNr = String.valueOf(customerNr);
         this.kundNrTextField.setText(String.valueOf(customerNr));
 
         // Sets all input field validators

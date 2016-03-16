@@ -169,7 +169,7 @@ public abstract class ValidatorHelper {
                 int customerNr = Integer.parseInt(inputText);
 
                 // Verify that the number is not already taken,
-                // but don't let the customer's own/existing nr give an error!
+                // but don't compare with ourselves!
                 if (this.originalCustomerNr != null && this.originalCustomerNr.equals(inputText)) {
                     this.messageOutput.setText("");
                     input.setBackground(DEFAULT_COLOR);

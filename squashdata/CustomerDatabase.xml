@@ -965,10 +965,10 @@
         <Subscriptions/>
         <Invoices>
             <Invoice>
-                <InvoiceNumber>1992</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-15/1717_w2s2ew_Faktura_1992_20160315.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-15T21:53:57.089+01:00</CreatedDate>
-                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>2032</InvoiceNumber>
+                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1717_w2s2ew_Faktura_2032_20160316.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-16T13:55:26.449+01:00</CreatedDate>
+                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
@@ -979,10 +979,10 @@
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>2032</InvoiceNumber>
-                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1717_w2s2ew_Faktura_2032_20160316.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-16T13:55:26.449+01:00</CreatedDate>
-                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>1992</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1717_w2s2ew_Faktura_1992_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.089+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
         </Invoices>
@@ -1079,10 +1079,10 @@
         <Subscriptions/>
         <Invoices>
             <Invoice>
-                <InvoiceNumber>1995</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-15/1721_zsdasa_Faktura_1995_20160315.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-15T21:53:57.789+01:00</CreatedDate>
-                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>2035</InvoiceNumber>
+                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1721_zsdasa_Faktura_2035_20160316.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-16T13:55:26.768+01:00</CreatedDate>
+                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
@@ -1093,10 +1093,10 @@
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>2035</InvoiceNumber>
-                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1721_zsdasa_Faktura_2035_20160316.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-16T13:55:26.768+01:00</CreatedDate>
-                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>1995</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1721_zsdasa_Faktura_1995_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:57.789+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
         </Invoices>
@@ -1117,10 +1117,10 @@
         <Subscriptions/>
         <Invoices>
             <Invoice>
-                <InvoiceNumber>1996</InvoiceNumber>
-                <RelativeFilePath>./squashdata/invoices/2016-03-15/1722_asd23ev_Faktura_1996_20160315.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-15T21:53:58.046+01:00</CreatedDate>
-                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>2036</InvoiceNumber>
+                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1722_asd23ev_Faktura_2036_20160316.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-16T13:55:26.866+01:00</CreatedDate>
+                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
@@ -1131,10 +1131,10 @@
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
             <Invoice>
-                <InvoiceNumber>2036</InvoiceNumber>
-                <RelativeFilePath>.\squashdata\invoices\2016-03-16/1722_asd23ev_Faktura_2036_20160316.xlsx</RelativeFilePath>
-                <CreatedDate>2016-03-16T13:55:26.866+01:00</CreatedDate>
-                <DueDate>2016-04-15T00:00:00.000+02:00</DueDate>
+                <InvoiceNumber>1996</InvoiceNumber>
+                <RelativeFilePath>./squashdata/invoices/2016-03-15/1722_asd23ev_Faktura_1996_20160315.xlsx</RelativeFilePath>
+                <CreatedDate>2016-03-15T21:53:58.046+01:00</CreatedDate>
+                <DueDate>2016-04-14T00:00:00.000+02:00</DueDate>
                 <InvoiceStatus>New</InvoiceStatus>
             </Invoice>
         </Invoices>
@@ -1291,6 +1291,22 @@
             </Invoice>
         </Invoices>
     </Customer>
-    <CurrentCustomerNr>1734</CurrentCustomerNr>
+    <Customer>
+        <CustomerInfo>
+            <CustomerUUID>69e73884-f7e6-4128-8748-897546be9747</CustomerUUID>
+            <CustomerNumber>1736</CustomerNumber>
+            <Company>false</Company>
+            <Firstname>Olle</Firstname>
+            <Lastname></Lastname>
+            <Street></Street>
+            <PostalCode></PostalCode>
+            <City></City>
+            <Telephone></Telephone>
+            <Email></Email>
+        </CustomerInfo>
+        <Subscriptions/>
+        <Invoices/>
+    </Customer>
+    <CurrentCustomerNr>1736</CurrentCustomerNr>
     <CurrentInvoiceNr>2040</CurrentInvoiceNr>
 </Customers>

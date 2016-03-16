@@ -28,6 +28,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.jaxb.InvoiceStatusType;
@@ -66,12 +67,17 @@ public class InvoicesTable extends JTable {
         invoiceNrColumn.setMaxWidth(70);
         invoiceNrColumn.setCellRenderer(new SmallerFontRenderer());
 
+        TableColumn dueDateColumn = super.getColumnModel()
+            .getColumn(TableColumnEnum.DUE_DATE.index);
+        dueDateColumn.setMaxWidth(70);
+        dueDateColumn.setCellRenderer(new SmallerFontRenderer());
+
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(400);
+        filenameColumn.setMaxWidth(424);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
 
-        // Use a combobox editor to set the invoice status
+        // Use a combobox editor when editing the invoice status
         {
             final Vector<String> statusOptions = new Vector<String>();
             for (InvoiceStatusType statusType : InvoiceStatusType.values()) {
@@ -170,6 +176,7 @@ public class InvoicesTable extends JTable {
         private static final Class<?>[] COLUMN_CLASSES = new Class[]{
             String.class,
             Integer.class,
+            XMLGregorianCalendar.class,
             String.class};
 
         /**
@@ -219,10 +226,13 @@ public class InvoicesTable extends JTable {
             // Get the actual object to update, e.g. the row
             InvoiceType invoice = this.invoices.get(rowIndex);
 
-            // Set value depending on what column we're at
+            // Set value depending on what column we're at.
+            // Only Status may be changed, only handle that:
             if (columnIndex == TableColumnEnum.INVOICE_NR.index) {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.FILENAME.index) {
+                // No edit allowed!
+            } else if (columnIndex == TableColumnEnum.DUE_DATE.index) {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.STATUS.index) {
                 // Status can be edited:
@@ -268,6 +278,8 @@ public class InvoicesTable extends JTable {
             switch (tableColumn) {
                 case INVOICE_NR :
                     return Integer.valueOf(invoice.getInvoiceNumber());
+                case DUE_DATE :
+                    return SquashUtil.getDayFormat(invoice.getDueDate());
                 case FILENAME :
                     return SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath());
                 case STATUS :
@@ -281,7 +293,8 @@ public class InvoicesTable extends JTable {
     // Table column definitions, with index and display name
     private static enum TableColumnEnum {
 
-        STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), FILENAME(2, "Filnamn");
+        STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), DUE_DATE(2, "Betalas"), FILENAME(3,
+                "Filnamn");
 
         private TableColumnEnum(int index, String name) {
             this.index = index;
@@ -383,7 +396,7 @@ public class InvoicesTable extends JTable {
             JLabel label = new JLabel(value.toString());
             label.setFont(new Font(null, Font.PLAIN, 10));
 
-            if (column == TableColumnEnum.INVOICE_NR.index) {
+            if (column == TableColumnEnum.DUE_DATE.index) {
                 InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
                 if (invoice != null && SquashUtil.isOverdue(invoice)) {
                     label.setForeground(Color.RED);

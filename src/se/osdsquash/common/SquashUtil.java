@@ -27,6 +27,9 @@ public abstract class SquashUtil {
     // The time format (HH:mm) for track start times, e.g. when a track is booked.
     private static final String START_TIME_DATE_FORMAT = "HH:mm";
 
+    // Default date format
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+
     /**
      * Converts an XML weekday type to a Swedish string
      * @param weekdayType XML type
@@ -314,6 +317,20 @@ public abstract class SquashUtil {
             return fileName.toString();
         }
         return null;
+    }
+
+    /**
+     * Returns a printable day format for an XML calendar
+     * @param xmlCalendar XML calendar
+     * @return The printable date, or null if input is null
+     */
+    public static String getDayFormat(XMLGregorianCalendar xmlCalendar) {
+
+        if (xmlCalendar == null) {
+            return null;
+        }
+        return new SimpleDateFormat(DEFAULT_DATE_FORMAT)
+            .format(xmlCalendar.toGregorianCalendar().getTime());
     }
 
     /**

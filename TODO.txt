@@ -4,8 +4,7 @@
  -----------------------------------
  
  TODOs 2016-03-16:
- 
-  - Bredda invoice-tabellen, visa även created date och due date.
+
   - Ordna all layout snyggare !!!
  
  

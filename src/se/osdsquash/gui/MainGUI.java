@@ -430,18 +430,45 @@ public class MainGUI extends JFrame {
             }
         });
 
-        final JButton infoButton = new JButton("Info");
+        final StringBuilder infoMessage = new StringBuilder(1024);
+        infoMessage.append("<html>");
+        infoMessage.append("<br/>");
+        infoMessage.append(
+            "<b>Program för att hantera Östersunds Squashförenings abonnemang och fakturor.</b>");
+        infoMessage.append("<br/><br/>");
+        infoMessage.append(
+            "Då det närmar sig ny abonnemangsperiod skall du skapa fakturor för alla kunder. Gå igenom,<br/>");
+        infoMessage.append(
+            "verifiera och skicka iväg alla fakturorna. Uppdatera varje kunds faktura med status 'Skickad'.<br/>");
+        infoMessage.append("<br/>");
+        infoMessage.append(
+            "Bevaka betalningar och ändra status på fakturorna vartefter, för att hålla koll på allt.<br/>");
+        infoMessage.append(
+            "Om en kund i listan rödflaggas av programmet så finns det en 'aktiv' faktura som förfallit.<br/>");
+        infoMessage.append(
+            "Kontrollera detta och sätt status 'Skyldig' på fakturan om den visar sig vara obetald.<br/>");
+        infoMessage.append("<br/>");
+        infoMessage.append(
+            "Om en kund avslutar sitt abonnemang så kan du sätta status 'Avbruten' på fakturan och den<br/>");
+        infoMessage.append(
+            "kan då aldrig rödflaggas. När en ny abonnemangsperiod infaller så rödflaggas heller inte<br/>");
+        infoMessage.append("gamla fakturor från tidigare period.<br/>");
+        infoMessage.append("<br/>");
+        infoMessage.append("</html>");
+
+        final JButton infoButton = new JButton("Hjälp");
         infoButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         bottomPanel.add(infoButton);
-        final String infoMessage = "Program för att hantera Östersunds Squashförenings abonnemang och fakturor.";
-
         infoButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent event) {
 
-                JOptionPane
-                    .showMessageDialog(null, infoMessage, "Info", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(
+                    null,
+                    infoMessage.toString(),
+                    "Hjälp",
+                    JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

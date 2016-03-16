@@ -5,12 +5,12 @@
  
  TODOs 2016-03-12:
  
-  - Gör klart alla valmöjligheter i fakturalistan och bredda den. Lägg till DueDate!
+  - Bredda invoice-tabellen, visa även created date och due date.
   - Ordna all layout snyggare !!!
  
  
  Senare features att införa:
  
- - Undersök möjlighet att generera faktura-mail
+ - Undersök möjlighet att generera faktura-mail via Desktop.mail() ...
  - Inför loggning till fil för tekniska fel, etc.
  

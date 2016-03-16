@@ -1,5 +1,6 @@
 package se.osdsquash.test;
 
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -13,5 +14,8 @@ public class UuidGenerator {
         for (int i = 0; i < 5; i++) {
             System.out.println(UUID.randomUUID().toString());
         }
+
+        String testPath = "/Test/sokvag/jarfilen.jar";
+        System.out.println(testPath.substring(0, testPath.lastIndexOf(File.separator)));
     }
 }

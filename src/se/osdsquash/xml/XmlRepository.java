@@ -24,6 +24,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
 
+import se.osdsquash.common.SquashProperties;
 import se.osdsquash.excel.ExcelHandler;
 import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.CustomersType;
@@ -47,14 +48,14 @@ public class XmlRepository {
 
     private static final String XSD_SCHEMA_PATH = "se/osdsquash/xml/Customers.xsd";
 
-    private static final String DATA_DIR_PATH = "./squashdata";
-    private static final String BACKUPS_DIR_PATH = DATA_DIR_PATH + "/backups";
-    private static final String XML_STORAGE_FILE_PATH = DATA_DIR_PATH + "/CustomerDatabase.xml";
+    private static final String DATA_DIR_PATH;
+    private static final String BACKUPS_DIR_PATH;
+    private static final String XML_STORAGE_FILE_PATH;
 
     /**
      * Path to the invoices directory
      */
-    public static final String INVOICES_DIR_PATH = DATA_DIR_PATH + "/invoices";
+    public static final String INVOICES_DIR_PATH;
 
     private static final String TIMESTAMP_DATE_FORMAT = "yyyyMMdd_HHmmss";
 
@@ -75,6 +76,19 @@ public class XmlRepository {
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             SCHEMA = schemaFactory
                 .newSchema(XmlRepository.class.getClassLoader().getResource(XSD_SCHEMA_PATH));
+
+            // Find out where this class is executing from and build some paths
+            String pathToJar = XmlRepository.class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath();
+            String currentDir = pathToJar.substring(0, pathToJar.lastIndexOf(File.separator));
+
+            DATA_DIR_PATH = currentDir + "/squashdata";
+            INVOICES_DIR_PATH = DATA_DIR_PATH + "/invoices";
+            BACKUPS_DIR_PATH = DATA_DIR_PATH + "/backups";
+            XML_STORAGE_FILE_PATH = DATA_DIR_PATH + "/CustomerDatabase.xml";
 
         } catch (SAXException | JAXBException exception) {
             throw new RuntimeException(exception);
@@ -406,7 +420,8 @@ public class XmlRepository {
 
         ExcelHandler excelHandler = new ExcelHandler(this);
         for (CustomerType customer : this.getAllCustomers()) {
-            InvoiceType invoice = excelHandler.createInvoiceFile(customer);
+            InvoiceType invoice = excelHandler
+                .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE);
             invoiceFilenames.add(invoice.getRelativeFilePath());
         }
 

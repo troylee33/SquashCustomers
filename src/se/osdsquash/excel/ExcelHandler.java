@@ -68,9 +68,11 @@ public class ExcelHandler {
      * The actual invoice file is saved to local disk.
      * 
      * @param customer A valid customer to create invoice for
+     * @param dueDays Nr of due days from now, when invoice must be paid
+     * 
      * @return The invoice meta-data object
      */
-    public InvoiceType createInvoiceFile(CustomerType customer) {
+    public InvoiceType createInvoiceFile(CustomerType customer, int dueDays) {
 
         CustomerInfoType customerInfo = customer.getCustomerInfo();
         int invoiceNr = this.xmlRepository.getNewInvoiceNr();
@@ -409,7 +411,7 @@ public class ExcelHandler {
             cellCounter = rowCounter.getCellCounter();
 
             XSSFCell paymentInfoCell = momsRow.createCell(cellCounter.next());
-            paymentInfoCell.setCellValue("Bankgiro: 5121-6158");
+            paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
             this.setCenterAlign(paymentInfoCell);
 
             momsRow.createCell(cellCounter.next()).setCellValue("  Varav moms");
@@ -422,7 +424,7 @@ public class ExcelHandler {
 
             // Add the payment due date (no time parts), relative from "now", just below the BG nr
             Calendar dueCal = (Calendar) invoiceCreationCal.clone();
-            dueCal.add(Calendar.DATE, SquashProperties.INVOICE_DAYS_DUE);
+            dueCal.add(Calendar.DATE, dueDays);
             SquashUtil.timeZeroCalendar(dueCal);
             String dueDateString = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(dueCal.getTime());

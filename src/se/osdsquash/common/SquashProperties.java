@@ -29,6 +29,7 @@ public abstract class SquashProperties {
 
             CLUB_NAME = properties.getProperty("club.name");
             CLUB_ORG_NR = properties.getProperty("club.orgnr");
+            CLUB_BG_NR = properties.getProperty("club.bgnr");
             INVOICE_NAME = properties.getProperty("invoice.name");
             INVOICE_STREET = properties.getProperty("invoice.street");
             INVOICE_CITY = properties.getProperty("invoice.city");
@@ -63,6 +64,8 @@ public abstract class SquashProperties {
      * The club's organization number
      */
     public static String CLUB_ORG_NR = "802416-6251";
+
+    public static String CLUB_BG_NR = "5121-6158";
 
     /**
      * The first and last name of the person to be the sender of an invoice

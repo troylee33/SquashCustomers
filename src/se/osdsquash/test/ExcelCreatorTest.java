@@ -57,7 +57,7 @@ public class ExcelCreatorTest {
         customerType.setSubscriptions(subscriptionsType);
 
         String filename = new ExcelHandler(XmlRepository.getInstance())
-            .createInvoiceFile(customerType)
+            .createInvoiceFile(customerType, 30)
             .getRelativeFilePath();
         System.out.println("Excel file created : " + filename);
     }

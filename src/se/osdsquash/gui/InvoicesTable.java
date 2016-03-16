@@ -293,7 +293,7 @@ public class InvoicesTable extends JTable {
     // Table column definitions, with index and display name
     private static enum TableColumnEnum {
 
-        STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), DUE_DATE(2, "Betalas"), FILENAME(3,
+        STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), DUE_DATE(2, "Förfaller"), FILENAME(3,
                 "Filnamn");
 
         private TableColumnEnum(int index, String name) {

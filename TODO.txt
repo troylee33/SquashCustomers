@@ -6,6 +6,7 @@
  TODOs 2016-03-17:
 
   - Hitta buggen som ger dirty-varning fastän oändrat !!!
+  - Skriv ut vår referens och er referens i fakturan
  
  
  Senare features att införa:

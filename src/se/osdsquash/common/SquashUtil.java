@@ -334,7 +334,9 @@ public abstract class SquashUtil {
     }
 
     /**
-     * Returns true if customer have unpaid invoice(s) overdue
+     * Returns true if customer have unpaid invoice(s) overdue.
+     * An invoice is flagged as overdue if it has an "active" status.
+     * 
      * @param customer Customer to check
      * @return True if there are payment overdue(s)
      */
@@ -352,7 +354,9 @@ public abstract class SquashUtil {
     }
 
     /**
-     * Returns true if the invoice is overdue and must be paid
+     * Returns true if the invoice is overdue and must be paid.
+     * An invoice is flagged as overdue if it has an "active" status.
+     * 
      * @param invoice Invoice to check
      * @return True if overdue
      */
@@ -367,6 +371,7 @@ public abstract class SquashUtil {
         if (InvoiceStatusType.NEW.equals(status)
             || InvoiceStatusType.SENT.equals(status)
             || InvoiceStatusType.DEBT_DUE.equals(status)) {
+
             XMLGregorianCalendar dueDateXmlCal = invoice.getDueDate();
             if (dueDateXmlCal != null) {
                 if (todayCal.after(dueDateXmlCal.toGregorianCalendar())) {

@@ -76,6 +76,7 @@
 			<xs:element name="RelativeFilePath" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="CreatedDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="DueDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PeriodStartDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="InvoiceStatus" type="InvoiceStatusType" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="SentDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Notes" type="xs:string" minOccurs="0" maxOccurs="1"/>

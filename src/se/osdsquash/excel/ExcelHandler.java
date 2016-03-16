@@ -276,7 +276,7 @@ public class ExcelHandler {
 
             // This gets us the next, upcoming subscription period.
             // We assume all invoices are for the next period:
-            SubscriptionPeriod nextPeriod = new SubscriptionPeriod();
+            SubscriptionPeriod nextPeriod = new SubscriptionPeriod(true);
 
             // First an empty row in the table...
             XSSFRow firstTableRow = this.createPaddingRow(rowCounter.next());
@@ -505,6 +505,9 @@ public class ExcelHandler {
 
             gregorialCal.setTimeInMillis(dueCal.getTimeInMillis());
             invoice.setDueDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
+
+            gregorialCal.setTimeInMillis(nextPeriod.getStartDay().getTimeInMillis());
+            invoice.setPeriodStartDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
 
             invoice.setInvoiceNumber(invoiceNr);
             invoice.setInvoiceStatus(InvoiceStatusType.NEW);

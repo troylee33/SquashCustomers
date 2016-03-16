@@ -49,7 +49,7 @@ import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
 
 /**
- * The GUI class that presents/interacts - called by the main <code>Runner</code> class.
+ * The GUI class that presents/interacts - called by the main <code>SquashKunder</code> class.
  * 
  * <p>
  * The design is a singleton instance
@@ -186,7 +186,7 @@ public class MainGUI extends JFrame {
                 // Warn if leaving a modified, unsaved customer
                 if (MainGUI.this.customerMasterPanel.isCustomerDirty()) {
                     int dialogResult = JOptionPane.showConfirmDialog(
-                        MainGUI.this.customerMasterPanel,
+                        MainGUI.this,
                         "Det finns osparade kunduppgifter! Vill du verkligen fortsätta?",
                         "Varning",
                         JOptionPane.YES_NO_OPTION);
@@ -315,7 +315,7 @@ public class MainGUI extends JFrame {
 
                 if (MainGUI.this.customerMasterPanel.isCustomerDirty()) {
                     int dialogResult = JOptionPane.showConfirmDialog(
-                        MainGUI.this.customerMasterPanel,
+                        MainGUI.this,
                         "Det finns osparade kunduppgifter! Vill du verkligen fortsätta?",
                         "Varning",
                         JOptionPane.YES_NO_OPTION);
@@ -351,7 +351,7 @@ public class MainGUI extends JFrame {
                     MainGUI.this.printInfoText("Du måste välja en kund att radera", true, true);
                 } else {
                     int dialogResult = JOptionPane.showConfirmDialog(
-                        MainGUI.this.customerMasterPanel,
+                        MainGUI.this,
                         "Vill du verkligen radera kunden?",
                         "Radera?",
                         JOptionPane.YES_NO_OPTION);
@@ -387,7 +387,7 @@ public class MainGUI extends JFrame {
 
                 if (MainGUI.this.customerMasterPanel.isCustomerDirty()) {
                     int dialogResult = JOptionPane.showConfirmDialog(
-                        MainGUI.this.customerMasterPanel,
+                        MainGUI.this,
                         "Det finns osparade kunduppgifter! Vill du verkligen fortsätta?",
                         "Varning",
                         JOptionPane.YES_NO_OPTION);
@@ -401,14 +401,14 @@ public class MainGUI extends JFrame {
                     MainGUI.this.printInfoText("Det finns inga kunder!", true, true);
                 } else {
 
-                    String periodString = new SubscriptionPeriod().getPeriodString();
+                    String nextPeriodString = new SubscriptionPeriod(true).getPeriodString();
 
                     int dialogResult = JOptionPane.showConfirmDialog(
-                        MainGUI.this.customerMasterPanel,
+                        MainGUI.this,
                         "Vill du generera fakturafiler för alla kunder"
                             + "\n"
                             + "för perioden "
-                            + periodString
+                            + nextPeriodString
                             + "?",
                         "Skapa fakturor",
                         JOptionPane.YES_NO_OPTION);
@@ -484,10 +484,8 @@ public class MainGUI extends JFrame {
             "Kontrollera detta och sätt status 'Skyldig' på fakturan om den visar sig vara obetald.<br/>");
         infoMessage.append("<br/>");
         infoMessage.append(
-            "Om en kund avslutar sitt abonnemang så kan du sätta status 'Avbruten' på fakturan och den<br/>");
-        infoMessage.append(
-            "kan då aldrig rödflaggas. När en ny abonnemangsperiod infaller så rödflaggas heller inte<br/>");
-        infoMessage.append("gamla fakturor från tidigare period.<br/>");
+            "Om en kund av någon anledning inte behöver betala en faktura så skall du sätta status<br/>");
+        infoMessage.append("'Avbruten' på fakturan, så rödflaggas den inte.<br/>");
         infoMessage.append("<br/>");
         infoMessage.append("</html>");
 
@@ -499,7 +497,7 @@ public class MainGUI extends JFrame {
             public void actionPerformed(ActionEvent event) {
 
                 JOptionPane.showMessageDialog(
-                    null,
+                    MainGUI.this,
                     infoMessage.toString(),
                     "Hjälp",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -616,7 +614,7 @@ public class MainGUI extends JFrame {
         if (MainGUI.this.customerMasterPanel.isCustomerDirty()) {
 
             int dialogResult = JOptionPane.showConfirmDialog(
-                MainGUI.this.customerMasterPanel,
+                MainGUI.this,
                 "Det finns osparade kunduppgifter! Vill du verkligen avsluta?",
                 "Varning",
                 JOptionPane.YES_NO_OPTION);

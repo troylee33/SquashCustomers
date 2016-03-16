@@ -69,12 +69,12 @@ public class InvoicesTable extends JTable {
 
         TableColumn dueDateColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.DUE_DATE.index);
-        dueDateColumn.setMaxWidth(70);
+        dueDateColumn.setMaxWidth(80);
         dueDateColumn.setCellRenderer(new SmallerFontRenderer());
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(460);
+        filenameColumn.setMaxWidth(450);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
 
         // Use a combobox editor when editing the invoice status

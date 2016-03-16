@@ -3,9 +3,9 @@
   ARBETSLOGG och TODO för projektet
  -----------------------------------
  
- TODOs 2016-03-16:
+ TODOs 2016-03-17:
 
-  - Ordna all layout snyggare !!!
+  - Hitta buggen som ger dirty-varning fastän oändrat !!!
  
  
  Senare features att införa:

@@ -41,7 +41,7 @@ public class SubscriptionsTable extends JTable {
         super(new SubscriptionsTableModel(subscriptions));
 
         super.setCellSelectionEnabled(true);
-        super.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        super.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         TableColumn trackColumn = super.getColumnModel().getColumn(TableColumnEnum.TRACK_NR.index);
         trackColumn.setMaxWidth(60);
@@ -53,11 +53,11 @@ public class SubscriptionsTable extends JTable {
 
         // All cell values are selected through combo boxes, define those editors:
         {
-            final Vector<Integer> trackOptions = new Vector<Integer>();
+            final Vector<String> trackOptions = new Vector<String>();
             for (Integer trackNr : SquashUtil.getAllTracks()) {
-                trackOptions.addElement(trackNr);
+                trackOptions.addElement(String.valueOf(trackNr));
             }
-            JComboBox<Integer> tracksComboBox = new JComboBox<>(trackOptions);
+            JComboBox<String> tracksComboBox = new JComboBox<>(trackOptions);
             this.trackEditor = new DefaultCellEditor(tracksComboBox);
         }
 
@@ -129,7 +129,7 @@ public class SubscriptionsTable extends JTable {
         private String[] columnNames = TableColumnEnum.getNames();
 
         private static final Class<?>[] COLUMN_CLASSES = new Class[]{
-            Integer.class,
+            String.class,
             String.class,
             String.class};
 
@@ -179,7 +179,8 @@ public class SubscriptionsTable extends JTable {
 
             // Set value depending on what column we're at
             if (columnIndex == TableColumnEnum.TRACK_NR.index) {
-                subscription.setTrackNumber((Integer) aValue);
+                int trackNr = Integer.parseInt((String) aValue);
+                subscription.setTrackNumber(trackNr);
             } else if (columnIndex == TableColumnEnum.WEEKDAY.index) {
                 subscription.setWeekday(SquashUtil.weekdayStringToType((String) aValue));
             } else if (columnIndex == TableColumnEnum.START_TIME.index) {
@@ -224,7 +225,7 @@ public class SubscriptionsTable extends JTable {
             TableColumnEnum tableColumn = TableColumnEnum.fromIndex(col);
             switch (tableColumn) {
                 case TRACK_NR :
-                    return Integer.valueOf(subscription.getTrackNumber());
+                    return String.valueOf(subscription.getTrackNumber());
                 case WEEKDAY :
                     return SquashUtil.weekdayTypeToString(subscription.getWeekday());
                 case START_TIME :

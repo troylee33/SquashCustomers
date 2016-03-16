@@ -31,7 +31,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -240,8 +239,6 @@ public class MainGUI extends JFrame {
         invoicesSouthPanel.setPreferredSize(new Dimension(680, 280));
 
         // Now prepare all graphics for the invoice table, draw it below the customer details
-        invoicesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-
         JScrollPane invoicesScrollPane = new JScrollPane(
             invoicesTable,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

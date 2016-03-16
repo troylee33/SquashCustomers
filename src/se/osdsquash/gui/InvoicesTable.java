@@ -56,7 +56,7 @@ public class InvoicesTable extends JTable {
         super(new InvoiceTableModel(invoices));
 
         super.setCellSelectionEnabled(true);
-        super.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        super.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         TableColumn statusColumn = super.getColumnModel().getColumn(TableColumnEnum.STATUS.index);
         statusColumn.setMaxWidth(70);
@@ -74,7 +74,7 @@ public class InvoicesTable extends JTable {
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(424);
+        filenameColumn.setMaxWidth(460);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
 
         // Use a combobox editor when editing the invoice status

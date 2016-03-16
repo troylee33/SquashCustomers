@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -64,7 +63,6 @@ public class CustomerMasterPanel extends JPanel {
         // The subscriptions and invoices are presented in tables:
 
         this.subscriptionsTable = new SubscriptionsTable(null);
-        this.subscriptionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
         // We only have a reference to the invoices, we don't draw it within this panel
         this.invoicesTable = invoicesTable;

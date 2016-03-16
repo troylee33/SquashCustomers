@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -650,11 +652,19 @@ public class MainGUI extends JFrame {
         protected String doInBackground() throws Exception {
 
             // Loop all customers and generate invoices as Excel-files
-            this.filesResult = new StringBuilder(128);
-            this.filesResult.append("Följande fakturafiler har skapats:\n\n");
+            this.filesResult = new StringBuilder(1024);
 
-            for (String filename : MainGUI.this.xmlRepository.generateAndStoreInvoices()) {
-                this.filesResult.append(filename + "\n");
+            List<String> invoiceFileResults = MainGUI.this.xmlRepository.generateAndStoreInvoices();
+            this.filesResult
+                .append("Dessa " + invoiceFileResults.size() + " fakturafiler har skapats:\n\n");
+
+            Iterator<String> filenameIterator = invoiceFileResults.iterator();
+            while (filenameIterator.hasNext()) {
+                String fullFilename = filenameIterator.next();
+                this.filesResult.append(SquashUtil.getFilenameFromPath(fullFilename));
+                if (filenameIterator.hasNext()) {
+                    this.filesResult.append("\n");
+                }
             }
 
             return this.filesResult.toString();
@@ -673,10 +683,21 @@ public class MainGUI extends JFrame {
                     MainGUI.this.customerMasterPanel.setCustomer(customer);
                 }
 
+                JTextArea resultText = new JTextArea(this.filesResult.toString());
+                resultText.setEditable(false);
+                resultText.setLineWrap(true);
+                resultText.setWrapStyleWord(true);
+                resultText.setMinimumSize(new Dimension(400, 260));
+                resultText.setMaximumSize(new Dimension(500, 600));
+
+                JScrollPane resultsScroller = new JScrollPane(resultText);
+                resultsScroller.setPreferredSize(new Dimension(460, 500));
+                resultsScroller.setBorder(BorderFactory.createEmptyBorder(20, 20, 6, 20));
+
                 // Show the results from the execution
                 JOptionPane.showMessageDialog(
                     MainGUI.this,
-                    this.filesResult.toString(),
+                    resultsScroller,
                     "Resultat",
                     JOptionPane.PLAIN_MESSAGE);
 

@@ -21,19 +21,25 @@ public class DirtyMarker implements DocumentListener, ChangeListener, TableModel
 
     private AtomicBoolean dirtyBoolean;
 
+    // Set true if you need to debug dirty tracking:
+    private boolean debugMode = false;
+
     /**
-     * Inits the marker as clean
+     * Creates the marker as clean and not dirty
      */
     protected DirtyMarker() {
         this.dirtyBoolean = new AtomicBoolean(false);
     }
 
     protected void setDirty() {
-        this.dirtyBoolean.compareAndSet(false, true);
+        this.dirtyBoolean.set(true);
     }
 
     protected void setClean() {
-        this.dirtyBoolean.compareAndSet(true, false);
+        this.dirtyBoolean.set(false);
+        if (this.debugMode) {
+            System.out.println("setClean called");
+        }
     }
 
     public boolean isDirty() {
@@ -45,6 +51,9 @@ public class DirtyMarker implements DocumentListener, ChangeListener, TableModel
     @Override
     public void stateChanged(ChangeEvent e) {
         this.setDirty();
+        if (this.debugMode) {
+            System.out.println("stateChanged called");
+        }
     }
 
     //  This handles JTextField change events - the DocumentListener
@@ -52,16 +61,25 @@ public class DirtyMarker implements DocumentListener, ChangeListener, TableModel
     @Override
     public void insertUpdate(DocumentEvent e) {
         this.setDirty();
+        if (this.debugMode) {
+            System.out.println("insertUpdate called");
+        }
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         this.setDirty();
+        if (this.debugMode) {
+            System.out.println("removeUpdate called");
+        }
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
         this.setDirty();
+        if (this.debugMode) {
+            System.out.println("changedUpdate called");
+        }
     }
 
     //  This handles JTable change events - the TableModelListener
@@ -69,5 +87,8 @@ public class DirtyMarker implements DocumentListener, ChangeListener, TableModel
     @Override
     public void tableChanged(TableModelEvent e) {
         this.setDirty();
+        if (this.debugMode) {
+            System.out.println("tableChanged called");
+        }
     }
 }

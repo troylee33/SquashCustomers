@@ -1,4 +1,5 @@
 src-generated/*
 build
+squashdata
 bin/*
 */.DS_Store

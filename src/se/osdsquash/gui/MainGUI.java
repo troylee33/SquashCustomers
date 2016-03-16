@@ -63,7 +63,7 @@ public class MainGUI extends JFrame {
     // Singleton reference to the repository:
     private XmlRepository xmlRepository;
 
-    private static final int WINDOW_PIXEL_WIDTH = 1020;
+    private static final int WINDOW_PIXEL_WIDTH = 1080;
     private static final int WINDOW_PIXEL_HEIGTH = 970;
 
     private final JLabel validationErrorLabel = new JLabel(" ");

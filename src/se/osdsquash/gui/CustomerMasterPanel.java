@@ -97,8 +97,8 @@ public class CustomerMasterPanel extends JPanel {
         subscriptionsPanel.add(subscriptionsScrollPane);
 
         // Hack to cause a line break:
-        subscriptionsPanel.add(new JLabel("                    "));
-        subscriptionsPanel.add(new JLabel("               "));
+        subscriptionsPanel.add(new JLabel("             "));
+        subscriptionsPanel.add(new JLabel("             "));
 
         // Create add/remove buttons below
         this.addSubscriptionButton = new JButton("+");

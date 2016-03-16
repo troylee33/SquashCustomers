@@ -15,12 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.XmlRepository;
@@ -78,7 +72,7 @@ public class CustomerDetailsPanel extends JPanel {
     private JButton saveButton;
 
     // True if there are unsaved changes made to the customer
-    private DirtyMarker customerDirty;
+    private final DirtyMarker dirtyMarker;
 
     /**
      * Constructor initializing an empty and disabled customer details panel
@@ -92,7 +86,7 @@ public class CustomerDetailsPanel extends JPanel {
         InvoicesTable invoicesTable) {
 
         super();
-        this.customerDirty = new DirtyMarker();
+        this.dirtyMarker = new DirtyMarker();
 
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
@@ -261,7 +255,7 @@ public class CustomerDetailsPanel extends JPanel {
 
                 MainGUI.getInstance().printInfoText(saveMessage, false, true);
 
-                CustomerDetailsPanel.this.customerDirty.setClean();
+                CustomerDetailsPanel.this.dirtyMarker.setClean();
             }
         });
 
@@ -286,7 +280,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.registerDirtyListeners();
 
         // Start with customer not dirty
-        this.customerDirty.setClean();
+        this.dirtyMarker.setClean();
     }
 
     private void registerDirtyListeners() {
@@ -294,37 +288,22 @@ public class CustomerDetailsPanel extends JPanel {
         // Add data change listeners for all our different input components
         for (Component component : super.getComponents()) {
             if (component instanceof JTextField) {
-                ((JTextField) component).getDocument().addDocumentListener(new DirtyListener());
+                ((JTextField) component)
+                    .getDocument()
+                    .addDocumentListener(CustomerDetailsPanel.this.dirtyMarker);
             } else if (component instanceof JCheckBox) {
-                ((JCheckBox) component).addChangeListener(new ChangeListener() {
-
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        CustomerDetailsPanel.this.customerDirty.setDirty();
-                    }
-                });
+                ((JCheckBox) component).addChangeListener(CustomerDetailsPanel.this.dirtyMarker);
             }
         }
 
         // The subscriptions table
-        this.subscriptionsTable
-            .getSubscriptionsTableModel()
-            .addTableModelListener(new TableModelListener() {
-
-                @Override
-                public void tableChanged(TableModelEvent evt) {
-                    CustomerDetailsPanel.this.customerDirty.setDirty();
-                }
-            });
+        this.subscriptionsTable.getSubscriptionsTableModel().addTableModelListener(
+            CustomerDetailsPanel.this.dirtyMarker);
 
         // The invoices table
-        this.invoicesTable.getInvoicesTableModel().addTableModelListener(new TableModelListener() {
-
-            @Override
-            public void tableChanged(TableModelEvent evt) {
-                CustomerDetailsPanel.this.customerDirty.setDirty();
-            }
-        });
+        this.invoicesTable
+            .getInvoicesTableModel()
+            .addTableModelListener(CustomerDetailsPanel.this.dirtyMarker);
     }
 
     /**
@@ -339,7 +318,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.toggleFields(true, false);
 
         // Make customer not dirty after everything is set
-        this.customerDirty.setClean();
+        this.dirtyMarker.setClean();
     }
 
     /**
@@ -405,7 +384,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.invoicesTable.repaint();
 
         // Make customer not dirty after everything is set
-        this.customerDirty.setClean();
+        this.dirtyMarker.setClean();
     }
 
     /**
@@ -427,7 +406,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.kundNrTextField.requestFocus();
 
         // Make customer not dirty after everything is set
-        this.customerDirty.setClean();
+        this.dirtyMarker.setClean();
     }
 
     /**
@@ -437,7 +416,7 @@ public class CustomerDetailsPanel extends JPanel {
      * @return True if there are unsaved changes to the customer
      */
     protected boolean isCustomerDirty() {
-        return this.customerDirty.isDirty();
+        return this.dirtyMarker.isDirty();
     }
 
     // Optional clearing of all input fields and enable or disable them
@@ -518,25 +497,6 @@ public class CustomerDetailsPanel extends JPanel {
 
         protected CustomerTextField(String textValue) {
             super(textValue, defaultNrOfColumns);
-        }
-    }
-
-    // Change listener that marks the customer "dirty", e.g. modified
-    private final class DirtyListener implements DocumentListener {
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty.setDirty();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty.setDirty();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            CustomerDetailsPanel.this.customerDirty.setDirty();
         }
     }
 }

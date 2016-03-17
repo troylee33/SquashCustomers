@@ -1,6 +1,5 @@
 package se.osdsquash.excel;
 
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
 
@@ -9,17 +8,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
  */
 public class InvoiceExcelWorkbook extends XSSFWorkbook {
 
-    private XSSFSheet invoiceSheet;
+    private InvoiceSheet invoiceSheet;
 
     /**
      * Creates a new Excel workbook with one Invoice sheet
      */
     protected InvoiceExcelWorkbook() {
         super(XSSFWorkbookType.XLSX);
-        this.invoiceSheet = super.createSheet("Faktura");
+        this.invoiceSheet = new InvoiceSheet(super.createSheet("Faktura"));
     }
 
-    protected XSSFSheet getInvoiceSheet() {
+    protected InvoiceSheet getInvoiceSheet() {
         return this.invoiceSheet;
     }
 }

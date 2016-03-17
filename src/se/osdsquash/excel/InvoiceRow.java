@@ -24,12 +24,20 @@ public class InvoiceRow implements Row {
 
     private XSSFRow row;
 
-    public InvoiceRow(XSSFRow row) {
+    protected InvoiceRow(XSSFRow row) {
         this.row = row;
     }
 
-    public XSSFRow getRow() {
+    protected XSSFRow getRow() {
         return this.row;
+    }
+
+    /**
+     * Returns current cell index for this row
+     * @return The index of the last created cell, -1 if no cells
+     */
+    protected int currentCellIndex() {
+        return this.cellColumnIndex;
     }
 
     /**
@@ -39,6 +47,16 @@ public class InvoiceRow implements Row {
     protected InvoiceCell createNextCell() {
         XSSFCell newCell = this.row.createCell(++this.cellColumnIndex);
         return new InvoiceCell(newCell);
+    }
+
+    /**
+     * Adds an empty padding cell as the next cell
+     * @return A new cell, having some whitespaces as value
+     */
+    protected InvoiceCell createNextCellPadded() {
+        XSSFCell cell = this.row.createCell(++this.cellColumnIndex);
+        cell.setCellValue("    ");
+        return new InvoiceCell(cell);
     }
 
     // -------------------  BELOW ARE DELEGATE METHODS FOR THE WRAPPED ROW -------------------

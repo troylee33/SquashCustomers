@@ -63,6 +63,14 @@ public class InvoiceSheet implements Sheet {
     }
 
     /**
+     * Returns current row index for this sheet
+     * @return The index of the last created row, -1 if no rows
+     */
+    protected int currentRowIndex() {
+        return this.rowIndex;
+    }
+
+    /**
      * Creates a new row by incrementing the sheet's row index
      * @return A new row
      */
@@ -70,6 +78,18 @@ public class InvoiceSheet implements Sheet {
         XSSFRow row = this.sheet.createRow(++this.rowIndex);
         return new InvoiceRow(row);
     }
+
+    /**
+     * Adds a new row as the next row, already having one left padding column added
+     * @return A new row, having one cell already
+     */
+    protected InvoiceRow createNextPaddedRow() {
+        InvoiceRow row = this.createNextRow();
+        row.createNextCell().setCellValue("    ");
+        return row;
+    }
+
+    // -------------------  BELOW ARE DELEGATE METHODS FOR THE WRAPPED SHEET -------------------
 
     @Override
     public Spliterator<Row> spliterator() {

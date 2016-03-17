@@ -16,20 +16,14 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.ShapeTypes;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 
 import se.osdsquash.common.SquashProperties;
@@ -57,7 +51,7 @@ public class ExcelHandler {
     private XmlRepository xmlRepository;
 
     private InvoiceExcelWorkbook excelWorkbook;
-    private XSSFSheet fakturaSheet;
+    private InvoiceSheet invoiceSheet;
 
     public ExcelHandler(XmlRepository xmlRepository) {
         this.xmlRepository = xmlRepository;
@@ -85,7 +79,7 @@ public class ExcelHandler {
 
             // Create a new workbook having one sheet
             this.excelWorkbook = new InvoiceExcelWorkbook();
-            this.fakturaSheet = this.excelWorkbook.getInvoiceSheet();
+            this.invoiceSheet = this.excelWorkbook.getInvoiceSheet();
 
             // Set some generic options
             POIXMLProperties.CoreProperties docCoreProperties = this.excelWorkbook
@@ -94,23 +88,20 @@ public class ExcelHandler {
             docCoreProperties.setTitle("Faktura");
             docCoreProperties.setCreator(SquashProperties.CLUB_NAME);
 
-            this.fakturaSheet.setColumnWidth(0, 3 * 256); // The width must be given as 'nr of character x 256'
-            this.fakturaSheet.setColumnWidth(1, 44 * 256);
-            this.fakturaSheet.setColumnWidth(2, 13 * 256);
-            this.fakturaSheet.setColumnWidth(3, 14 * 256);
-            this.fakturaSheet.setDefaultColumnWidth(10);
-            this.fakturaSheet.setDefaultRowHeightInPoints(15);
-            this.fakturaSheet.setDisplayGridlines(false);
-            this.fakturaSheet.setZoom(100);
+            this.invoiceSheet.setColumnWidth(0, 3 * 256); // The width must be given as 'nr of character x 256'
+            this.invoiceSheet.setColumnWidth(1, 44 * 256);
+            this.invoiceSheet.setColumnWidth(2, 13 * 256);
+            this.invoiceSheet.setColumnWidth(3, 14 * 256);
+            this.invoiceSheet.setDefaultColumnWidth(10);
+            this.invoiceSheet.setDefaultRowHeightInPoints(15);
+            this.invoiceSheet.setDisplayGridlines(false);
+            this.invoiceSheet.setZoom(100);
 
-            XSSFDrawing sheetDrawing = this.fakturaSheet.createDrawingPatriarch();
-
-            // Start on row 0 and increment the rows
-            RowCounter rowCounter = new RowCounter();
+            XSSFDrawing sheetDrawing = this.invoiceSheet.createDrawingPatriarch();
 
             // First of all, add some empty space
-            this.createPaddingRow(rowCounter.current());
-            this.createPaddingRow(rowCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
 
             // Create a larger font
             XSSFFont font = this.excelWorkbook.createFont();
@@ -119,54 +110,48 @@ public class ExcelHandler {
             XSSFCellStyle largeFontStyle = this.excelWorkbook.createCellStyle();
             largeFontStyle.setFont(font);
 
-            XSSFRow clubnameAndInvoiceNrRow = this.createNewRow(rowCounter.next());
+            InvoiceRow clubnameAndInvoiceNrRow = this.invoiceSheet.createNextPaddedRow();
             clubnameAndInvoiceNrRow.setHeightInPoints(22);
-
-            // For each row, there is a cell counter
-            CellCounter cellCounter = rowCounter.getCellCounter();
 
             // Start with the club logo and invoice nr
             // ------------------------------------------------------------------------------------
 
-            XSSFCell logoCell = clubnameAndInvoiceNrRow.createCell(cellCounter.next());
+            InvoiceCell logoCell = clubnameAndInvoiceNrRow.createNextCell();
             logoCell.setCellStyle(largeFontStyle);
             logoCell.setCellValue(SquashProperties.CLUB_NAME);
-
-            clubnameAndInvoiceNrRow.createCell(cellCounter.next());
+            clubnameAndInvoiceNrRow.createNextCell();
 
             // Right align last cell here
-            XSSFCell invoiceNrCell = this
-                .setRightAlign(clubnameAndInvoiceNrRow.createCell(cellCounter.next()));
+            InvoiceCell invoiceNrCell = this
+                .setRightAlign(clubnameAndInvoiceNrRow.createNextCell());
             invoiceNrCell.setCellValue("FakturaNr:  " + invoiceNr);
 
             // Now add club's org.nr and current date
             // ------------------------------------------------------------------------------------
 
-            XSSFRow orgNrAndDateRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            orgNrAndDateRow.createCell(cellCounter.next()).setCellValue(
-                "Org.nr: " + SquashProperties.CLUB_ORG_NR);
+            InvoiceRow orgNrAndDateRow = this.invoiceSheet.createNextPaddedRow();
 
-            orgNrAndDateRow.createCell(cellCounter.next());
+            orgNrAndDateRow
+                .createNextCell()
+                .setCellValue("Org.nr: " + SquashProperties.CLUB_ORG_NR);
+            orgNrAndDateRow.createNextCell();
 
             Calendar invoiceCreationCal = Calendar.getInstance();
 
             // Right align last cell here
             String invoiceDate = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(invoiceCreationCal.getTime());
-            XSSFCell invoiceDateCell = this
-                .setRightAlign(orgNrAndDateRow.createCell(cellCounter.next()));
-            invoiceDateCell.setCellValue("Datum: " + invoiceDate);
+            InvoiceCell invoiceDateCell = this.setRightAlign(orgNrAndDateRow.createNextCell());
+            invoiceDateCell.setCellValue("Datum:  " + invoiceDate);
 
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
 
             // Add the "Faktura" text
             // ------------------------------------------------------------------------------------
 
-            XSSFRow fakturaTextRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
+            InvoiceRow fakturaTextRow = this.invoiceSheet.createNextPaddedRow();
 
             XSSFFont fontFaktura = this.excelWorkbook.createFont();
             fontFaktura.setFontHeightInPoints((short) 15);
@@ -174,7 +159,7 @@ public class ExcelHandler {
             fontFaktura.setItalic(true);
             XSSFCellStyle fakturaFontStyle = this.excelWorkbook.createCellStyle();
             fakturaFontStyle.setFont(fontFaktura);
-            XSSFCell fakturaCell = fakturaTextRow.createCell(cellCounter.next());
+            InvoiceCell fakturaCell = fakturaTextRow.createNextCell();
             fakturaCell.setCellValue("FAKTURA");
             fakturaCell.setCellStyle(fakturaFontStyle);
 
@@ -185,16 +170,16 @@ public class ExcelHandler {
                 300 /* X end position, relative from the cell top left corner */,
                 300 /* Y end position, relative from the cell top left corner */,
                 1 /* Which column index to draw from, e.g. starting cell */,
-                rowCounter.current() /* Which row index to draw from, e.g. starting cell */,
+                this.invoiceSheet
+                    .currentRowIndex() /* Which row index to draw from, e.g. starting cell */,
                 4 /* Which column index to draw to */,
-                rowCounter.current()) /* Which row index to draw to */;
+                this.invoiceSheet.currentRowIndex()) /* Which row index to draw to */;
 
             XSSFSimpleShape lineShape = sheetDrawing.createSimpleShape(clientAnchorLine1);
             lineShape.setLineStyleColor(220, 220, 220);
             lineShape.setLineWidth(2);
             lineShape.setShapeType(ShapeTypes.LINE);
-
-            this.createPaddingRow(rowCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
 
             // This draws a line just below the "Faktura" text
             XSSFClientAnchor clientAnchorLine2 = sheetDrawing.createAnchor(
@@ -203,84 +188,75 @@ public class ExcelHandler {
                 300 /* X end position, relative from the cell top left corner */,
                 300 /* Y end position, relative from the cell top left corner */,
                 1 /* Which column index to draw from, e.g. starting cell */,
-                rowCounter.current() /* Which row index to draw from, e.g. starting cell */,
+                this.invoiceSheet
+                    .currentRowIndex() /* Which row index to draw from, e.g. starting cell */,
                 4 /* Which column index to draw to */,
-                rowCounter.current()) /* Which row index to draw to */;
+                this.invoiceSheet.currentRowIndex()) /* Which row index to draw to */;
 
             XSSFSimpleShape lineShape2 = sheetDrawing.createSimpleShape(clientAnchorLine2);
             lineShape2.setLineStyleColor(220, 220, 220);
             lineShape2.setLineWidth(2);
             lineShape2.setShapeType(ShapeTypes.LINE);
-
-            this.createPaddingRow(rowCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
 
             // Add customer and club info. The left box is the customer, the right one is the club.
             // ------------------------------------------------------------------------------------
 
-            XSSFRow referencesRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            this.setBoldFont(referencesRow.createCell(cellCounter.next()), true).setCellValue(
-                "Er referens:");
-            this.setBoldFont(referencesRow.createCell(cellCounter.next()), true).setCellValue(
-                "Vår referens:");
+            InvoiceRow referencesRow = this.invoiceSheet.createNextPaddedRow();
 
-            XSSFRow nameRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            nameRow.createCell(cellCounter.next()).setCellValue(
+            this.setBoldFont(referencesRow.createNextCell(), true).setCellValue("Er referens:");
+            this.setBoldFont(referencesRow.createNextCell(), true).setCellValue("Vår referens:");
+
+            InvoiceRow nameRow = this.invoiceSheet.createNextPaddedRow();
+            nameRow.createNextCell().setCellValue(
                 customerInfo.getFirstname() + " " + customerInfo.getLastname());
-            nameRow.createCell(cellCounter.next()).setCellValue(SquashProperties.INVOICE_NAME);
+            nameRow.createNextCell().setCellValue(SquashProperties.INVOICE_NAME);
 
-            XSSFRow adressRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            adressRow.createCell(cellCounter.next()).setCellValue(customerInfo.getStreet());
-            adressRow.createCell(cellCounter.next()).setCellValue(SquashProperties.INVOICE_STREET);
+            InvoiceRow adressRow = this.invoiceSheet.createNextPaddedRow();
+            adressRow.createNextCell().setCellValue(customerInfo.getStreet());
+            adressRow.createNextCell().setCellValue(SquashProperties.INVOICE_STREET);
 
-            XSSFRow cityRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            cityRow.createCell(cellCounter.next()).setCellValue(
+            InvoiceRow cityRow = this.invoiceSheet.createNextPaddedRow();
+            cityRow.createNextCell().setCellValue(
                 customerInfo.getPostalCode() + " " + customerInfo.getCity());
-            cityRow.createCell(cellCounter.next()).setCellValue(SquashProperties.INVOICE_CITY);
+            cityRow.createNextCell().setCellValue(SquashProperties.INVOICE_CITY);
 
-            XSSFRow phoneRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            phoneRow.createCell(cellCounter.next()).setCellValue(customerInfo.getTelephone());
-            phoneRow.createCell(cellCounter.next()).setCellValue(SquashProperties.INVOICE_PHONE);
+            InvoiceRow phoneRow = this.invoiceSheet.createNextPaddedRow();
+            phoneRow.createNextCell().setCellValue(customerInfo.getTelephone());
+            phoneRow.createNextCell().setCellValue(SquashProperties.INVOICE_PHONE);
 
-            XSSFRow emailRow = this.createNewRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            XSSFCell emailCell1 = emailRow.createCell(cellCounter.next());
+            InvoiceRow emailRow = this.invoiceSheet.createNextPaddedRow();
+            InvoiceCell emailCell1 = emailRow.createNextCell();
             emailCell1.setCellValue(customerInfo.getEmail());
-            this.setEmailLink(emailCell1);
+            emailCell1.applyEmailLink();
 
-            XSSFCell emailCell2 = emailRow.createCell(cellCounter.next());
+            InvoiceCell emailCell2 = emailRow.createNextCell();
             emailCell2.setCellValue(SquashProperties.INVOICE_EMAIL);
-            this.setEmailLink(emailCell2);
+            emailCell2.applyEmailLink();
 
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
 
             // Write the the track subscription(s) table, e.g. the invoice specification
             // ------------------------------------------------------------------------------------
 
-            XSSFRow trackTableHeaderRow = this.createNewRow(rowCounter.next());
+            InvoiceRow trackTableHeaderRow = this.invoiceSheet.createNextPaddedRow();
 
-            cellCounter = rowCounter.getCellCounter();
-            this
-                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
-                .setCellValue("  Beskrivning");
-            this
-                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
-                .setCellValue("     ");
-            this
-                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
-                .setCellValue("          Belopp");
+            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue(
+                "  Beskrivning");
+            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue("     ");
+            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue(
+                "          Belopp");
 
             // Add border around the header cell range
             String trackHeaderRowArea = trackTableHeaderRow.getCell(1).getAddress().formatAsString()
                 + ":"
-                + trackTableHeaderRow.getCell(cellCounter.current()).getAddress().formatAsString();
+                + trackTableHeaderRow
+                    .getCell(trackTableHeaderRow.currentCellIndex())
+                    .getAddress()
+                    .formatAsString();
             this.addBorder(trackHeaderRowArea, true);
 
             // Loop subscriptions and write track cost rows
@@ -291,20 +267,18 @@ public class ExcelHandler {
             SubscriptionPeriod nextPeriod = new SubscriptionPeriod(true);
 
             // First an empty row in the table...
-            XSSFRow firstTableRow = this.createPaddingRow(rowCounter.next());
-            XSSFCell firstTableCell = this
-                .createPaddingCell(firstTableRow, rowCounter.getCellCounter().next());
+            InvoiceRow firstTableRow = this.invoiceSheet.createNextPaddedRow();
+            InvoiceCell firstTableCell = firstTableRow.createNextCellPadded();
             String trackTableStartCellName = firstTableCell.getAddress().formatAsString();
 
             SubscriptionsType subscriptionsType = customer.getSubscriptions();
             if (subscriptionsType == null || subscriptionsType.getSubscription().isEmpty()) {
 
                 // If no subscriptions, write a red warning info row about this
-                XSSFRow noSubscriptionsRow = this.fakturaSheet.createRow(rowCounter.next());
-                cellCounter = rowCounter.getCellCounter();
+                InvoiceRow noSubscriptionsRow = this.invoiceSheet.createNextRow();
 
                 String warningMessage = " OBS: Det finns inga abonnemang att fakturera!";
-                XSSFCell warningTextCell = noSubscriptionsRow.createCell(cellCounter.next());
+                InvoiceCell warningTextCell = noSubscriptionsRow.createNextCell();
                 warningTextCell.setCellValue(warningMessage);
 
                 XSSFCellStyle warningCellStyle = this.excelWorkbook.createCellStyle();
@@ -324,9 +298,10 @@ public class ExcelHandler {
 
                     // Write a track info row
                     {
-                        XSSFRow trackInfoRow = this.fakturaSheet.createRow(rowCounter.next());
+                        InvoiceRow trackInfoRow = this.invoiceSheet.createNextRow();
 
-                        cellCounter = rowCounter.getCellCounter();
+                        // Skip through first cell, that's just the padding cell
+                        trackInfoRow.createNextCell();
 
                         // Write a text like "Abbonemang bana 1, Torsdagar, kl 19:00"
                         String trackInfoText = "  Abonnemang bana "
@@ -336,30 +311,29 @@ public class ExcelHandler {
                             + "ar"
                             + " kl "
                             + SquashUtil.getTrackTimeFromCalendar(subscription.getStartTime());
-                        XSSFCell trackInfoCell = trackInfoRow.createCell(cellCounter.next());
+
+                        InvoiceCell trackInfoCell = trackInfoRow.createNextCell();
+
                         trackInfoCell.setCellValue(trackInfoText);
 
-                        this.createPaddingCell(trackInfoRow, cellCounter.next());
-                        this.createPaddingCell(trackInfoRow, cellCounter.next());
+                        trackInfoRow.createNextCellPadded();
+                        trackInfoRow.createNextCellPadded();
                     }
 
                     // Write another row with the track period and the price
                     {
-                        XSSFRow trackPeriodAndPriceRow = this.fakturaSheet
-                            .createRow(rowCounter.next());
+                        InvoiceRow trackPeriodAndPriceRow = this.invoiceSheet.createNextRow();
 
-                        cellCounter = rowCounter.getCellCounter();
+                        // Skip through first cell, that's just the padding cell
+                        trackPeriodAndPriceRow.createNextCell();
 
                         String trackPeriodText = "  Gäller perioden "
                             + nextPeriod.getStartDayString()
                             + " till "
                             + nextPeriod.getEndDayString();
 
-                        trackPeriodAndPriceRow
-                            .createCell(cellCounter.next())
-                            .setCellValue(trackPeriodText);
-
-                        this.createPaddingCell(trackPeriodAndPriceRow, cellCounter.next());
+                        trackPeriodAndPriceRow.createNextCell().setCellValue(trackPeriodText);
+                        trackPeriodAndPriceRow.createNextCellPadded();
 
                         double trackPrice;
                         if (customerInfo.isCompany()) {
@@ -368,32 +342,30 @@ public class ExcelHandler {
                             trackPrice = SquashProperties.TRACK_PRICE_PERSON;
                         }
 
-                        XSSFCell trackPriceCell = trackPeriodAndPriceRow
-                            .createCell(cellCounter.next());
+                        InvoiceCell trackPriceCell = trackPeriodAndPriceRow.createNextCell();
                         this.setCurrencyFormat(trackPriceCell, trackPrice, true, false);
 
                         totalPrice += trackPrice;
                     }
 
                     // One empty row between track rows
-                    this.createPaddingRow(rowCounter.next());
+                    this.invoiceSheet.createNextPaddedRow();
                 }
             }
 
             // Add some blank rows, to better match the A4 paper height
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            this.createPaddingRow(rowCounter.next());
-            XSSFRow lastTrackTableRow = this.createPaddingRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
-            this.createPaddingCell(lastTrackTableRow, cellCounter.next());
-            this.createPaddingCell(lastTrackTableRow, cellCounter.next());
-            XSSFCell lastTrackTableCell = this
-                .createPaddingCell(lastTrackTableRow, cellCounter.next());
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+            this.invoiceSheet.createNextPaddedRow();
+
+            InvoiceRow lastTrackTableRow = this.invoiceSheet.createNextPaddedRow();
+
+            lastTrackTableRow.createNextCellPadded();
+            lastTrackTableRow.createNextCellPadded();
+            InvoiceCell lastTrackTableCell = lastTrackTableRow.createNextCellPadded();
 
             // Add a border around the subscriptions table
             String trackTableCellRange = trackTableStartCellName
@@ -406,35 +378,34 @@ public class ExcelHandler {
             // ------------------------------------------------------------------------------------
 
             // Write the sum row
-            XSSFRow sumRow = this.fakturaSheet.createRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
+            InvoiceRow sumRow = this.invoiceSheet.createNextRow();
+            sumRow.createNextCellPadded();
+            sumRow.createNextCellPadded();
 
-            this.createPaddingCell(sumRow, cellCounter.next());
-
-            XSSFCell sumTextCell = sumRow.createCell(cellCounter.next());
+            InvoiceCell sumTextCell = sumRow.createNextCell();
             sumTextCell.setCellValue("  Summa");
 
-            XSSFCell sumValueCell = sumRow.createCell(cellCounter.next());
+            InvoiceCell sumValueCell = sumRow.createNextCell();
             this.setCurrencyFormat(sumValueCell, totalPrice, true, false);
 
             // Write the "moms" row, along with payment instructions box
-            XSSFRow momsRow = this.fakturaSheet.createRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
+            InvoiceRow momsRow = this.invoiceSheet.createNextRow();
+            momsRow.createNextCellPadded();
 
-            XSSFCell paymentInfoCell = momsRow.createCell(cellCounter.next());
+            InvoiceCell paymentInfoCell = momsRow.createNextCell();
             paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
             this.setCenterAlign(paymentInfoCell);
 
             // TODO: Check if there IS moms to set ?!?!?!?!
             double momsValue = 0d;
 
-            momsRow.createCell(cellCounter.next()).setCellValue("  Varav moms");
-            XSSFCell momsValueCell = momsRow.createCell(cellCounter.next());
+            momsRow.createNextCell().setCellValue("  Varav moms");
+            InvoiceCell momsValueCell = momsRow.createNextCell();
             this.setCurrencyFormat(momsValueCell, momsValue, true, false);
 
             // Write the row with the total ammount to pay
-            XSSFRow ammountToPayRow = this.fakturaSheet.createRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
+            InvoiceRow ammountToPayRow = this.invoiceSheet.createNextRow();
+            ammountToPayRow.createNextCellPadded();
 
             // Add the payment due date (no time parts), relative from "now", just below the BG nr
             Calendar dueCal = (Calendar) invoiceCreationCal.clone();
@@ -443,16 +414,15 @@ public class ExcelHandler {
             String dueDateString = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(dueCal.getTime());
 
-            XSSFCell paymentInfo2Cell = this
-                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
+            InvoiceCell paymentInfo2Cell = this
+                .setBoldFont(ammountToPayRow.createNextCell(), false);
             paymentInfo2Cell.setCellValue("Förfallodag " + dueDateString);
             this.setCenterAlign(paymentInfo2Cell);
 
-            this.setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false).setCellValue(
-                "  Att betala");
+            this.setBoldFont(ammountToPayRow.createNextCell(), false).setCellValue("  Att betala");
 
-            XSSFCell totalAmmountCell = this
-                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
+            InvoiceCell totalAmmountCell = this
+                .setBoldFont(ammountToPayRow.createNextCell(), false);
             this.setCurrencyFormat(totalAmmountCell, totalPrice, true, true);
 
             // Add border around the sum area
@@ -462,11 +432,10 @@ public class ExcelHandler {
             this.addBorder(sumRange, true);
 
             // Write a row with payment marking info
-            XSSFRow markPaymentRow = this.fakturaSheet.createRow(rowCounter.next());
-            cellCounter = rowCounter.getCellCounter();
+            InvoiceRow markPaymentRow = this.invoiceSheet.createNextRow();
+            markPaymentRow.createNextCellPadded();
 
-            XSSFCell paymentInfo3Cell = this
-                .setBoldFont(markPaymentRow.createCell(cellCounter.next()), false);
+            InvoiceCell paymentInfo3Cell = this.setBoldFont(markPaymentRow.createNextCell(), false);
             paymentInfo3Cell.setCellValue("Märk betalningen med FakturaNr!");
             this.setCenterAlign(paymentInfo3Cell);
 
@@ -561,7 +530,7 @@ public class ExcelHandler {
     // ------------------------------------------------------------------------------------
 
     // Adds bold font to a cell and possibly italic, builder pattern
-    private XSSFCell setBoldFont(XSSFCell cell, boolean italic) {
+    private InvoiceCell setBoldFont(InvoiceCell cell, boolean italic) {
 
         XSSFCellStyle style = this.excelWorkbook.createCellStyle();
         XSSFFont font = this.excelWorkbook.createFont();
@@ -574,7 +543,7 @@ public class ExcelHandler {
     }
 
     // Adds text right alignment to a cell, builder pattern
-    private XSSFCell setRightAlign(XSSFCell cell) {
+    private InvoiceCell setRightAlign(InvoiceCell cell) {
         XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
         alignStyle.setAlignment(CellStyle.ALIGN_RIGHT);
         cell.setCellStyle(alignStyle);
@@ -582,34 +551,10 @@ public class ExcelHandler {
     }
 
     // Adds text center alignment to a cell, builder pattern
-    private XSSFCell setCenterAlign(XSSFCell cell) {
+    private InvoiceCell setCenterAlign(InvoiceCell cell) {
         XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
         alignStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cell.setCellStyle(alignStyle);
-        return cell;
-    }
-
-    // Sets given cell's value (if any) to an e-mail hyperlink text, builder pattern
-    private XSSFCell setEmailLink(XSSFCell cell) {
-
-        String cellValue = cell.getStringCellValue();
-        if (cellValue != null && cellValue.contains("@")) {
-
-            XSSFCellStyle hyperStyle = this.excelWorkbook.createCellStyle();
-            XSSFFont hyperFont = this.excelWorkbook.createFont();
-            hyperFont.setUnderline(Font.U_SINGLE);
-            hyperFont.setColor(IndexedColors.BLUE.getIndex());
-            hyperStyle.setFont(hyperFont);
-
-            XSSFCreationHelper creationHelper = this.excelWorkbook.getCreationHelper();
-
-            XSSFHyperlink link = creationHelper
-                .createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_EMAIL);
-            link.setAddress("mailto:" + cell.getStringCellValue());
-            cell.setHyperlink(link);
-            cell.setCellStyle(hyperStyle);
-        }
-
         return cell;
     }
 
@@ -620,15 +565,15 @@ public class ExcelHandler {
 
         // The range is given as the format "A1:B4"
         CellRangeAddress cellRange = CellRangeAddress.valueOf(cellRangeSpan);
-        RegionUtil.setBorderBottom(borderStyle, cellRange, this.fakturaSheet, this.excelWorkbook);
-        RegionUtil.setBorderLeft(borderStyle, cellRange, this.fakturaSheet, this.excelWorkbook);
-        RegionUtil.setBorderRight(borderStyle, cellRange, this.fakturaSheet, this.excelWorkbook);
-        RegionUtil.setBorderTop(borderStyle, cellRange, this.fakturaSheet, this.excelWorkbook);
+        RegionUtil.setBorderBottom(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
+        RegionUtil.setBorderLeft(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
+        RegionUtil.setBorderRight(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
+        RegionUtil.setBorderTop(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
     }
 
     // Set given ammount as currency to given cell. Alignment and bold option possible.
-    private XSSFCell setCurrencyFormat(
-        XSSFCell cell,
+    private InvoiceCell setCurrencyFormat(
+        InvoiceCell cell,
         double ammount,
         boolean rightAlign,
         boolean bold) {
@@ -656,82 +601,5 @@ public class ExcelHandler {
             this.excelWorkbook.getCreationHelper().createDataFormat().getFormat(excelFormat));
         cell.setCellStyle(currencyStyle);
         return cell;
-    }
-
-    // Adds a new row, having one left padding column, so the next cell is always index 1
-    private XSSFRow createNewRow(int rowNr) {
-        XSSFRow row = this.fakturaSheet.createRow(rowNr);
-        this.createLeftPaddingCell(row);
-        return row;
-    }
-
-    // Adds an empty padding row
-    private XSSFRow createPaddingRow(int rowNr) {
-        XSSFRow row = this.fakturaSheet.createRow(rowNr);
-        this.createLeftPaddingCell(row);
-        return row;
-    }
-
-    // Adds a first, blank cell to a row - to give it some initial space from the left
-    private XSSFCell createLeftPaddingCell(XSSFRow row) {
-        XSSFCell firstCell = row.createCell(0);
-        firstCell.setCellValue("    ");
-        return firstCell;
-    }
-
-    // Adds an empty padding cell
-    private XSSFCell createPaddingCell(XSSFRow row, int cellNr) {
-        XSSFCell cell = row.createCell(cellNr);
-        cell.setCellValue("    ");
-        return cell;
-    }
-
-    private static class RowCounter {
-
-        private static final int START_INDEX = 0;
-
-        private int rowIndex;
-        private CellCounter cellCounter;
-
-        private RowCounter() {
-            this.rowIndex = START_INDEX;
-            this.cellCounter = new CellCounter();
-        }
-
-        private int current() {
-            return this.rowIndex;
-        }
-
-        private int next() {
-            this.cellCounter.reset();
-            return ++this.rowIndex;
-        }
-
-        private CellCounter getCellCounter() {
-            return this.cellCounter;
-        }
-    }
-
-    private static class CellCounter {
-
-        private static final int START_INDEX = 0;
-
-        private int cellIndex;
-
-        private CellCounter() {
-            this.cellIndex = START_INDEX;
-        }
-
-        private int current() {
-            return this.cellIndex;
-        }
-
-        private int next() {
-            return ++this.cellIndex;
-        }
-
-        private void reset() {
-            this.cellIndex = START_INDEX;
-        }
     }
 }

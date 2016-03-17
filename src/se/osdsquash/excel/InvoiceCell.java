@@ -7,18 +7,23 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 /**
@@ -28,12 +33,38 @@ public class InvoiceCell implements Cell {
 
     private XSSFCell cell;
 
-    public InvoiceCell(XSSFCell cell) {
+    protected InvoiceCell(XSSFCell cell) {
         this.cell = cell;
     }
 
-    public XSSFCell getCell() {
+    protected XSSFCell getCell() {
         return this.cell;
+    }
+
+    /**
+     * Sets the cell's value (if any) to an e-mail hyperlink text with correct styling
+     */
+    protected void applyEmailLink() {
+
+        XSSFWorkbook currentWorkbook = this.cell.getSheet().getWorkbook();
+
+        String cellValue = this.cell.getStringCellValue();
+        if (cellValue != null && cellValue.contains("@")) {
+
+            XSSFCellStyle hyperStyle = currentWorkbook.createCellStyle();
+            XSSFFont hyperFont = currentWorkbook.createFont();
+            hyperFont.setUnderline(Font.U_SINGLE);
+            hyperFont.setColor(IndexedColors.BLUE.getIndex());
+            hyperStyle.setFont(hyperFont);
+
+            XSSFCreationHelper creationHelper = currentWorkbook.getCreationHelper();
+
+            XSSFHyperlink link = creationHelper
+                .createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_EMAIL);
+            link.setAddress("mailto:" + this.cell.getStringCellValue());
+            this.cell.setHyperlink(link);
+            this.cell.setCellStyle(hyperStyle);
+        }
     }
 
     // -------------------  BELOW ARE DELEGATE METHODS FOR THE WRAPPED CELL -------------------

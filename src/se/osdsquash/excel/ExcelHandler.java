@@ -217,6 +217,13 @@ public class ExcelHandler {
             // Add customer and club info. The left box is the customer, the right one is the club.
             // ------------------------------------------------------------------------------------
 
+            XSSFRow referencesRow = this.createNewRow(rowCounter.next());
+            cellCounter = rowCounter.getCellCounter();
+            this.setBoldFont(referencesRow.createCell(cellCounter.next()), true).setCellValue(
+                "Er referens:");
+            this.setBoldFont(referencesRow.createCell(cellCounter.next()), true).setCellValue(
+                "Vår referens:");
+
             XSSFRow nameRow = this.createNewRow(rowCounter.next());
             cellCounter = rowCounter.getCellCounter();
             nameRow.createCell(cellCounter.next()).setCellValue(
@@ -260,12 +267,15 @@ public class ExcelHandler {
             XSSFRow trackTableHeaderRow = this.createNewRow(rowCounter.next());
 
             cellCounter = rowCounter.getCellCounter();
-            this.setBoldFont(trackTableHeaderRow.createCell(cellCounter.next())).setCellValue(
-                "  Beskrivning");
-            this.setBoldFont(trackTableHeaderRow.createCell(cellCounter.next())).setCellValue(
-                "     ");
-            this.setBoldFont(trackTableHeaderRow.createCell(cellCounter.next())).setCellValue(
-                "Belopp");
+            this
+                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
+                .setCellValue("  Beskrivning");
+            this
+                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
+                .setCellValue("     ");
+            this
+                .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
+                .setCellValue("Belopp");
 
             // Add border around the header cell range
             String trackHeaderRowArea = trackTableHeaderRow.getCell(1).getAddress().formatAsString()
@@ -430,15 +440,15 @@ public class ExcelHandler {
                 .format(dueCal.getTime());
 
             XSSFCell paymentInfo2Cell = this
-                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()));
+                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
             paymentInfo2Cell.setCellValue("Förfallodag " + dueDateString);
             this.setCenterAlign(paymentInfo2Cell);
 
-            this.setBoldFont(ammountToPayRow.createCell(cellCounter.next())).setCellValue(
+            this.setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false).setCellValue(
                 "  Att betala");
 
             XSSFCell totalAmmountCell = this
-                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()));
+                .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
             totalAmmountCell.setCellValue(String.valueOf(totalPrice) + " kr"); // TODO, format!
 
             // Add border around the sum area
@@ -452,7 +462,7 @@ public class ExcelHandler {
             cellCounter = rowCounter.getCellCounter();
 
             XSSFCell paymentInfo3Cell = this
-                .setBoldFont(markPaymentRow.createCell(cellCounter.next()));
+                .setBoldFont(markPaymentRow.createCell(cellCounter.next()), false);
             paymentInfo3Cell.setCellValue("Märk betalningen med FakturaNr!");
             this.setCenterAlign(paymentInfo3Cell);
 
@@ -546,12 +556,13 @@ public class ExcelHandler {
     // ---------------------    BELOW ARE HELPER METHODS AND SUCH    ----------------------
     // ------------------------------------------------------------------------------------
 
-    // Adds bold font to a cell, builder pattern
-    private XSSFCell setBoldFont(XSSFCell cell) {
+    // Adds bold font to a cell and possibly italic, builder pattern
+    private XSSFCell setBoldFont(XSSFCell cell, boolean italic) {
 
         XSSFCellStyle style = this.excelWorkbook.createCellStyle();
         XSSFFont font = this.excelWorkbook.createFont();
         font.setBold(true);
+        font.setItalic(italic);
         style.setFont(font);
 
         cell.setCellStyle(style);

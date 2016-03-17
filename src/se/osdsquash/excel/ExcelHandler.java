@@ -3,12 +3,9 @@ package se.osdsquash.excel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -101,8 +98,8 @@ public class ExcelHandler {
 
             this.fakturaSheet.setColumnWidth(0, 3 * 256); // The width must be given as 'nr of character x 256'
             this.fakturaSheet.setColumnWidth(1, 44 * 256);
-            this.fakturaSheet.setColumnWidth(2, 15 * 256);
-            this.fakturaSheet.setColumnWidth(3, 15 * 256);
+            this.fakturaSheet.setColumnWidth(2, 13 * 256);
+            this.fakturaSheet.setColumnWidth(3, 14 * 256);
             this.fakturaSheet.setDefaultColumnWidth(10);
             this.fakturaSheet.setDefaultRowHeightInPoints(15);
             this.fakturaSheet.setDisplayGridlines(false);
@@ -280,7 +277,7 @@ public class ExcelHandler {
                 .setCellValue("     ");
             this
                 .setBoldFont(trackTableHeaderRow.createCell(cellCounter.next()), false)
-                .setCellValue("Belopp");
+                .setCellValue("          Belopp");
 
             // Add border around the header cell range
             String trackHeaderRowArea = trackTableHeaderRow.getCell(1).getAddress().formatAsString()
@@ -375,8 +372,7 @@ public class ExcelHandler {
 
                         XSSFCell trackPriceCell = trackPeriodAndPriceRow
                             .createCell(cellCounter.next());
-                        this.setLeftAlign(trackPriceCell);
-                        trackPriceCell.setCellValue(this.toCurrency(trackPrice));
+                        this.setCurrencyFormat(trackPriceCell, trackPrice, true, false);
 
                         totalPrice += trackPrice;
                     }
@@ -419,8 +415,9 @@ public class ExcelHandler {
 
             XSSFCell sumTextCell = sumRow.createCell(cellCounter.next());
             sumTextCell.setCellValue("  Summa");
-            this.setLeftAlign(sumRow.createCell(cellCounter.next())).setCellValue(
-                this.toCurrency(totalPrice));
+
+            XSSFCell sumValueCell = sumRow.createCell(cellCounter.next());
+            this.setCurrencyFormat(sumValueCell, totalPrice, true, false);
 
             // Write the "moms" row, along with payment instructions box
             XSSFRow momsRow = this.fakturaSheet.createRow(rowCounter.next());
@@ -430,10 +427,12 @@ public class ExcelHandler {
             paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
             this.setCenterAlign(paymentInfoCell);
 
-            momsRow.createCell(cellCounter.next()).setCellValue("  Varav moms");
+            // TODO: Check if there IS moms to set ?!?!?!?!
+            double momsValue = 0d;
 
-            this.setLeftAlign(momsRow.createCell(cellCounter.next())).setCellValue(
-                this.toCurrency(0d)); // TODO: Check if there IS moms?
+            momsRow.createCell(cellCounter.next()).setCellValue("  Varav moms");
+            XSSFCell momsValueCell = momsRow.createCell(cellCounter.next());
+            this.setCurrencyFormat(momsValueCell, momsValue, true, false);
 
             // Write the row with the total ammount to pay
             XSSFRow ammountToPayRow = this.fakturaSheet.createRow(rowCounter.next());
@@ -456,7 +455,7 @@ public class ExcelHandler {
 
             XSSFCell totalAmmountCell = this
                 .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
-            totalAmmountCell.setCellValue(this.toCurrency(totalPrice));
+            this.setCurrencyFormat(totalAmmountCell, totalPrice, true, true);
 
             // Add border around the sum area
             String sumRange = sumTextCell.getAddress().formatAsString()
@@ -576,14 +575,6 @@ public class ExcelHandler {
         return cell;
     }
 
-    // Adds text left alignment to a cell, builder pattern
-    private XSSFCell setLeftAlign(XSSFCell cell) {
-        XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
-        alignStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        cell.setCellStyle(alignStyle);
-        return cell;
-    }
-
     // Adds text right alignment to a cell, builder pattern
     private XSSFCell setRightAlign(XSSFCell cell) {
         XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
@@ -637,6 +628,38 @@ public class ExcelHandler {
         RegionUtil.setBorderTop(borderStyle, cellRange, this.fakturaSheet, this.excelWorkbook);
     }
 
+    // Set given ammount as currency to given cell. Alignment and bold option possible.
+    private XSSFCell setCurrencyFormat(
+        XSSFCell cell,
+        double ammount,
+        boolean rightAlign,
+        boolean bold) {
+
+        // Double-safety, format to currency in Java first...
+        final Locale seLocale = new Locale("sv", "SE");
+        NumberFormat swedishFormat = NumberFormat.getCurrencyInstance(seLocale);
+        cell.setCellValue(swedishFormat.format(ammount));
+
+        // ...and set the same Excel cell format, so Excel won't warn about the cell's format
+        final String excelFormat = "# ##0,00 kr";
+        XSSFCellStyle currencyStyle = this.excelWorkbook.createCellStyle();
+
+        if (rightAlign) {
+            currencyStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        }
+
+        if (bold) {
+            XSSFFont font = this.excelWorkbook.createFont();
+            font.setBold(bold);
+            currencyStyle.setFont(font);
+        }
+
+        currencyStyle.setDataFormat(
+            this.excelWorkbook.getCreationHelper().createDataFormat().getFormat(excelFormat));
+        cell.setCellStyle(currencyStyle);
+        return cell;
+    }
+
     // Adds a new row, having one left padding column, so the next cell is always index 1
     private XSSFRow createNewRow(int rowNr) {
         XSSFRow row = this.fakturaSheet.createRow(rowNr);
@@ -663,26 +686,6 @@ public class ExcelHandler {
         XSSFCell cell = row.createCell(cellNr);
         cell.setCellValue("    ");
         return cell;
-    }
-
-    private String toCurrency(double ammount) {
-
-        Locale swedishLocale = new Locale("sv", "SE");
-        final String krSuffix = " kr";
-
-        DecimalFormatSymbols formatSymbols = DecimalFormatSymbols.getInstance();
-        formatSymbols.setCurrency(Currency.getInstance(swedishLocale));
-        formatSymbols.setCurrencySymbol("kr");
-        formatSymbols.setGroupingSeparator(' ');
-
-        if (ammount < 0.5d) {
-            return "0,00" + krSuffix;
-        }
-        final NumberFormat twoDecimalsFormat = new DecimalFormat("#0,00", formatSymbols);
-        twoDecimalsFormat.setCurrency(Currency.getInstance(swedishLocale));
-        twoDecimalsFormat.setMinimumFractionDigits(2);
-        twoDecimalsFormat.setMaximumFractionDigits(2);
-        return twoDecimalsFormat.format(ammount) + krSuffix;
     }
 
     private static class RowCounter {

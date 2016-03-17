@@ -3,13 +3,11 @@ package se.osdsquash.excel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -122,8 +120,8 @@ public class ExcelHandler {
             clubnameAndInvoiceNrRow.createNextCell();
 
             // Right align last cell here
-            InvoiceCell invoiceNrCell = this
-                .setRightAlign(clubnameAndInvoiceNrRow.createNextCell());
+            InvoiceCell invoiceNrCell = clubnameAndInvoiceNrRow.createNextCell();
+            invoiceNrCell.setAlignment(CellStyle.ALIGN_CENTER);
             invoiceNrCell.setCellValue("FakturaNr:  " + invoiceNr);
 
             // Now add club's org.nr and current date
@@ -141,7 +139,8 @@ public class ExcelHandler {
             // Right align last cell here
             String invoiceDate = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(invoiceCreationCal.getTime());
-            InvoiceCell invoiceDateCell = this.setRightAlign(orgNrAndDateRow.createNextCell());
+            InvoiceCell invoiceDateCell = orgNrAndDateRow.createNextCell();
+            invoiceDateCell.setAlignment(CellStyle.ALIGN_CENTER);
             invoiceDateCell.setCellValue("Datum:  " + invoiceDate);
 
             this.invoiceSheet.createNextPaddedRow();
@@ -204,8 +203,13 @@ public class ExcelHandler {
 
             InvoiceRow referencesRow = this.invoiceSheet.createNextPaddedRow();
 
-            this.setBoldFont(referencesRow.createNextCell(), true).setCellValue("Er referens:");
-            this.setBoldFont(referencesRow.createNextCell(), true).setCellValue("Vår referens:");
+            InvoiceCell yourReferenceCell = referencesRow.createNextCell();
+            yourReferenceCell.setCellValue("Er referens:");
+            yourReferenceCell.applyFontStyles(true, true);
+
+            InvoiceCell ourReferenceCell = referencesRow.createNextCell();
+            ourReferenceCell.setCellValue("Vår referens:");
+            ourReferenceCell.applyFontStyles(true, true);
 
             InvoiceRow nameRow = this.invoiceSheet.createNextPaddedRow();
             nameRow.createNextCell().setCellValue(
@@ -244,11 +248,16 @@ public class ExcelHandler {
 
             InvoiceRow trackTableHeaderRow = this.invoiceSheet.createNextPaddedRow();
 
-            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue(
-                "  Beskrivning");
-            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue("     ");
-            this.setBoldFont(trackTableHeaderRow.createNextCell(), false).setCellValue(
-                "          Belopp");
+            InvoiceCell descriptionCell = trackTableHeaderRow.createNextCell();
+            descriptionCell.setCellValue("  Beskrivning");
+            descriptionCell.applyFontStyles(true, false);
+
+            // Skip one cell...
+            trackTableHeaderRow.createNextCellPadded();
+
+            InvoiceCell ammountCell = trackTableHeaderRow.createNextCell();
+            ammountCell.setCellValue("          Belopp");
+            ammountCell.applyFontStyles(true, false);
 
             // Add border around the header cell range
             String trackHeaderRowArea = trackTableHeaderRow.getCell(1).getAddress().formatAsString()
@@ -343,7 +352,7 @@ public class ExcelHandler {
                         }
 
                         InvoiceCell trackPriceCell = trackPeriodAndPriceRow.createNextCell();
-                        this.setCurrencyFormat(trackPriceCell, trackPrice, true, false);
+                        trackPriceCell.setCurrencyFormat(trackPrice, true, false);
 
                         totalPrice += trackPrice;
                     }
@@ -386,7 +395,7 @@ public class ExcelHandler {
             sumTextCell.setCellValue("  Summa");
 
             InvoiceCell sumValueCell = sumRow.createNextCell();
-            this.setCurrencyFormat(sumValueCell, totalPrice, true, false);
+            sumValueCell.setCurrencyFormat(totalPrice, true, false);
 
             // Write the "moms" row, along with payment instructions box
             InvoiceRow momsRow = this.invoiceSheet.createNextRow();
@@ -394,14 +403,14 @@ public class ExcelHandler {
 
             InvoiceCell paymentInfoCell = momsRow.createNextCell();
             paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
-            this.setCenterAlign(paymentInfoCell);
+            paymentInfoCell.setAlignment(CellStyle.ALIGN_CENTER);
 
             // TODO: Check if there IS moms to set ?!?!?!?!
             double momsValue = 0d;
 
             momsRow.createNextCell().setCellValue("  Varav moms");
             InvoiceCell momsValueCell = momsRow.createNextCell();
-            this.setCurrencyFormat(momsValueCell, momsValue, true, false);
+            momsValueCell.setCurrencyFormat(momsValue, true, false);
 
             // Write the row with the total ammount to pay
             InvoiceRow ammountToPayRow = this.invoiceSheet.createNextRow();
@@ -414,16 +423,18 @@ public class ExcelHandler {
             String dueDateString = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(dueCal.getTime());
 
-            InvoiceCell paymentInfo2Cell = this
-                .setBoldFont(ammountToPayRow.createNextCell(), false);
+            InvoiceCell paymentInfo2Cell = ammountToPayRow.createNextCell();
+            paymentInfo2Cell.applyFontStyles(true, false);
+
             paymentInfo2Cell.setCellValue("Förfallodag " + dueDateString);
-            this.setCenterAlign(paymentInfo2Cell);
+            paymentInfo2Cell.setAlignment(CellStyle.ALIGN_CENTER);
 
-            this.setBoldFont(ammountToPayRow.createNextCell(), false).setCellValue("  Att betala");
+            InvoiceCell ammountToPayTextCell = ammountToPayRow.createNextCell();
+            ammountToPayTextCell.setCellValue("  Att betala");
+            ammountToPayTextCell.applyFontStyles(true, false);
 
-            InvoiceCell totalAmmountCell = this
-                .setBoldFont(ammountToPayRow.createNextCell(), false);
-            this.setCurrencyFormat(totalAmmountCell, totalPrice, true, true);
+            InvoiceCell totalAmmountCell = ammountToPayRow.createNextCell();
+            totalAmmountCell.setCurrencyFormat(totalPrice, true, true);
 
             // Add border around the sum area
             String sumRange = sumTextCell.getAddress().formatAsString()
@@ -435,9 +446,9 @@ public class ExcelHandler {
             InvoiceRow markPaymentRow = this.invoiceSheet.createNextRow();
             markPaymentRow.createNextCellPadded();
 
-            InvoiceCell paymentInfo3Cell = this.setBoldFont(markPaymentRow.createNextCell(), false);
+            InvoiceCell paymentInfo3Cell = markPaymentRow.createNextCell();
             paymentInfo3Cell.setCellValue("Märk betalningen med FakturaNr!");
-            this.setCenterAlign(paymentInfo3Cell);
+            paymentInfo3Cell.setAlignment(CellStyle.ALIGN_CENTER);
 
             // Write the workbook to a new file
             // ------------------------------------------------------------------------------------
@@ -525,39 +536,6 @@ public class ExcelHandler {
         }
     }
 
-    // ------------------------------------------------------------------------------------
-    // ---------------------    BELOW ARE HELPER METHODS AND SUCH    ----------------------
-    // ------------------------------------------------------------------------------------
-
-    // Adds bold font to a cell and possibly italic, builder pattern
-    private InvoiceCell setBoldFont(InvoiceCell cell, boolean italic) {
-
-        XSSFCellStyle style = this.excelWorkbook.createCellStyle();
-        XSSFFont font = this.excelWorkbook.createFont();
-        font.setBold(true);
-        font.setItalic(italic);
-        style.setFont(font);
-
-        cell.setCellStyle(style);
-        return cell;
-    }
-
-    // Adds text right alignment to a cell, builder pattern
-    private InvoiceCell setRightAlign(InvoiceCell cell) {
-        XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
-        alignStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        cell.setCellStyle(alignStyle);
-        return cell;
-    }
-
-    // Adds text center alignment to a cell, builder pattern
-    private InvoiceCell setCenterAlign(InvoiceCell cell) {
-        XSSFCellStyle alignStyle = this.excelWorkbook.createCellStyle();
-        alignStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cell.setCellStyle(alignStyle);
-        return cell;
-    }
-
     // Adds a black border around a cell area, can also be once cell only
     private void addBorder(String cellRangeSpan, boolean thinnerBorder) {
 
@@ -569,37 +547,5 @@ public class ExcelHandler {
         RegionUtil.setBorderLeft(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
         RegionUtil.setBorderRight(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
         RegionUtil.setBorderTop(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
-    }
-
-    // Set given ammount as currency to given cell. Alignment and bold option possible.
-    private InvoiceCell setCurrencyFormat(
-        InvoiceCell cell,
-        double ammount,
-        boolean rightAlign,
-        boolean bold) {
-
-        // Double-safety, format to currency in Java first...
-        final Locale seLocale = new Locale("sv", "SE");
-        NumberFormat swedishFormat = NumberFormat.getCurrencyInstance(seLocale);
-        cell.setCellValue(swedishFormat.format(ammount));
-
-        // ...and set the same Excel cell format, so Excel won't warn about the cell's format
-        final String excelFormat = "# ##0,00 kr";
-        XSSFCellStyle currencyStyle = this.excelWorkbook.createCellStyle();
-
-        if (rightAlign) {
-            currencyStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        }
-
-        if (bold) {
-            XSSFFont font = this.excelWorkbook.createFont();
-            font.setBold(bold);
-            currencyStyle.setFont(font);
-        }
-
-        currencyStyle.setDataFormat(
-            this.excelWorkbook.getCreationHelper().createDataFormat().getFormat(excelFormat));
-        cell.setCellStyle(currencyStyle);
-        return cell;
     }
 }

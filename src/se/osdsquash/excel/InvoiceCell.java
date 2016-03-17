@@ -1,7 +1,9 @@
 package se.osdsquash.excel;
 
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
@@ -30,6 +32,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
  * Invoice Cell class. Using a wrapped XSSFCell, since one can't extend the XSSFCell class!
  */
 public class InvoiceCell implements Cell {
+
+    private static final Locale SWE_LOCALE = new Locale("sv", "SE");
+    private static final String EXCEL_CURRENCY_FORMAT = "# ##0,00 kr";
 
     private XSSFCell cell;
 
@@ -65,6 +70,75 @@ public class InvoiceCell implements Cell {
             this.cell.setHyperlink(link);
             this.cell.setCellStyle(hyperStyle);
         }
+    }
+
+    /**
+     * Set cell's value to given ammount in Swedish "Kr" currency format.
+     * Alignment and bold options also possible.
+     * 
+     * @param ammount The ammount to set as currency
+     * @param rightAlign True to right align, false to not alter alignment
+     * @param bold True to use bold font, false to not alter font
+     */
+    protected void setCurrencyFormat(double ammount, boolean rightAlign, boolean bold) {
+
+        // Double-safety, format to currency in Java first...
+        NumberFormat swedishFormat = NumberFormat.getCurrencyInstance(SWE_LOCALE);
+        this.cell.setCellValue(swedishFormat.format(ammount));
+
+        // ...and set the same Excel cell format, so Excel won't warn about the cell's format
+        XSSFWorkbook currentWorkbook = this.cell.getSheet().getWorkbook();
+        XSSFCellStyle currencyStyle = currentWorkbook.createCellStyle();
+
+        if (rightAlign) {
+            currencyStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        }
+
+        if (bold) {
+            XSSFFont font = currentWorkbook.createFont();
+            font.setBold(bold);
+            currencyStyle.setFont(font);
+        }
+
+        currencyStyle.setDataFormat(
+            currentWorkbook
+                .getCreationHelper()
+                .createDataFormat()
+                .getFormat(EXCEL_CURRENCY_FORMAT));
+
+        this.cell.setCellStyle(currencyStyle);
+    }
+
+    /**
+     * Sets the cell's font styles according to given markers
+     * 
+     * @param bold True if to set bold font style
+     * @param italic True if to set italic font style
+     */
+    protected void applyFontStyles(boolean bold, boolean italic) {
+
+        XSSFWorkbook currentWorkbook = this.cell.getSheet().getWorkbook();
+
+        XSSFCellStyle style = currentWorkbook.createCellStyle();
+        XSSFFont font = currentWorkbook.createFont();
+        font.setBold(bold);
+        font.setItalic(italic);
+        style.setFont(font);
+
+        this.cell.setCellStyle(style);
+    }
+
+    /**
+     * Sets the cell's alignment
+     * @param align value, see <code>org.apache.poi.ss.usermodel.CellStyle</code> for constant values
+     */
+    protected void setAlignment(short align) {
+
+        XSSFWorkbook currentWorkbook = this.cell.getSheet().getWorkbook();
+
+        XSSFCellStyle alignStyle = currentWorkbook.createCellStyle();
+        alignStyle.setAlignment(align);
+        this.cell.setCellStyle(alignStyle);
     }
 
     // -------------------  BELOW ARE DELEGATE METHODS FOR THE WRAPPED CELL -------------------

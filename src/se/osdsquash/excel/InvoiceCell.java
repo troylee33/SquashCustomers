@@ -22,7 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 /**
- * Invoice Cell class. Using a wrapped XSSF Cell, since one can't extend the XSSFCell class!
+ * Invoice Cell class. Using a wrapped XSSFCell, since one can't extend the XSSFCell class!
  */
 public class InvoiceCell implements Cell {
 

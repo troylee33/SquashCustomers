@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
- * Invoice Row class, extending the XSSF Row
+ * Invoice Row class. Using a wrapped XSSFRow.
  */
 public class InvoiceRow implements Row {
 

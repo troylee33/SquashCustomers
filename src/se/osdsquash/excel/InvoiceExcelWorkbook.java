@@ -1,6 +1,5 @@
 package se.osdsquash.excel;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
@@ -12,16 +11,15 @@ public class InvoiceExcelWorkbook extends XSSFWorkbook {
 
     private XSSFSheet invoiceSheet;
 
-    // Initialize this before the first row, which is 0
-    private int rowIndex = -1;
-
+    /**
+     * Creates a new Excel workbook with one Invoice sheet
+     */
     protected InvoiceExcelWorkbook() {
         super(XSSFWorkbookType.XLSX);
         this.invoiceSheet = super.createSheet("Faktura");
     }
 
-    protected InvoiceRow createNextRow() {
-        XSSFRow row = this.invoiceSheet.createRow(++this.rowIndex);
-        return new InvoiceRow(row);
+    protected XSSFSheet getInvoiceSheet() {
+        return this.invoiceSheet;
     }
 }

@@ -31,8 +31,6 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
 
 import se.osdsquash.common.SquashProperties;
 import se.osdsquash.common.SquashUtil;
@@ -58,7 +56,7 @@ public class ExcelHandler {
 
     private XmlRepository xmlRepository;
 
-    private XSSFWorkbook excelWorkbook;
+    private InvoiceExcelWorkbook excelWorkbook;
     private XSSFSheet fakturaSheet;
 
     public ExcelHandler(XmlRepository xmlRepository) {
@@ -86,8 +84,8 @@ public class ExcelHandler {
             // ------------------------------------------------------------------------------------
 
             // Create a new workbook having one sheet
-            this.excelWorkbook = new XSSFWorkbook(XSSFWorkbookType.XLSX);
-            this.fakturaSheet = this.excelWorkbook.createSheet("Faktura");
+            this.excelWorkbook = new InvoiceExcelWorkbook();
+            this.fakturaSheet = this.excelWorkbook.getInvoiceSheet();
 
             // Set some generic options
             POIXMLProperties.CoreProperties docCoreProperties = this.excelWorkbook

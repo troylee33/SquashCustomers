@@ -3,11 +3,16 @@ package se.osdsquash.excel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -371,7 +376,7 @@ public class ExcelHandler {
                         XSSFCell trackPriceCell = trackPeriodAndPriceRow
                             .createCell(cellCounter.next());
                         this.setLeftAlign(trackPriceCell);
-                        trackPriceCell.setCellValue(trackPrice); // TODO, format!
+                        trackPriceCell.setCellValue(this.toCurrency(trackPrice));
 
                         totalPrice += trackPrice;
                     }
@@ -414,7 +419,8 @@ public class ExcelHandler {
 
             XSSFCell sumTextCell = sumRow.createCell(cellCounter.next());
             sumTextCell.setCellValue("  Summa");
-            this.setLeftAlign(sumRow.createCell(cellCounter.next())).setCellValue(totalPrice); // TODO, format!
+            this.setLeftAlign(sumRow.createCell(cellCounter.next())).setCellValue(
+                this.toCurrency(totalPrice));
 
             // Write the "moms" row, along with payment instructions box
             XSSFRow momsRow = this.fakturaSheet.createRow(rowCounter.next());
@@ -426,7 +432,8 @@ public class ExcelHandler {
 
             momsRow.createCell(cellCounter.next()).setCellValue("  Varav moms");
 
-            this.setLeftAlign(momsRow.createCell(cellCounter.next())).setCellValue(0); // TODO, format!. Check if there ARE moms?
+            this.setLeftAlign(momsRow.createCell(cellCounter.next())).setCellValue(
+                this.toCurrency(0d)); // TODO: Check if there IS moms?
 
             // Write the row with the total ammount to pay
             XSSFRow ammountToPayRow = this.fakturaSheet.createRow(rowCounter.next());
@@ -449,7 +456,7 @@ public class ExcelHandler {
 
             XSSFCell totalAmmountCell = this
                 .setBoldFont(ammountToPayRow.createCell(cellCounter.next()), false);
-            totalAmmountCell.setCellValue(String.valueOf(totalPrice) + " kr"); // TODO, format!
+            totalAmmountCell.setCellValue(this.toCurrency(totalPrice));
 
             // Add border around the sum area
             String sumRange = sumTextCell.getAddress().formatAsString()
@@ -656,6 +663,26 @@ public class ExcelHandler {
         XSSFCell cell = row.createCell(cellNr);
         cell.setCellValue("    ");
         return cell;
+    }
+
+    private String toCurrency(double ammount) {
+
+        Locale swedishLocale = new Locale("sv", "SE");
+        final String krSuffix = " kr";
+
+        DecimalFormatSymbols formatSymbols = DecimalFormatSymbols.getInstance();
+        formatSymbols.setCurrency(Currency.getInstance(swedishLocale));
+        formatSymbols.setCurrencySymbol("kr");
+        formatSymbols.setGroupingSeparator(' ');
+
+        if (ammount < 0.5d) {
+            return "0,00" + krSuffix;
+        }
+        final NumberFormat twoDecimalsFormat = new DecimalFormat("#0,00", formatSymbols);
+        twoDecimalsFormat.setCurrency(Currency.getInstance(swedishLocale));
+        twoDecimalsFormat.setMinimumFractionDigits(2);
+        twoDecimalsFormat.setMaximumFractionDigits(2);
+        return twoDecimalsFormat.format(ammount) + krSuffix;
     }
 
     private static class RowCounter {

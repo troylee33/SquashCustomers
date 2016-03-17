@@ -19,6 +19,7 @@
 	<property name="resources.dir" location="${basedir}/resources" />
 	<property name="dist.jar.file" location="${ant.build.dir}/SquashCustomers.jar" />
 	<property name="dist.macapp.dir" location="${ant.build.dir}/MacApp" />
+	<property name="app.name" value="SquashKunder" />
 	
 	<!-- Include JAXB task to generate classes from XSD -->
 	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
@@ -104,15 +105,15 @@
 		<!-- 5. Also create a Mac OS X application package based on the jar -->
 		<echo message="Creates the Jar package..." />
 	    <bundleapp outputdirectory="${dist.macapp.dir}"
-	        	   name="SquashKunder"
+	        	   name="${app.name}"
 	        	   displayname="SquashKunder"
 	    		   icon="${resources.dir}/Racket.icns"
-	        	   identifier="se.osdsquash.SquashKunder"
+	        	   identifier="se.osdsquash.${app.name}"
 	        	   shortversion="1.0"
 	    		   signature="OSSF"
 	    		   copyright="Östersunds Squashförening 2016"
 	        	   applicationCategory="public.app-category.sports"
-	        	   mainclassname="se/osdsquash/SquashKunder">
+	        	   mainclassname="se/osdsquash/${app.name}">
 	    	<classpath file="${dist.jar.file}"/>
 	        <option value="-Dapple.laf.useScreenMenuBar=true"/>
 	    </bundleapp>
@@ -120,7 +121,7 @@
 		<echo level="info" message=" " />
 		<echo level="info" message="BUILD COMPLETE!" />
 		<echo level="info" message="The executable jar file is here: ${dist.jar.file}" />
-		<echo level="info" message="The Mac OS X application is here: ${dist.macapp.dir}/SquashKunder" />
+		<echo level="info" message="The Mac OS X application is here: ${dist.macapp.dir}/${app.name}" />
 		<echo level="info" message=" " />
 		<echo level="info" message="Use the OS X app for Mac and the jar file for other platforms." />
 		<echo level="info" message=" " />

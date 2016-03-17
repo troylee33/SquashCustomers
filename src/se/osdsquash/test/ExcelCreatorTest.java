@@ -1,5 +1,8 @@
 package se.osdsquash.test;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 
@@ -60,5 +63,13 @@ public class ExcelCreatorTest {
             .createInvoiceFile(customerType, 30)
             .getRelativeFilePath();
         System.out.println("Excel file created : " + filename);
+
+        // Open the file
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            desktop.open(new File(filename));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }

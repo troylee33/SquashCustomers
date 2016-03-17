@@ -83,7 +83,7 @@ public class XmlRepository {
                 .getCodeSource()
                 .getLocation()
                 .getPath();
-            String currentDir = pathToJar.substring(0, pathToJar.lastIndexOf(File.separator));
+            String currentDir = pathToJar.substring(0, pathToJar.lastIndexOf("/"));
 
             DATA_DIR_PATH = currentDir + "/squashdata";
             INVOICES_DIR_PATH = DATA_DIR_PATH + "/invoices";

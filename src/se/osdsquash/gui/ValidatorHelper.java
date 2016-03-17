@@ -53,7 +53,7 @@ public abstract class ValidatorHelper {
                 return true;
             } else {
                 this.messageOutput.setForeground(Color.red);
-                this.messageOutput.setText("Fel: " + this.labelName + " måste anges");
+                this.messageOutput.setText(this.labelName + " saknas");
                 input.setBackground(INVALID_COLOR);
                 return false;
             }

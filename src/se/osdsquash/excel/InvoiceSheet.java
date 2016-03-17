@@ -50,6 +50,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
  * Invoice Row class. Using a wrapped XSSFSheet.
+ * 
+ * <p>
+ * This sheet can create new rows like the iterator pattern
+ * using the method createNextRow(), which will step through
+ * row creation from top to bottom.
+ * </p>
  */
 public class InvoiceSheet implements Sheet {
 

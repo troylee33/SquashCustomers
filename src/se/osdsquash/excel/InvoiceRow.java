@@ -16,6 +16,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
  * Invoice Row class. Using a wrapped XSSFRow.
+ * 
+ * <p>
+ * This row can create new cells like the iterator pattern
+ * using the method createNextCell(), which will step through
+ * cell creation from left to right.
+ * </p>
  */
 public class InvoiceRow implements Row {
 

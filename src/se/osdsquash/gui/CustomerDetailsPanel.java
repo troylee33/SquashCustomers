@@ -1,22 +1,24 @@
 package se.osdsquash.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -65,6 +67,8 @@ public class CustomerDetailsPanel extends JPanel {
     private JLabel eMailLabel;
     private JTextField eMailTextField;
 
+    private List<JComponent> inputsWithVerifiers;
+
     // Tables holding the subscriptions and invoices
     private SubscriptionsTable subscriptionsTable;
     private InvoicesTable invoicesTable;
@@ -87,6 +91,7 @@ public class CustomerDetailsPanel extends JPanel {
 
         super();
         this.dirtyMarker = new DirtyMarker();
+        this.inputsWithVerifiers = new ArrayList<>();
 
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
@@ -164,15 +169,20 @@ public class CustomerDetailsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent event) {
 
-                // Check if we have any validation errors and abort the save
-                String errorMessage = MainGUI.getInstance().getValidationErrorTextLabel().getText();
-
-                if (SquashUtil.isSet(errorMessage)) {
+                // Re-evaluate all fields before save, which also error-marks the fields.
+                // Don't save if we find error(s).
+                boolean validationErrors = false;
+                for (JComponent inputComponent : CustomerDetailsPanel.this.inputsWithVerifiers) {
+                    if (!inputComponent.getInputVerifier().shouldYieldFocus(inputComponent)) {
+                        validationErrors = true;
+                    }
+                }
+                if (validationErrors) {
                     JOptionPane.showMessageDialog(
                         CustomerDetailsPanel.this,
-                        "Kunduppgifterna kan inte sparas eftersom det finns felaktiga uppgifter:"
-                            + "\n\n"
-                            + errorMessage,
+                        "Kunden sparades inte eftersom det finns fel:"
+                            + "\n"
+                            + "Obligatoriska uppgifter saknas.",
                         "Ogiltiga uppgifter",
                         JOptionPane.ERROR_MESSAGE);
                     return;
@@ -183,25 +193,8 @@ public class CustomerDetailsPanel extends JPanel {
                 boolean newCustomer;
 
                 if (CustomerDetailsPanel.this.customerUUID == null) {
+
                     newCustomer = true;
-
-                    // One may slip through validation if nothing was ever entered, because that
-                    // never triggers any validation in the fields. Do a basic validation check.
-                    if ((!CustomerDetailsPanel.this.kundNrTextField
-                        .getInputVerifier()
-                        .shouldYieldFocus(CustomerDetailsPanel.this.kundNrTextField))
-                        || (!CustomerDetailsPanel.this.fornamnTextField
-                            .getInputVerifier()
-                            .shouldYieldFocus(CustomerDetailsPanel.this.fornamnTextField))) {
-
-                        JOptionPane.showMessageDialog(
-                            CustomerDetailsPanel.this,
-                            "Kunden kan inte skapas eftersom det saknas obligatoriska uppgifter!"
-                                + "\n",
-                            "Ogiltiga uppgifter",
-                            JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
 
                     customer = CustomerDetailsPanel.this.xmlRepository.getNewCustomer();
                     CustomerDetailsPanel.this.customerUUID = UUID.randomUUID();
@@ -365,18 +358,12 @@ public class CustomerDetailsPanel extends JPanel {
             this.invoicesTable.setInvoices(invoicesType.getInvoice());
         }
 
-        // Sets all input field validators
+        // Sets all input field validators...
         this.initValidators();
 
-        // We must re-evaluate the validators to get the correct status
-        for (Component component : this.getComponents()) {
-            if (component instanceof JTextField) {
-                JTextField textField = ((JTextField) component);
-                InputVerifier inputVerifier = textField.getInputVerifier();
-                if (inputVerifier != null) {
-                    inputVerifier.shouldYieldFocus(textField);
-                }
-            }
+        // ...and re-evaluate them to get the correct status
+        for (JComponent component : this.inputsWithVerifiers) {
+            component.getInputVerifier().shouldYieldFocus(component);
         }
 
         // Repaint now that things are populated and done:
@@ -400,8 +387,14 @@ public class CustomerDetailsPanel extends JPanel {
         this.customerNr = String.valueOf(customerNr);
         this.kundNrTextField.setText(String.valueOf(customerNr));
 
-        // Sets all input field validators
+        // Sets all input field validators...
         this.initValidators();
+
+        // ...and clear old validation error markers.
+        // We must give the user a chance to enter everything before we error-mark.
+        for (JComponent component : this.inputsWithVerifiers) {
+            component.setBackground(Color.WHITE);
+        }
 
         this.kundNrTextField.requestFocus();
 
@@ -456,33 +449,41 @@ public class CustomerDetailsPanel extends JPanel {
     // Resets/creates all input field validators
     private void initValidators() {
 
-        // Validation errors are written to a main panel field
+        // Validation errors are written to the main panel
         MainGUI mainGui = MainGUI.getInstance();
 
-        this.kundNrTextField.setInputVerifier(
-            new ValidatorHelper.CustomerNrJTextFieldVerifier(
-                this.customerNr,
-                mainGui.getValidationErrorTextLabel()));
+        // Collect the fields having verifiers
+        this.inputsWithVerifiers.clear();
 
-        this.fornamnTextField.setInputVerifier(
-            new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
-                "Förnamn",
-                mainGui.getValidationErrorTextLabel()));
+        InputVerifier kundNrVerifier = new ValidatorHelper.CustomerNrJTextFieldVerifier(
+            this.customerNr,
+            mainGui.getValidationErrorTextLabel());
+        this.kundNrTextField.setInputVerifier(kundNrVerifier);
+        this.inputsWithVerifiers.add(this.kundNrTextField);
 
-        this.gatuAdressTextField.setInputVerifier(
-            new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
-                "Gatuadress",
-                mainGui.getValidationErrorTextLabel()));
+        InputVerifier fornamnVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
+            "Obligatoriska uppgifter",
+            mainGui.getValidationErrorTextLabel());
+        this.fornamnTextField.setInputVerifier(fornamnVerifier);
+        this.inputsWithVerifiers.add(this.fornamnTextField);
 
-        this.postNrTextField.setInputVerifier(
-            new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
-                "Postnr",
-                mainGui.getValidationErrorTextLabel()));
+        InputVerifier streetVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
+            "Obligatoriska uppgifter",
+            mainGui.getValidationErrorTextLabel());
+        this.gatuAdressTextField.setInputVerifier(streetVerifier);
+        this.inputsWithVerifiers.add(this.gatuAdressTextField);
 
-        this.ortTextField.setInputVerifier(
-            new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
-                "Ort",
-                mainGui.getValidationErrorTextLabel()));
+        InputVerifier postNrVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
+            "Obligatoriska uppgifter",
+            mainGui.getValidationErrorTextLabel());
+        this.postNrTextField.setInputVerifier(postNrVerifier);
+        this.inputsWithVerifiers.add(this.postNrTextField);
+
+        InputVerifier cityVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
+            "Obligatoriska uppgifter",
+            mainGui.getValidationErrorTextLabel());
+        this.ortTextField.setInputVerifier(cityVerifier);
+        this.inputsWithVerifiers.add(this.ortTextField);
     }
 
     // Default sizes text field

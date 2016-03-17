@@ -44,6 +44,7 @@ import javax.swing.border.TitledBorder;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.common.SubscriptionPeriod;
+import se.osdsquash.mail.MailHandler;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -82,6 +83,7 @@ public class MainGUI extends JFrame {
 
     private final JButton newCustomerButton = new JButton("Ny Kund");
     private final JButton deleteCustomerButton = new JButton("Radera Kund");
+    private final JButton mailToCustomerButton = new JButton("Faktura-mail");
     private final JButton generateInvoicesButton = new JButton("Skapa Fakturor");
 
     private static final MainGUI INSTANCE = new MainGUI();
@@ -202,12 +204,14 @@ public class MainGUI extends JFrame {
                 // Set data according to the selection
                 if (MainGUI.this.customerList.isSelectionEmpty()) {
                     MainGUI.this.deleteCustomerButton.setEnabled(false);
+                    MainGUI.this.mailToCustomerButton.setEnabled(false);
                     MainGUI.this.customerMasterPanel.toggleEnabled(false);
 
                     MainGUI.this.customerMasterPanel.clearCustomer();
 
                 } else {
                     MainGUI.this.deleteCustomerButton.setEnabled(true);
+                    MainGUI.this.mailToCustomerButton.setEnabled(true);
                     MainGUI.this.customerMasterPanel.toggleEnabled(true);
 
                     CustomerType customer = MainGUI.this.customerList.getSelectedValue();
@@ -374,6 +378,37 @@ public class MainGUI extends JFrame {
 
         customerButtonsPanel.add(this.createEmptyRow());
 
+        this.mailToCustomerButton.setToolTipText(
+            "Startar ditt mail-program och förbereder ett nytt faktura-mail till kunden");
+        this.mailToCustomerButton.setMinimumSize(new Dimension(130, 22));
+        this.mailToCustomerButton.setMaximumSize(new Dimension(130, 22));
+        customerButtonsPanel.add(this.mailToCustomerButton);
+
+        // Disable this until a customer is selected
+        MainGUI.this.mailToCustomerButton.setEnabled(false);
+
+        this.mailToCustomerButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                if (MainGUI.this.customerList.isSelectionEmpty()) {
+                    MainGUI.this.printInfoText("Du måste välja en kund att maila", true, true);
+                } else {
+                    CustomerType customer = MainGUI.this.customerList.getSelectedValue();
+                    String eMail = customer.getCustomerInfo().getEmail();
+                    if (SquashUtil.isSet(eMail)) {
+                        MainGUI.this.printInfoText("Mail-programmet startar...", false, true);
+                        new MailHandler().createMailDraft(eMail, true);
+                    } else {
+                        MainGUI.this.printInfoText("Kunden saknar e-postadress", true, true);
+                    }
+                }
+            }
+        });
+
+        customerButtonsPanel.add(this.createEmptyRow());
+
         this.generateInvoicesButton
             .setToolTipText("Skapa fakturor för alla kunder för nästkommande abonnemangsperiod");
         this.generateInvoicesButton.setMinimumSize(new Dimension(130, 22));
@@ -512,7 +547,7 @@ public class MainGUI extends JFrame {
 
     // Creates a filler component, e.g. empty space
     private JComponent createEmptyRow() {
-        return new Box.Filler(new Dimension(20, 10), new Dimension(20, 10), new Dimension(20, 10));
+        return new Box.Filler(new Dimension(16, 10), new Dimension(16, 10), new Dimension(16, 10));
     }
 
     // Adds a customer to the list

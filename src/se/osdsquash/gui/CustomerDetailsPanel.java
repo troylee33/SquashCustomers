@@ -2,9 +2,11 @@ package se.osdsquash.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import se.osdsquash.common.SquashUtil;
+import se.osdsquash.mail.MailHandler;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -75,6 +79,8 @@ public class CustomerDetailsPanel extends JPanel {
 
     private JButton saveButton;
 
+    private MailLinkClicker mailLinkListener;
+
     // True if there are unsaved changes made to the customer
     private final DirtyMarker dirtyMarker;
 
@@ -92,6 +98,7 @@ public class CustomerDetailsPanel extends JPanel {
         super();
         this.dirtyMarker = new DirtyMarker();
         this.inputsWithVerifiers = new ArrayList<>();
+        this.mailLinkListener = new MailLinkClicker();
 
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
@@ -340,6 +347,9 @@ public class CustomerDetailsPanel extends JPanel {
         this.telefonTextField.setText(customerInfo.getTelephone());
         this.eMailTextField.setText(customerInfo.getEmail());
 
+        // This enables a mail-link if e-mail is present, otherwise turns it off
+        this.initMailLink(this.eMailTextField);
+
         this.kundNrTextField.requestFocus();
 
         // Set all subscriptions
@@ -484,6 +494,30 @@ public class CustomerDetailsPanel extends JPanel {
             mainGui.getValidationErrorTextLabel());
         this.ortTextField.setInputVerifier(cityVerifier);
         this.inputsWithVerifiers.add(this.ortTextField);
+    }
+
+    private void initMailLink(JTextField emailField) {
+
+        if (SquashUtil.isSet(emailField.getText())) {
+            emailField.setForeground(Color.BLUE);
+            emailField.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            emailField.setToolTipText("Skicka e-mail");
+            emailField.addMouseListener(this.mailLinkListener);
+        } else {
+            emailField.setForeground(Color.BLACK);
+            emailField.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            emailField.setToolTipText(null);
+            emailField.removeMouseListener(this.mailLinkListener);
+        }
+    }
+
+    private static final class MailLinkClicker extends MouseAdapter {
+
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            JTextField linkField = (JTextField) evt.getSource();
+            new MailHandler().createMailDraft(linkField.getText(), false);
+        }
     }
 
     // Default sizes text field

@@ -41,6 +41,7 @@
 		<pathelement location="${poi.lib.dir}/poi-ooxml-3.14-20160307.jar" />
 		<pathelement location="${poi.lib.dir}/poi-ooxml-schemas-3.14-20160307.jar" />
 		<pathelement location="${poi.lib.dir}/ooxml-lib/xmlbeans-2.6.0.jar" />
+		<pathelement location="${lib.dir}/javax.mail.jar" />
 	</path>
 	
 	<target name="create.package" description="Compiles and creates the application jar">
@@ -84,7 +85,7 @@
 		</javac>
 		
 		<!-- 4. Package the code into a runnable Jar file. We also include 
-		        Apache POI class files from the POI jars, into this jar. -->
+		        Apache POI and Mail classes from their jars, into this jar. -->
 		<echo message="Creates the Jar package..." />
 		<jar jarfile="${dist.jar.file}" manifest="${resources.dir}/MANIFEST.MF">
 			<fileset dir="${ant.classes.dir}">
@@ -100,6 +101,7 @@
 				<include name="se/**/*.gif"/>
 			</fileset>
 			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="javax.mail.jar" />
 		</jar>
 		
 		<!-- 5. Also create a Mac OS X application package based on the jar -->

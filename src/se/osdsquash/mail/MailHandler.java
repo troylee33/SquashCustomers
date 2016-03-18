@@ -45,7 +45,6 @@ public class MailHandler {
 
         FileOutputStream mailOutputStream = null;
         try {
-
             if (attachmentFilename == null) {
                 // If no attachment, we can simply open a new mail right away
                 String uriString = String.format(

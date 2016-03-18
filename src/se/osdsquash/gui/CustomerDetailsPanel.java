@@ -354,7 +354,7 @@ public class CustomerDetailsPanel extends JPanel {
         // Set all invoices
         InvoicesType invoicesType = customerType.getInvoices();
         if (invoicesType != null) {
-            this.invoicesTable.setInvoices(invoicesType.getInvoice());
+            this.invoicesTable.setInvoices(customerInfo, invoicesType.getInvoice());
         }
 
         // Sets all input field validators...

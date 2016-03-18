@@ -31,6 +31,8 @@ import javax.swing.table.TableColumn;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.mail.MailHandler;
+import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.InvoiceStatusType;
 import se.osdsquash.xml.jaxb.InvoiceType;
 
@@ -46,6 +48,8 @@ public class InvoicesTable extends JTable {
     private static final long serialVersionUID = 6855240729945090702L;
 
     private TableCellEditor invoiceStatusEditor;
+
+    private String customerEmail;
 
     /**
      * Constructor, taking existing invoice references, null is OK as well
@@ -74,8 +78,12 @@ public class InvoicesTable extends JTable {
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(450);
+        filenameColumn.setMaxWidth(410);
         filenameColumn.setCellRenderer(new SmallerFontRenderer());
+
+        TableColumn mailColumn = super.getColumnModel().getColumn(TableColumnEnum.MAIL.index);
+        mailColumn.setMaxWidth(40);
+        mailColumn.setCellRenderer(new SmallerFontRenderer());
 
         // Use a combobox editor when editing the invoice status
         {
@@ -89,22 +97,37 @@ public class InvoicesTable extends JTable {
             this.invoiceStatusEditor = new DefaultCellEditor(statusesComboBox);
         }
 
-        // The filename cell is a clickable link that opens it
+        // The filename & mail cells are clickable
         super.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                // If a filename cell has been clicked, open the file
                 if (e.getClickCount() > 0) {
                     int selectedRow = InvoicesTable.this.getSelectedRow();
-                    if (InvoicesTable.this.getSelectedColumn() == TableColumnEnum.FILENAME.index
-                        && selectedRow >= 0) {
-                        InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this.getModel())
-                            .getInvoices()
-                            .get(selectedRow);
-                        if (invoice != null) {
-                            InvoicesTable.this.openFile(invoice.getRelativeFilePath());
+                    int selectedColumn = InvoicesTable.this.getSelectedColumn();
+                    if (selectedRow >= 0) {
+
+                        // If a filename cell has been clicked, open the file
+                        if (selectedColumn == TableColumnEnum.FILENAME.index) {
+                            InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this
+                                .getModel()).getInvoices().get(selectedRow);
+                            if (invoice != null) {
+                                InvoicesTable.this.openFile(invoice.getRelativeFilePath());
+                            }
+
+                            // Create a new mail with the file as attachment
+                        } else if (selectedColumn == TableColumnEnum.MAIL.index) {
+                            InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this
+                                .getModel()).getInvoices().get(selectedRow);
+                            if (invoice != null) {
+                                MainGUI.getInstance().printInfoText(
+                                    "Mail-programmet startar...",
+                                    false,
+                                    true);
+                                new MailHandler()
+                                    .createMailDraft("adress", invoice.getRelativeFilePath(), true);
+                            }
                         }
                     }
                 }
@@ -116,11 +139,12 @@ public class InvoicesTable extends JTable {
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {
 
-        // Set hand cursor for filename links, otherwise standard cursor
+        // Set hand cursor for filename and mail links, otherwise standard cursor
         Point point = e.getPoint();
         int column = InvoicesTable.this.columnAtPoint(point);
         int row = InvoicesTable.this.rowAtPoint(point);
-        if (TableColumnEnum.FILENAME.index == column && row >= 0) {
+        if ((TableColumnEnum.FILENAME.index == column || TableColumnEnum.MAIL.index == column)
+            && row >= 0) {
             InvoicesTable.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             JLabel labelRenderer = (JLabel) InvoicesTable.this.getCellRenderer(row, column);
             labelRenderer.setText("<html><u>)" + labelRenderer.getText() + "</u></html>");
@@ -131,11 +155,13 @@ public class InvoicesTable extends JTable {
         super.processMouseMotionEvent(e);
     }
 
-    protected void setInvoices(List<InvoiceType> invoices) {
+    protected void setInvoices(CustomerInfoType customerInfo, List<InvoiceType> invoices) {
+        this.customerEmail = customerInfo.getEmail();
         this.getInvoicesTableModel().setInvoices(invoices);
     }
 
     protected void clearInvoices() {
+        this.customerEmail = null;
         this.getInvoicesTableModel().clearInvoices();
     }
 
@@ -177,6 +203,7 @@ public class InvoicesTable extends JTable {
             String.class,
             Integer.class,
             XMLGregorianCalendar.class,
+            String.class,
             String.class};
 
         /**
@@ -232,6 +259,8 @@ public class InvoicesTable extends JTable {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.FILENAME.index) {
                 // No edit allowed!
+            } else if (columnIndex == TableColumnEnum.MAIL.index) {
+                // No edit allowed!
             } else if (columnIndex == TableColumnEnum.DUE_DATE.index) {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.STATUS.index) {
@@ -282,6 +311,8 @@ public class InvoicesTable extends JTable {
                     return SquashUtil.getDayFormat(invoice.getDueDate());
                 case FILENAME :
                     return SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath());
+                case MAIL :
+                    return "Mail";
                 case STATUS :
                     return SquashUtil.invoiceStatusTypeToString(invoice.getInvoiceStatus());
                 default :
@@ -294,7 +325,7 @@ public class InvoicesTable extends JTable {
     private static enum TableColumnEnum {
 
         STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), DUE_DATE(2, "Förfaller"), FILENAME(3,
-                "Filnamn");
+                "Filnamn"), MAIL(4, "Mail");
 
         private TableColumnEnum(int index, String name) {
             this.index = index;
@@ -367,7 +398,7 @@ public class InvoicesTable extends JTable {
     }
 
     // Cell renderer using a smaller, size 10 font
-    private static class SmallerFontRenderer extends DefaultTableCellRenderer {
+    private class SmallerFontRenderer extends DefaultTableCellRenderer {
 
         /**
          * Serial UID
@@ -412,6 +443,27 @@ public class InvoicesTable extends JTable {
                     label.setForeground(Color.BLUE);
                     return label;
                 }
+            } else if (column == TableColumnEnum.MAIL.index) {
+
+                if (SquashUtil.isSet(InvoicesTable.this.customerEmail)) {
+                    InvoiceType invoice = ((InvoiceTableModel) table.getModel())
+                        .getInvoices()
+                        .get(row);
+                    if (invoice != null) {
+                        // Set the font style as a link to create a new mail
+                        label.setEnabled(true);
+                        label.setText("<html><u>Mail</u></html>");
+                        label.setToolTipText("Maila fakturan till kunden");
+                        label.setForeground(Color.BLUE);
+                        return label;
+                    }
+                } else {
+                    label.setEnabled(false);
+                    label.setText("Mail");
+                    label.setToolTipText("Kunden saknar e-post");
+                    label.setForeground(Color.LIGHT_GRAY);
+                }
+
             }
 
             return label;

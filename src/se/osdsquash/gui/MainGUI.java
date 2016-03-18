@@ -83,7 +83,7 @@ public class MainGUI extends JFrame {
 
     private final JButton newCustomerButton = new JButton("Ny Kund");
     private final JButton deleteCustomerButton = new JButton("Radera Kund");
-    private final JButton mailToCustomerButton = new JButton("Faktura-mail");
+    private final JButton mailToCustomerButton = new JButton("Maila Kund");
     private final JButton generateInvoicesButton = new JButton("Skapa Fakturor");
 
     private static final MainGUI INSTANCE = new MainGUI();
@@ -379,7 +379,7 @@ public class MainGUI extends JFrame {
         customerButtonsPanel.add(this.createEmptyRow());
 
         this.mailToCustomerButton
-            .setToolTipText("Startar ditt mail-program och förbereder ett nytt mail till kunden");
+            .setToolTipText("Startar ditt mail-program med ett nytt mail till kunden");
         this.mailToCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.mailToCustomerButton.setMaximumSize(new Dimension(130, 22));
         customerButtonsPanel.add(this.mailToCustomerButton);

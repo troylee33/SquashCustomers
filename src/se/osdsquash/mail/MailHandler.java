@@ -25,6 +25,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
 
 import se.osdsquash.common.SquashProperties;
+import se.osdsquash.common.SquashUtil;
 
 /**
  * Handles e-mailing to customers
@@ -35,17 +36,17 @@ public class MailHandler {
      * Creates a new mail draft and opens it in the default mail program
      * 
      * @param recipientAddress The customer's address
-     * @param attachmentFilename Optional filename to attach to mail, null if no file
+     * @param attachmentPath Optional path and filename to attach to mail, null if no file
      * @param useInvoiceTopic True if to add the invoice text to the mail
      */
     public void createMailDraft(
         String recipientAddress,
-        String attachmentFilename,
+        String attachmentPath,
         boolean useInvoiceTopic) {
 
         FileOutputStream mailOutputStream = null;
         try {
-            if (attachmentFilename == null) {
+            if (attachmentPath == null) {
                 // If no attachment, we can simply open a new mail right away
                 String uriString = String.format(
                     "mailto:%s?subject=%s&body=%s",
@@ -106,9 +107,9 @@ public class MailHandler {
 
                 // Add another part, which is the attachment
                 messageBodyPart = new MimeBodyPart();
-                DataSource source = new FileDataSource(attachmentFilename);
-                messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(attachmentFilename);
+                DataSource fileSource = new FileDataSource(attachmentPath);
+                messageBodyPart.setDataHandler(new DataHandler(fileSource));
+                messageBodyPart.setFileName(SquashUtil.getFilenameFromPath(attachmentPath));
                 multipart.addBodyPart(messageBodyPart);
 
                 // Complete the message

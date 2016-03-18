@@ -27,8 +27,10 @@ import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 
 import se.osdsquash.common.SquashProperties;
+import se.osdsquash.common.SquashRuntimeInfo;
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.excel.ExcelHandler;
+import se.osdsquash.logger.SquashLogger;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.CustomersType;
@@ -46,6 +48,8 @@ import se.osdsquash.xml.jaxb.SubscriptionsType;
  * </p>
  */
 public class XmlRepository {
+
+    private static final SquashLogger logger = SquashLogger.getInstance();
 
     // We start at 3000, to avoid duplicates with the club's historical data
     private static final int DEFAULT_START_NR = 3000;
@@ -81,15 +85,7 @@ public class XmlRepository {
             SCHEMA = schemaFactory
                 .newSchema(XmlRepository.class.getClassLoader().getResource(XSD_SCHEMA_PATH));
 
-            // Find out where this class is executing from and build some paths
-            String pathToJar = XmlRepository.class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .getPath();
-            String currentDir = pathToJar.substring(0, pathToJar.lastIndexOf("/"));
-
-            DATA_DIR_PATH = currentDir + "/squashdata";
+            DATA_DIR_PATH = SquashRuntimeInfo.getDataDirPath();
             INVOICES_DIR_PATH = DATA_DIR_PATH + "/invoices";
             BACKUPS_DIR_PATH = DATA_DIR_PATH + "/backups";
             XML_STORAGE_FILE_PATH = DATA_DIR_PATH + "/CustomerDatabase.xml";
@@ -155,12 +151,12 @@ public class XmlRepository {
             for (File file : tooOldFiles) {
                 try {
                     if (!file.delete()) {
-                        System.out
-                            .println("Notis: Kunde ej radera gammal backup-fil: " + file.getPath());
+                        logger.log(
+                            "Notis: Kunde ej radera gammal backup-fil: " + file.getPath(),
+                            true);
                     }
                 } catch (Exception ex) {
-                    System.out
-                        .println("Notis: Kunde ej radera gammal backup-fil: " + file.getPath());
+                    logger.log("Notis: Kunde ej radera gammal backup-fil: " + file.getPath(), true);
                 }
 
             }
@@ -173,10 +169,11 @@ public class XmlRepository {
             this.xmlFile = new File(XML_STORAGE_FILE_PATH);
             if (!this.xmlFile.isFile()) {
                 this.xmlFile = null;
-                System.out.println(
+                logger.log(
                     "XML-databasens fil existerade inte: "
                         + XML_STORAGE_FILE_PATH
-                        + ". Inga kunder finns.");
+                        + ". Inga kunder finns - startar med ny databas.",
+                    false);
             }
 
             // Parse the XML if it exists
@@ -194,9 +191,10 @@ public class XmlRepository {
                         new File(backupFilePath).toPath(),
                         StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception exception) {
-                    System.out.println(
+                    logger.log(
                         "Varning: Fel uppstod vid skapande a backup-fil för XML-databasen. Felmeddelande: "
-                            + exception.getMessage());
+                            + exception.getMessage(),
+                        true);
                 }
 
                 xmlFileStream = new FileInputStream(XML_STORAGE_FILE_PATH);

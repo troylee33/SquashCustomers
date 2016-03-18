@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 
 import se.osdsquash.common.SquashProperties;
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.logger.SquashLogger;
 
 /**
  * Handles e-mailing to customers
@@ -78,6 +79,7 @@ public class MailHandler {
                 }
 
                 if (errorMessage != null) {
+                    SquashLogger.getInstance().log(errorMessage, true);
                     JOptionPane
                         .showMessageDialog(null, errorMessage, "Fel", JOptionPane.ERROR_MESSAGE);
                 }
@@ -160,6 +162,7 @@ public class MailHandler {
                 }
 
                 if (errorMessage != null) {
+                    SquashLogger.getInstance().log(errorMessage, true);
                     JOptionPane
                         .showMessageDialog(null, errorMessage, "Fel", JOptionPane.ERROR_MESSAGE);
                 }

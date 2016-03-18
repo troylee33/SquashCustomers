@@ -7,6 +7,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import se.osdsquash.gui.MainGUI;
+import se.osdsquash.logger.SquashLogger;
 
 /**
  * Main class that initializes and starts the program.
@@ -16,14 +17,15 @@ public class SquashKunder {
 
     public static void main(String[] args) {
 
+        final SquashLogger logger = SquashLogger.getInstance();
+
         // Set generic error handling, showing all errors
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 
             @Override
             public void uncaughtException(Thread thread, Throwable error) {
 
-                System.err.println("Oväntat fel i programmet:");
-                error.printStackTrace();
+                logger.log("Oväntat fel i programmet, felmeddelande: " + error.getMessage(), error);
 
                 JOptionPane.showMessageDialog(
                     null,

@@ -378,8 +378,8 @@ public class MainGUI extends JFrame {
 
         customerButtonsPanel.add(this.createEmptyRow());
 
-        this.mailToCustomerButton.setToolTipText(
-            "Startar ditt mail-program och förbereder ett nytt faktura-mail till kunden");
+        this.mailToCustomerButton
+            .setToolTipText("Startar ditt mail-program och förbereder ett nytt mail till kunden");
         this.mailToCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.mailToCustomerButton.setMaximumSize(new Dimension(130, 22));
         customerButtonsPanel.add(this.mailToCustomerButton);
@@ -399,7 +399,7 @@ public class MainGUI extends JFrame {
                     String eMail = customer.getCustomerInfo().getEmail();
                     if (SquashUtil.isSet(eMail)) {
                         MainGUI.this.printInfoText("Mail-programmet startar...", false, true);
-                        new MailHandler().createMailDraft(eMail, true);
+                        new MailHandler().createMailDraft(eMail, null, false);
                     } else {
                         MainGUI.this.printInfoText("Kunden saknar e-postadress", true, true);
                     }

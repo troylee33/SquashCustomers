@@ -3,6 +3,8 @@ package se.osdsquash;
 import java.awt.EventQueue;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import se.osdsquash.gui.MainGUI;
 
@@ -32,6 +34,18 @@ public class SquashKunder {
                     JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        // Try setting the 'Nimbus' Look & Feel, if present
+        try {
+            for (LookAndFeelInfo lfInfo : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equalsIgnoreCase(lfInfo.getName())) {
+                    UIManager.setLookAndFeel(lfInfo.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            // Ok, fallback to default one...
+        }
 
         // Creates the Main GUI JFrame and display it
         EventQueue.invokeLater(new Runnable() {

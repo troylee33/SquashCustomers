@@ -2,12 +2,14 @@ package se.osdsquash.xml;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -59,7 +61,7 @@ public class XmlRepository {
      */
     public static final String INVOICES_DIR_PATH;
 
-    private static final String TIMESTAMP_DATE_FORMAT = "yyyyMMdd_HHmmss";
+    private static final String FILE_DATE_FORMAT = "yyyyMMdd";
 
     // This is the "in memory" XML data object:
     private JAXBElement<CustomersType> customersJaxbXml;
@@ -114,7 +116,7 @@ public class XmlRepository {
 
     private void init() {
 
-        // Always make sure we have the data folders:
+        // Always make sure we have all data folders:
         File dataDir = new File(DATA_DIR_PATH);
         if (!dataDir.exists()) {
             if (!dataDir.mkdir()) {
@@ -131,11 +133,43 @@ public class XmlRepository {
             }
         }
 
-        // Load, lock and parse the XML file - if it exists
+        File backupsDir = new File(BACKUPS_DIR_PATH);
+        if (!backupsDir.exists()) {
+            if (!backupsDir.mkdir()) {
+                throw new RuntimeException(
+                    "FEL när backups-katalogen skulle skapas, kontrollera att det går att skriva till lagringsytan!");
+            }
+        }
+
+        // Check for very old backup files and delete them
+        final long thresholdMillis = this.getBackupThresholdMillis();
+        File[] tooOldFiles = backupsDir.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isFile() && pathname.lastModified() < thresholdMillis;
+            }
+        });
+
+        if (tooOldFiles != null) {
+            for (File file : tooOldFiles) {
+                try {
+                    if (!file.delete()) {
+                        System.out
+                            .println("Notis: Kunde ej radera gammal backup-fil: " + file.getPath());
+                    }
+                } catch (Exception ex) {
+                    System.out
+                        .println("Notis: Kunde ej radera gammal backup-fil: " + file.getPath());
+                }
+
+            }
+        }
+
+        // Load and parse the XML file - if it exists
         FileInputStream xmlFileStream = null;
         try {
 
-            // Check if the file exists or not
             this.xmlFile = new File(XML_STORAGE_FILE_PATH);
             if (!this.xmlFile.isFile()) {
                 this.xmlFile = null;
@@ -148,19 +182,12 @@ public class XmlRepository {
             // Parse the XML if it exists
             if (this.xmlFile != null) {
 
-                // Create a backup of the XML file before we start
-                File backupsDir = new File(BACKUPS_DIR_PATH);
-                if (!backupsDir.exists()) {
-                    if (!backupsDir.mkdir()) {
-                        throw new RuntimeException(
-                            "FEL när backups-katalogen skulle skapas, kontrollera att det går att skriva till lagringsytan!");
-                    }
-                }
-
+                // Create a backup of the XML file before we start.
+                // We re-use one file per day, or we could get too many.
                 try {
                     String backupFilePath = BACKUPS_DIR_PATH
                         + "/CustomerDbBackup_"
-                        + new SimpleDateFormat(TIMESTAMP_DATE_FORMAT).format(new Date())
+                        + new SimpleDateFormat(FILE_DATE_FORMAT).format(new Date())
                         + ".xml";
                     Files.copy(
                         this.xmlFile.toPath(),
@@ -170,7 +197,6 @@ public class XmlRepository {
                     System.out.println(
                         "Varning: Fel uppstod vid skapande a backup-fil för XML-databasen. Felmeddelande: "
                             + exception.getMessage());
-                    ;
                 }
 
                 xmlFileStream = new FileInputStream(XML_STORAGE_FILE_PATH);
@@ -500,5 +526,12 @@ public class XmlRepository {
                 // Ignore this...
             }
         }
+    }
+
+    // How old backup files we keep
+    private long getBackupThresholdMillis() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, -1);
+        return cal.getTimeInMillis();
     }
 }

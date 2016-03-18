@@ -47,6 +47,13 @@ public class InvoicesTable extends JTable {
      */
     private static final long serialVersionUID = 6855240729945090702L;
 
+    private static final Font PAID_FONT;
+    private static final Color PAID_COLOR;
+    static {
+        PAID_FONT = new Font(null, Font.BOLD, 10);
+        PAID_COLOR = new Color(28, 116, 40);
+    }
+
     private TableCellEditor invoiceStatusEditor;
 
     private CustomerInfoType customerInfo;
@@ -64,26 +71,26 @@ public class InvoicesTable extends JTable {
 
         TableColumn statusColumn = super.getColumnModel().getColumn(TableColumnEnum.STATUS.index);
         statusColumn.setMaxWidth(70);
-        statusColumn.setCellRenderer(new SmallerFontRenderer());
+        statusColumn.setCellRenderer(new InvoiceCellRenderer());
 
         TableColumn invoiceNrColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.INVOICE_NR.index);
         invoiceNrColumn.setMaxWidth(70);
-        invoiceNrColumn.setCellRenderer(new SmallerFontRenderer());
+        invoiceNrColumn.setCellRenderer(new InvoiceCellRenderer());
 
         TableColumn dueDateColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.DUE_DATE.index);
         dueDateColumn.setMaxWidth(80);
-        dueDateColumn.setCellRenderer(new SmallerFontRenderer());
+        dueDateColumn.setCellRenderer(new InvoiceCellRenderer());
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
         filenameColumn.setMaxWidth(410);
-        filenameColumn.setCellRenderer(new SmallerFontRenderer());
+        filenameColumn.setCellRenderer(new InvoiceCellRenderer());
 
         TableColumn mailColumn = super.getColumnModel().getColumn(TableColumnEnum.MAIL.index);
         mailColumn.setMaxWidth(40);
-        mailColumn.setCellRenderer(new SmallerFontRenderer());
+        mailColumn.setCellRenderer(new InvoiceCellRenderer());
 
         // Use a combobox editor when editing the invoice status
         {
@@ -258,6 +265,7 @@ public class InvoicesTable extends JTable {
 
         protected void clearInvoices() {
             this.invoices.clear();
+            super.fireTableDataChanged();
         }
 
         protected List<InvoiceType> getInvoices() {
@@ -420,8 +428,8 @@ public class InvoicesTable extends JTable {
         }
     }
 
-    // Cell renderer using a smaller, size 10 font
-    private class SmallerFontRenderer extends DefaultTableCellRenderer {
+    // Cell renderer for the invoice cells
+    private class InvoiceCellRenderer extends DefaultTableCellRenderer {
 
         /**
          * Serial UID
@@ -450,7 +458,13 @@ public class InvoicesTable extends JTable {
             JLabel label = new JLabel(value.toString());
             label.setFont(new Font(null, Font.PLAIN, 10));
 
-            if (column == TableColumnEnum.DUE_DATE.index) {
+            if (column == TableColumnEnum.STATUS.index) {
+                InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
+                if (invoice != null && InvoiceStatusType.PAID.equals(invoice.getInvoiceStatus())) {
+                    label.setForeground(PAID_COLOR);
+                    label.setFont(PAID_FONT);
+                }
+            } else if (column == TableColumnEnum.DUE_DATE.index) {
                 InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
                 if (invoice != null && SquashUtil.isOverdue(invoice)) {
                     label.setForeground(Color.RED);

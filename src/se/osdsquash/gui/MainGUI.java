@@ -247,28 +247,28 @@ public class MainGUI extends JFrame {
 
         // Below, we have message fields to the left and invoices table to the right
         JPanel messagesAndInvoicesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        messagesAndInvoicesPanel.setPreferredSize(new Dimension(1020, 220));
+        messagesAndInvoicesPanel.setPreferredSize(new Dimension(1000, 220));
 
         // Add two labels that we use as input validation error display,
         // and one for generic messages for info and errors.
         // Place the two messages on separate rows in one panel.
         JPanel messagesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        messagesPanel.setPreferredSize(new Dimension(416, 220));
+        messagesPanel.setPreferredSize(new Dimension(390, 220));
 
         this.validationErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.validationErrorLabel.setForeground(Color.RED);
-        this.validationErrorLabel.setSize(400, 32); // X, Y
-        this.validationErrorLabel.setMinimumSize(new Dimension(400, 32));
-        this.validationErrorLabel.setMaximumSize(new Dimension(400, 32));
-        this.validationErrorLabel.setPreferredSize(new Dimension(400, 32));
+        this.validationErrorLabel.setSize(380, 32); // X, Y
+        this.validationErrorLabel.setMinimumSize(new Dimension(380, 32));
+        this.validationErrorLabel.setMaximumSize(new Dimension(380, 32));
+        this.validationErrorLabel.setPreferredSize(new Dimension(380, 32));
         messagesPanel.add(this.validationErrorLabel);
 
         this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         this.infoLabel.setForeground(Color.BLUE);
-        this.infoLabel.setSize(400, 32); // X, Y
-        this.infoLabel.setMinimumSize(new Dimension(400, 32));
-        this.infoLabel.setMaximumSize(new Dimension(400, 32));
-        this.infoLabel.setPreferredSize(new Dimension(400, 32));
+        this.infoLabel.setSize(380, 32); // X, Y
+        this.infoLabel.setMinimumSize(new Dimension(380, 32));
+        this.infoLabel.setMaximumSize(new Dimension(380, 32));
+        this.infoLabel.setPreferredSize(new Dimension(380, 32));
         messagesPanel.add(this.infoLabel);
 
         // Add the messages to the left

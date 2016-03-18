@@ -6,10 +6,7 @@
  TODOs 2016-03-17:
 
   - Hitta buggen som ger dirty-varning fastän oändrat !!!
- 
- 
- Senare features att införa:
- 
- - Implementera generering av faktura-mail via Desktop.mail() ...
+
+ - Fixa validering om fil saknas för mail
  - Inför loggning till fil för tekniska fel, etc.
  

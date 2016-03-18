@@ -25,7 +25,9 @@ import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 
 import se.osdsquash.common.SquashProperties;
+import se.osdsquash.common.SquashUtil;
 import se.osdsquash.excel.ExcelHandler;
+import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.CustomersType;
 import se.osdsquash.xml.jaxb.InvoiceType;
@@ -412,22 +414,39 @@ public class XmlRepository {
      * Generates invoice files for all customers for a given period
      * and saves everything at the save time.
      * 
-     * @return A list of all invoice filenames created
+     * @return The invoice creation result
      */
-    public synchronized List<String> generateAndStoreInvoices() {
+    public synchronized InvoiceResults generateAndStoreInvoices() {
 
         List<String> invoiceFilenames = new ArrayList<>();
+        List<String> customersWithoutSubscriptions = new ArrayList<>();
 
         ExcelHandler excelHandler = new ExcelHandler(this);
         for (CustomerType customer : this.getAllCustomers()) {
             InvoiceType invoice = excelHandler
                 .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE);
             invoiceFilenames.add(invoice.getRelativeFilePath());
+
+            // Period is null if there is no subscription
+            if (invoice.getPeriodStartDate() == null) {
+
+                CustomerInfoType customerInfo = customer.getCustomerInfo();
+                String customerLabel = String.valueOf(customerInfo.getCustomerNumber())
+                    + " ("
+                    + (!SquashUtil.isSet(customerInfo.getFirstname())
+                        ? ""
+                        : customerInfo.getFirstname())
+                    + (!SquashUtil.isSet(customerInfo.getLastname())
+                        ? ""
+                        : " " + customerInfo.getLastname())
+                    + ")";
+                customersWithoutSubscriptions.add(customerLabel);
+            }
         }
 
         this.saveRepository();
 
-        return invoiceFilenames;
+        return new InvoiceResults(invoiceFilenames, customersWithoutSubscriptions);
     }
 
     /**

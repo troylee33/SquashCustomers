@@ -45,6 +45,7 @@ import javax.swing.border.TitledBorder;
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.common.SubscriptionPeriod;
 import se.osdsquash.mail.MailHandler;
+import se.osdsquash.xml.InvoiceResults;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -701,11 +702,16 @@ public class MainGUI extends JFrame {
             // Loop all customers and generate invoices as Excel-files
             this.filesResult = new StringBuilder(1024);
 
-            List<String> invoiceFileResults = MainGUI.this.xmlRepository.generateAndStoreInvoices();
-            this.filesResult
-                .append("Dessa " + invoiceFileResults.size() + " fakturafiler har skapats:\n\n");
+            InvoiceResults invoiceFileResults = MainGUI.this.xmlRepository
+                .generateAndStoreInvoices();
 
-            Iterator<String> filenameIterator = invoiceFileResults.iterator();
+            List<String> allFilenames = invoiceFileResults.getAllInvoiceFilenames();
+            List<String> emptyInvoiceCustomers = invoiceFileResults.getEmptyInvoiceCustomers();
+
+            this.filesResult
+                .append("Dessa " + allFilenames.size() + " fakturafiler har skapats:\n\n");
+
+            Iterator<String> filenameIterator = allFilenames.iterator();
             while (filenameIterator.hasNext()) {
                 String fullFilename = filenameIterator.next();
                 this.filesResult.append(SquashUtil.getFilenameFromPath(fullFilename));
@@ -713,6 +719,26 @@ public class MainGUI extends JFrame {
                     this.filesResult.append("\n");
                 }
             }
+
+            if (!emptyInvoiceCustomers.isEmpty()) {
+                this.filesResult.append("\n");
+                this.filesResult.append("\n");
+                this.filesResult.append("\n");
+                this.filesResult.append(
+                    "OBS: Dessa "
+                        + emptyInvoiceCustomers.size()
+                        + " kunders faktura saknar abonnemang:\n\n");
+
+                Iterator<String> customerIterator = emptyInvoiceCustomers.iterator();
+                while (customerIterator.hasNext()) {
+                    this.filesResult.append(customerIterator.next());
+                    if (customerIterator.hasNext()) {
+                        this.filesResult.append("\n");
+                    }
+                }
+            }
+
+            this.filesResult.append("\n");
 
             return this.filesResult.toString();
         }

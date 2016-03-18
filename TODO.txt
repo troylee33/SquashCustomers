@@ -7,6 +7,5 @@
 
   - Hitta buggen som ger dirty-varning fastän oändrat !!!
 
- - Fixa validering om fil saknas för mail
  - Inför loggning till fil för tekniska fel, etc.
  

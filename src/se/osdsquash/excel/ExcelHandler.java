@@ -280,8 +280,11 @@ public class ExcelHandler {
             InvoiceCell firstTableCell = firstTableRow.createNextCellPadded();
             String trackTableStartCellName = firstTableCell.getAddress().formatAsString();
 
+            boolean hasSubscriptions;
             SubscriptionsType subscriptionsType = customer.getSubscriptions();
             if (subscriptionsType == null || subscriptionsType.getSubscription().isEmpty()) {
+
+                hasSubscriptions = false;
 
                 // If no subscriptions, write a red warning info row about this
                 InvoiceRow noSubscriptionsRow = this.invoiceSheet.createNextRow();
@@ -298,6 +301,9 @@ public class ExcelHandler {
                 warningTextCell.setCellStyle(warningCellStyle);
 
             } else {
+
+                hasSubscriptions = true;
+
                 Iterator<SubscriptionType> subscriptionIterator = subscriptionsType
                     .getSubscription()
                     .iterator();
@@ -502,8 +508,10 @@ public class ExcelHandler {
             gregorialCal.setTimeInMillis(dueCal.getTimeInMillis());
             invoice.setDueDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
 
-            gregorialCal.setTimeInMillis(nextPeriod.getStartDay().getTimeInMillis());
-            invoice.setPeriodStartDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
+            if (hasSubscriptions) {
+                gregorialCal.setTimeInMillis(nextPeriod.getStartDay().getTimeInMillis());
+                invoice.setPeriodStartDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
+            }
 
             invoice.setInvoiceNumber(invoiceNr);
             invoice.setInvoiceStatus(InvoiceStatusType.NEW);

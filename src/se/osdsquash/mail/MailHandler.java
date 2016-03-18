@@ -87,6 +87,14 @@ public class MailHandler {
                 // We must create and store a mail file, then open that file which will
                 // cause the default mail program to pick it up, with the attachment prepared.
 
+                if (!new File(attachmentPath).isFile()) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "Fakturafilen kunde inte hittas: " + attachmentPath,
+                        "Fel",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+
                 // Create a default MimeMessage object
                 Session session = Session.getDefaultInstance(new Properties());
                 Message message = new MimeMessage(session);

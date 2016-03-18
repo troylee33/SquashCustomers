@@ -49,7 +49,7 @@ public class InvoicesTable extends JTable {
 
     private TableCellEditor invoiceStatusEditor;
 
-    private String customerEmail;
+    private CustomerInfoType customerInfo;
 
     /**
      * Constructor, taking existing invoice references, null is OK as well
@@ -114,12 +114,26 @@ public class InvoicesTable extends JTable {
                                 .getModel()).getInvoices().get(selectedRow);
                             if (invoice != null) {
                                 InvoicesTable.this.openFile(invoice.getRelativeFilePath());
+                            } else {
+                                MainGUI.getInstance().printInfoText(
+                                    "Fakturan kan inte mailas: Inga fakturauppgifter hittades för denna rad",
+                                    true,
+                                    true);
                             }
 
                             // Create a new mail with the file as attachment
                         } else if (selectedColumn == TableColumnEnum.MAIL.index) {
                             InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this
                                 .getModel()).getInvoices().get(selectedRow);
+
+                            if (!SquashUtil.isSet(InvoicesTable.this.customerInfo.getEmail())) {
+                                MainGUI.getInstance().printInfoText(
+                                    "Det finns ingen E-post angiven",
+                                    true,
+                                    true);
+                                return;
+                            }
+
                             if (invoice != null) {
                                 MainGUI.getInstance().printInfoText(
                                     "Mail-programmet startar...",
@@ -127,6 +141,11 @@ public class InvoicesTable extends JTable {
                                     true);
                                 new MailHandler()
                                     .createMailDraft("adress", invoice.getRelativeFilePath(), true);
+                            } else {
+                                MainGUI.getInstance().printInfoText(
+                                    "Fakturan kan inte mailas: Inga fakturauppgifter hittades för denna rad",
+                                    true,
+                                    true);
                             }
                         }
                     }
@@ -156,17 +175,21 @@ public class InvoicesTable extends JTable {
     }
 
     protected void setInvoices(CustomerInfoType customerInfo, List<InvoiceType> invoices) {
-        this.customerEmail = customerInfo.getEmail();
+        this.customerInfo = customerInfo;
         this.getInvoicesTableModel().setInvoices(invoices);
     }
 
     protected void clearInvoices() {
-        this.customerEmail = null;
+        this.customerInfo = null;
         this.getInvoicesTableModel().clearInvoices();
     }
 
     protected List<InvoiceType> getInvoices() {
         return this.getInvoicesTableModel().getInvoices();
+    }
+
+    protected void refreshInvoiceTable() {
+        this.getInvoicesTableModel().fireTableDataChanged();
     }
 
     // Cntrol which editor to use for which column
@@ -445,7 +468,7 @@ public class InvoicesTable extends JTable {
                 }
             } else if (column == TableColumnEnum.MAIL.index) {
 
-                if (SquashUtil.isSet(InvoicesTable.this.customerEmail)) {
+                if (SquashUtil.isSet(InvoicesTable.this.customerInfo.getEmail())) {
                     InvoiceType invoice = ((InvoiceTableModel) table.getModel())
                         .getInvoices()
                         .get(row);
@@ -460,7 +483,7 @@ public class InvoicesTable extends JTable {
                 } else {
                     label.setEnabled(false);
                     label.setText("Mail");
-                    label.setToolTipText("Kunden saknar e-post");
+                    label.setToolTipText("Kundens E-mail måste anges");
                     label.setForeground(Color.LIGHT_GRAY);
                 }
 

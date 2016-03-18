@@ -3,7 +3,7 @@
   ARBETSLOGG och TODO för projektet
  -----------------------------------
  
- TODOs 2016-03-17:
+ TODOs 2016-03-18:
 
   - Hitta buggen som ger dirty-varning fastän oändrat !!!
 

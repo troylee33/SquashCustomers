@@ -174,7 +174,7 @@ public class MainGUI extends JFrame {
         this.customerList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         this.customerList.setVisibleRowCount(32);
 
-        // Implement a list selection listener, so we can abort selection changes
+        // Add a list selection listener, so we can monitor customer switch
         this.customerList.setSelectionModel(new DefaultListSelectionModel() {
 
             /**
@@ -211,11 +211,13 @@ public class MainGUI extends JFrame {
 
                 } else {
                     MainGUI.this.deleteCustomerButton.setEnabled(true);
-                    MainGUI.this.mailToCustomerButton.setEnabled(true);
                     MainGUI.this.customerMasterPanel.toggleEnabled(true);
 
                     CustomerType customer = MainGUI.this.customerList.getSelectedValue();
                     MainGUI.this.customerMasterPanel.setCustomer(customer);
+
+                    // Enable/disable mail buttons, if there is an e-mail, or not
+                    MainGUI.this.toggleEmailFunction();
                 }
             }
         });
@@ -558,6 +560,18 @@ public class MainGUI extends JFrame {
     // Repaints the customer list
     protected void repaintCustomerList() {
         this.customerList.repaint();
+    }
+
+    // Toggles all mail functions on/off for customer, if there is an email
+    protected void toggleEmailFunction() {
+        boolean haveEmail = this.customerMasterPanel.toggleEmailFunction();
+        this.mailToCustomerButton.setEnabled(haveEmail);
+        if (haveEmail) {
+            this.mailToCustomerButton
+                .setToolTipText("Startar ditt mail-program med ett nytt mail till kunden");
+        } else {
+            this.mailToCustomerButton.setToolTipText("Kundens E-mail måste anges");
+        }
     }
 
     // Handles the whole invoice creation execution

@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -244,6 +245,9 @@ public class CustomerDetailsPanel extends JPanel {
                     MainGUI.getInstance().repaintCustomerList();
                     saveMessage = "Kunduppgifter sparade";
                 }
+
+                // Update email buttons enable/disable for the whole program
+                MainGUI.getInstance().toggleEmailFunction();
 
                 MainGUI.getInstance().printInfoText(saveMessage, false, true);
 
@@ -483,6 +487,13 @@ public class CustomerDetailsPanel extends JPanel {
             mainGui.getValidationErrorTextLabel());
         this.ortTextField.setInputVerifier(cityVerifier);
         this.inputsWithVerifiers.add(this.ortTextField);
+    }
+
+    // Enables/disables mailing functions, if customer have an e-mail or not.
+    // Returns true if e-mail is enabled, otherwise false.
+    protected boolean toggleEmailFunction() {
+        this.invoicesTable.refreshInvoiceTable();
+        return SquashUtil.isSet(this.eMailTextField.getText());
     }
 
     // Default sizes text field

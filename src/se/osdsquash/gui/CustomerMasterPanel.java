@@ -187,6 +187,12 @@ public class CustomerMasterPanel extends JPanel {
         this.deleteSubscriptionButton.setEnabled(enable);
     }
 
+    // Enables/disables mailing functions, if customer have an e-mail or not.
+    // Returns true if e-mail is enabled, otherwise false.
+    protected boolean toggleEmailFunction() {
+        return this.customerDetailsPanel.toggleEmailFunction();
+    }
+
     // Below are some delegate methods, to the underlying panels
     protected boolean isCustomerDirty() {
         return this.customerDetailsPanel.isCustomerDirty();

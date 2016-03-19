@@ -2,11 +2,13 @@ package se.osdsquash.mail;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -32,6 +34,10 @@ import se.osdsquash.logger.SquashLogger;
  * Handles e-mailing to customers
  */
 public class MailHandler {
+
+    // Returns the path and static start of the temp mail files
+    private static final String MAIL_FILENAME_PREFIX = "SquashTempMail_";
+    private static final String MAIL_FILE_DIR = System.getProperty("java.io.tmpdir");
 
     /**
      * Creates a new mail draft and opens it in the default mail program
@@ -128,8 +134,9 @@ public class MailHandler {
 
                 // Write to local temporary file
                 final String mailFileSuffix = ".eml";
-                String eMailFilename = System.getProperty("java.io.tmpdir")
-                    + "/SquashTempMail"
+                String eMailFilename = MAIL_FILE_DIR
+                    + "/"
+                    + MAIL_FILENAME_PREFIX
                     + (String.valueOf(new Date().getTime()))
                     + mailFileSuffix;
                 mailOutputStream = new FileOutputStream(eMailFilename);
@@ -228,5 +235,45 @@ public class MailHandler {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Deletes old mail temp files
+     */
+    public static void deleteMailTempFiles() {
+
+        SquashLogger logger = SquashLogger.getInstance();
+
+        logger.log("Searching and deleting old temporary files...", false);
+
+        // Check for very old mail files and delete them
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, -1);
+        final long thresholdMillis = cal.getTimeInMillis();
+
+        File[] tooOldFiles = new File(MAIL_FILE_DIR).listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isFile()
+                    && pathname.getName().contains(MAIL_FILENAME_PREFIX)
+                    && pathname.lastModified() < thresholdMillis;
+            }
+        });
+
+        if (tooOldFiles != null) {
+            for (File file : tooOldFiles) {
+                try {
+                    if (!file.delete()) {
+                        logger
+                            .log("Notis: Kunde ej radera gammal mail-fil: " + file.getPath(), true);
+                    }
+                } catch (Exception ex) {
+                    logger.log("Notis: Kunde ej radera gammal mail-fil: " + file.getPath(), true);
+                }
+            }
+        }
+
+        logger.log("Temporary files delete finished...", false);
     }
 }

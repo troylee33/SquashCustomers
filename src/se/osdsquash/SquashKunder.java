@@ -8,6 +8,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import se.osdsquash.gui.MainGUI;
 import se.osdsquash.logger.SquashLogger;
+import se.osdsquash.mail.MailHandler;
 
 /**
  * Main class that initializes and starts the program.
@@ -48,6 +49,9 @@ public class SquashKunder {
         } catch (Exception ex) {
             // Ok, fallback to default one...
         }
+
+        // Check for older temp files to clean up
+        MailHandler.deleteMailTempFiles();
 
         // Creates the Main GUI JFrame and display it
         EventQueue.invokeLater(new Runnable() {

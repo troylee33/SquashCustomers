@@ -112,6 +112,8 @@ public class XmlRepository {
 
     private void init() {
 
+        logger.log("Initializing the customer database...", false);
+
         // Always make sure we have all data folders:
         File dataDir = new File(DATA_DIR_PATH);
         if (!dataDir.exists()) {
@@ -224,6 +226,8 @@ public class XmlRepository {
         } finally {
             this.closeResource(xmlFileStream);
         }
+
+        logger.log("Customer database initialize finished", false);
     }
 
     /**

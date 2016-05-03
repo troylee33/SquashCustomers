@@ -54,10 +54,12 @@
 		<delete includeemptydirs="true">
 			<fileset dir="${ant.classes.dir}" includes="**/*.class" />
 		</delete>
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="${dist.macapp.dir}" includes="**/*" />
 		</delete>
 		<delete file="${dist.jar.file}" failonerror="false" />
+		
+		<mkdir dir="${dist.macapp.dir}" />
 		
 		<!-- 2. Generate from XSD schema -->
 		<echo message="Generates JAXB files from XSD..." />

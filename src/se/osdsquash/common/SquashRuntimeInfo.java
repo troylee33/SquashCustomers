@@ -18,6 +18,14 @@ public abstract class SquashRuntimeInfo {
             .getPath();
         String currentDir = pathToJar.substring(0, pathToJar.lastIndexOf("/"));
 
+        // Hack to avoid creating data dir inside a packaged Mac OS app,
+        // which looks like this xxxxx/SquashKunder.app/Contents/Java/SquashCustomers.jar
+        // In this case, place the data dir above the .app directory.
+        if (currentDir.endsWith("Contents/Java")) {
+            currentDir = pathToJar.substring(0, pathToJar.lastIndexOf("/Contents/Java"));
+            currentDir = currentDir + "/..";
+        }
+
         DATA_DIR_PATH = currentDir + "/squashdata";
     }
 

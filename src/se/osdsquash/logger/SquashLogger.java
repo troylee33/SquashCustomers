@@ -20,7 +20,17 @@ public class SquashLogger {
 
     private SquashLogger() {
 
+        // Always make sure we have the data folder first:
+        File dataDir = new File(SquashRuntimeInfo.getDataDirPath());
+        if (!dataDir.exists()) {
+            if (!dataDir.mkdir()) {
+                throw new RuntimeException(
+                    "FEL när data-katalogen skulle skapas, kontrollera att det gör att skriva till lagringsytan!");
+            }
+        }
+
         final String logsDirPath = SquashRuntimeInfo.getDataDirPath() + "/logs";
+
         File logsDir = new File(logsDirPath);
         if (!logsDir.exists()) {
             if (!logsDir.mkdir()) {

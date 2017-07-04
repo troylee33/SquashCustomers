@@ -68,7 +68,7 @@ public class MainGUI extends JFrame {
     private XmlRepository xmlRepository;
 
     private static final int WINDOW_PIXEL_WIDTH = 1080;
-    private static final int WINDOW_PIXEL_HEIGTH = 840;
+    private static final int WINDOW_PIXEL_HEIGTH = 760;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -150,7 +150,7 @@ public class MainGUI extends JFrame {
         });
 
         // All GUI components, in order of their presentation
-        List<JComponent> components = new ArrayList<JComponent>();
+        List<JComponent> components = new ArrayList<>();
 
         // -----------------------------  CREATE CUSTOMER COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------

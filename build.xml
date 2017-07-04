@@ -115,7 +115,7 @@
 	        	   identifier="se.osdsquash.${app.name}"
 	        	   shortversion="1.0"
 	    		   signature="OSSF"
-	    		   copyright="Östersunds Squashförening 2016"
+	    		   copyright="Östersunds Squashförening 2017"
 	        	   applicationCategory="public.app-category.sports"
 	        	   mainclassname="se/osdsquash/${app.name}">
 	    	<classpath file="${dist.jar.file}"/>

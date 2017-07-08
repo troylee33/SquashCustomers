@@ -1,6 +1,7 @@
 package se.osdsquash.gui;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.InputVerifier;
@@ -10,6 +11,8 @@ import javax.swing.JTextField;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.XmlRepository;
+import se.osdsquash.xml.jaxb.CustomerType;
+import se.osdsquash.xml.jaxb.SubscriptionType;
 
 /**
  * Holds different validator classes and helper methods
@@ -22,6 +25,57 @@ public abstract class ValidatorHelper {
 
     private static final Color INVALID_COLOR = new Color(255, 186, 186);
     private static final Color DEFAULT_COLOR = Color.WHITE;
+
+    /**
+     * Checks if given subscription(s) are not already taken by any existing 
+     * customer's subscription, e.g. the time and track is taken.
+     * 
+     * @param customerNr The customer who's subscriptions to check
+     * @param subscriptions Subscriptions to check
+     * @param existingCustomers All existing customers and their subscriptions
+     * 
+     * @return An error message if subscription is already taken, null if all ok
+     */
+    public static String validateSubscriptions(
+        int customerNr,
+        List<SubscriptionType> subscriptions,
+        List<CustomerType> existingCustomers) {
+
+        for (SubscriptionType subscription : subscriptions) {
+            for (CustomerType customer : existingCustomers) {
+
+                // Don't compare with ourselves
+                if (customerNr == customer.getCustomerInfo().getCustomerNumber()) {
+                    continue;
+                }
+
+                for (SubscriptionType existingSubscription : subscriptions) {
+
+                    if (existingSubscription.getWeekday().equals(subscription.getWeekday())
+                        && existingSubscription.getTrackNumber() == subscription.getTrackNumber()
+                        && existingSubscription
+                            .getStartTime()
+                            .equals(subscription.getStartTime())) {
+
+                        return "Abonnemangstiden "
+                            + SquashUtil.weekdayTypeToString(existingSubscription.getWeekday())
+                            + " "
+                            + SquashUtil
+                                .getTrackTimeFromCalendar(existingSubscription.getStartTime())
+                            + " på bana "
+                            + existingSubscription.getTrackNumber()
+                            + " är redan upptagen av "
+                            + customer.getCustomerInfo().getCustomerNumber()
+                            + " ("
+                            + customer.getCustomerInfo().getFirstname()
+                            + ")";
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Simple validator that requires a non-whitespace value for a text field

@@ -94,7 +94,7 @@ public class InvoicesTable extends JTable {
 
         // Use a combobox editor when editing the invoice status
         {
-            final Vector<String> statusOptions = new Vector<String>();
+            final Vector<String> statusOptions = new Vector<>();
             for (InvoiceStatusType statusType : InvoiceStatusType.values()) {
                 String statusString = SquashUtil.invoiceStatusTypeToString(statusType);
                 statusOptions.addElement(statusString);
@@ -199,7 +199,7 @@ public class InvoicesTable extends JTable {
         this.getInvoicesTableModel().fireTableDataChanged();
     }
 
-    // Cntrol which editor to use for which column
+    // Control which editor to use for which column
     @Override
     public TableCellEditor getCellEditor(int row, int column) {
 

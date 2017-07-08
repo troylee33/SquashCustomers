@@ -188,6 +188,27 @@ public class CustomerDetailsPanel extends JPanel {
                     return;
                 }
 
+                // Validate subscriptions, making sure they are not already taken
+                List<SubscriptionType> subscriptions = CustomerDetailsPanel.this.subscriptionsTable
+                    .getSubscriptions();
+                if (subscriptions != null && (!subscriptions.isEmpty())) {
+
+                    String subscriptionError = ValidatorHelper.validateSubscriptions(
+                        Integer.valueOf(CustomerDetailsPanel.this.kundNrTextField.getText()),
+                        subscriptions,
+                        CustomerDetailsPanel.this.xmlRepository.getAllCustomers());
+                    if (subscriptionError != null) {
+                        JOptionPane.showMessageDialog(
+                            CustomerDetailsPanel.this,
+                            "Kunden sparades inte eftersom det finns fel:"
+                                + "\n"
+                                + subscriptionError,
+                            "Ogiltiga uppgifter",
+                            JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
                 // If no UUID, this is a new customer, otherwise it should exist
                 CustomerType customer;
                 boolean newCustomer;
@@ -413,6 +434,13 @@ public class CustomerDetailsPanel extends JPanel {
      */
     protected boolean isCustomerDirty() {
         return this.dirtyMarker.isDirty();
+    }
+
+    /**
+     * Clear dirty marker and sets it as NON dirty
+     */
+    protected void clearCustomerDirty() {
+        this.dirtyMarker.setClean();
     }
 
     // Optional clearing of all input fields and enable or disable them

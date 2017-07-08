@@ -220,6 +220,8 @@ public class MainGUI extends JFrame {
                     // Enable/disable mail buttons, if there is an e-mail, or not
                     MainGUI.this.toggleEmailFunction();
                 }
+
+                MainGUI.this.customerMasterPanel.clearCustomerDirty();
             }
         });
 
@@ -434,6 +436,8 @@ public class MainGUI extends JFrame {
                         return;
                     }
                 }
+
+                MainGUI.this.customerMasterPanel.clearCustomerDirty();
 
                 if (MainGUI.this.customerListModel.isEmpty()) {
                     MainGUI.this.printInfoText("Det finns inga kunder!", true, true);

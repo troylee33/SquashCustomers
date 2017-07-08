@@ -198,6 +198,10 @@ public class CustomerMasterPanel extends JPanel {
         return this.customerDetailsPanel.isCustomerDirty();
     }
 
+    protected void clearCustomerDirty() {
+        this.customerDetailsPanel.clearCustomerDirty();
+    }
+
     protected void clearCustomer() {
         this.customerDetailsPanel.clearCustomer();
     }

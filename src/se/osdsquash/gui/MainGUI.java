@@ -68,7 +68,7 @@ public class MainGUI extends JFrame {
     private XmlRepository xmlRepository;
 
     private static final int WINDOW_PIXEL_WIDTH = 1080;
-    private static final int WINDOW_PIXEL_HEIGTH = 760;
+    private static final int WINDOW_PIXEL_HEIGTH = 780;
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
@@ -305,17 +305,17 @@ public class MainGUI extends JFrame {
         components.add(this.createEmptyRow());
 
         // The function buttons are X aligned as one panel, on one row
-        JPanel customerButtonsPanel = new JPanel();
-        customerButtonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel functionButtonsPanel = new JPanel();
+        functionButtonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        customerButtonsPanel.setLayout(new BoxLayout(customerButtonsPanel, BoxLayout.X_AXIS));
-        customerButtonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 16, 10, 16));
-        customerButtonsPanel.setPreferredSize(new Dimension(500, 50));
+        functionButtonsPanel.setLayout(new BoxLayout(functionButtonsPanel, BoxLayout.X_AXIS));
+        functionButtonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 16, 10, 16));
+        functionButtonsPanel.setPreferredSize(new Dimension(500, 50));
 
         // Action buttons for the customers
         this.newCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.newCustomerButton.setMaximumSize(new Dimension(130, 22));
-        customerButtonsPanel.add(this.newCustomerButton);
+        functionButtonsPanel.add(this.newCustomerButton);
 
         this.newCustomerButton.addActionListener(new ActionListener() {
 
@@ -342,11 +342,11 @@ public class MainGUI extends JFrame {
             }
         });
 
-        customerButtonsPanel.add(this.createEmptyRow());
+        functionButtonsPanel.add(this.createEmptyRow());
 
         this.deleteCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.deleteCustomerButton.setMaximumSize(new Dimension(130, 22));
-        customerButtonsPanel.add(this.deleteCustomerButton);
+        functionButtonsPanel.add(this.deleteCustomerButton);
 
         // Disable this until a customer is selected
         MainGUI.this.deleteCustomerButton.setEnabled(false);
@@ -381,13 +381,13 @@ public class MainGUI extends JFrame {
             }
         });
 
-        customerButtonsPanel.add(this.createEmptyRow());
+        functionButtonsPanel.add(this.createEmptyRow());
 
         this.mailToCustomerButton
             .setToolTipText("Startar ditt mail-program med ett nytt mail till kunden");
         this.mailToCustomerButton.setMinimumSize(new Dimension(130, 22));
         this.mailToCustomerButton.setMaximumSize(new Dimension(130, 22));
-        customerButtonsPanel.add(this.mailToCustomerButton);
+        functionButtonsPanel.add(this.mailToCustomerButton);
 
         // Disable this until a customer is selected
         MainGUI.this.mailToCustomerButton.setEnabled(false);
@@ -412,13 +412,14 @@ public class MainGUI extends JFrame {
             }
         });
 
-        customerButtonsPanel.add(this.createEmptyRow());
+        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createWiderEmptyRow());
 
         this.generateInvoicesButton
             .setToolTipText("Skapa fakturor för alla kunder för nästkommande abonnemangsperiod");
         this.generateInvoicesButton.setMinimumSize(new Dimension(130, 22));
         this.generateInvoicesButton.setMaximumSize(new Dimension(130, 22));
-        customerButtonsPanel.add(this.generateInvoicesButton);
+        functionButtonsPanel.add(this.generateInvoicesButton);
 
         this.generateInvoicesButton.addActionListener(new ActionListener() {
 
@@ -468,47 +469,12 @@ public class MainGUI extends JFrame {
             }
         });
 
-        // Add the buttons panel
-        components.add(customerButtonsPanel);
+        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createWiderEmptyRow());
 
-        // Draw all components to the panel
-        this.drawLayout(components);
-
-        waitForInitDialog.setVisible(false);
-    }
-
-    // Creates a basic layout panel and add all given components to it
-    private void drawLayout(List<JComponent> components) {
-
-        // The topPanel contains customer components
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-
-        for (JComponent component : components) {
-            component.setAlignmentX(Component.LEFT_ALIGNMENT);
-            topPanel.add(component);
-        }
-
-        // Add common exit and help buttons as the very bottom panel:
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 40));
-
-        final JButton quitButton = new JButton("Avsluta");
-        bottomPanel.add(quitButton);
-        quitButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent event) {
-
-                MainGUI.this.handleProgramExitEvent();
-            }
-        });
-
-        bottomPanel.add(Box.createRigidArea(new Dimension(16, 10)));
-
+        // Info button
         final StringBuilder infoMessage = new StringBuilder(1024);
         infoMessage.append("<html>");
         infoMessage.append("<br/>");
@@ -534,7 +500,7 @@ public class MainGUI extends JFrame {
         infoMessage.append("</html>");
 
         final JButton infoButton = new JButton("Hjälp");
-        bottomPanel.add(infoButton);
+        functionButtonsPanel.add(infoButton);
         infoButton.addActionListener(new ActionListener() {
 
             @Override
@@ -548,15 +514,54 @@ public class MainGUI extends JFrame {
             }
         });
 
+        functionButtonsPanel.add(this.createEmptyRow());
+
+        final JButton quitButton = new JButton("Avsluta");
+        quitButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                MainGUI.this.handleProgramExitEvent();
+            }
+        });
+        functionButtonsPanel.add(quitButton);
+
+        // Add the buttons panel
+        components.add(functionButtonsPanel);
+
+        // Draw all components to the panel
+        this.drawLayout(components);
+
+        waitForInitDialog.setVisible(false);
+    }
+
+    // Creates a basic layout panel and add all given components to it
+    private void drawLayout(List<JComponent> components) {
+
+        // The topPanel contains customer components
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+        for (JComponent component : components) {
+            component.setAlignmentX(Component.LEFT_ALIGNMENT);
+            topPanel.add(component);
+        }
+
         // Finally draw the panels on the JFrame's ContentPane
         Container contentPane = this.getContentPane();
         contentPane.add(topPanel, BorderLayout.NORTH);
-        contentPane.add(bottomPanel, BorderLayout.EAST);
     }
 
     // Creates a filler component, e.g. empty space
     private JComponent createEmptyRow() {
         return new Box.Filler(new Dimension(16, 10), new Dimension(16, 10), new Dimension(16, 10));
+    }
+
+    // Creates a filler component, e.g. empty space
+    private JComponent createWiderEmptyRow() {
+        return new Box.Filler(new Dimension(48, 10), new Dimension(48, 10), new Dimension(48, 10));
     }
 
     // Adds a customer to the list

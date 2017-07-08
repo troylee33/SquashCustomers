@@ -74,7 +74,9 @@ public class CustomerDetailsPanel extends JPanel {
     // Tables holding the subscriptions and invoices
     private SubscriptionsTable subscriptionsTable;
     private InvoicesTable invoicesTable;
+    private JLabel customerNotesLabel;
     private JTextArea customerNotesText;
+    private JCheckBox createEmptyInvoiceCheckbox;
 
     private JButton saveButton;
 
@@ -83,15 +85,13 @@ public class CustomerDetailsPanel extends JPanel {
 
     /**
      * Constructor initializing an empty and disabled customer details panel
-     * 
-     * @param subscriptionsTable Reference to the subscriptions
-     * @param invoicesTable Reference to the invoices
-     * @param customerNotes Reference to the customer common text area
      */
     protected CustomerDetailsPanel(
         SubscriptionsTable subscriptionsTable,
         InvoicesTable invoicesTable,
-        JTextArea customerNotesText) {
+        JLabel customerNotesLabel,
+        JTextArea customerNotesText,
+        JCheckBox createEmptyInvoiceCheckbox) {
 
         super();
         this.dirtyMarker = new DirtyMarker();
@@ -100,7 +100,9 @@ public class CustomerDetailsPanel extends JPanel {
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
         this.invoicesTable = invoicesTable;
+        this.customerNotesLabel = customerNotesLabel;
         this.customerNotesText = customerNotesText;
+        this.createEmptyInvoiceCheckbox = createEmptyInvoiceCheckbox;
 
         this.initPanel();
     }
@@ -246,6 +248,8 @@ public class CustomerDetailsPanel extends JPanel {
                 customerInfo.setStreet(CustomerDetailsPanel.this.gatuAdressTextField.getText());
                 customerInfo.setTelephone(CustomerDetailsPanel.this.telefonTextField.getText());
 
+                customerInfo.setCreateEmptyInvoice(
+                    CustomerDetailsPanel.this.createEmptyInvoiceCheckbox.isSelected());
                 customerInfo.setNotes(CustomerDetailsPanel.this.customerNotesText.getText());
 
                 // Simply take what's in the subscriptions table and set that
@@ -381,6 +385,7 @@ public class CustomerDetailsPanel extends JPanel {
         this.eMailTextField.setText(customerInfo.getEmail());
 
         this.customerNotesText.setText(customerInfo.getNotes());
+        this.createEmptyInvoiceCheckbox.setSelected(customerInfo.isCreateEmptyInvoice());
 
         this.kundNrTextField.requestFocus();
 
@@ -492,10 +497,13 @@ public class CustomerDetailsPanel extends JPanel {
             this.subscriptionsTable.clearSubscriptions();
             this.invoicesTable.clearInvoices();
             this.customerNotesText.setText("");
+            this.createEmptyInvoiceCheckbox.setSelected(false);
         }
         this.subscriptionsTable.setEnabled(enableFields);
         this.invoicesTable.setEnabled(enableFields);
+        this.customerNotesLabel.setEnabled(enableFields);
         this.customerNotesText.setEnabled(enableFields);
+        this.createEmptyInvoiceCheckbox.setEnabled(enableFields);
 
         // Repaint the tables to make sure they are updated
         this.subscriptionsTable.repaint();

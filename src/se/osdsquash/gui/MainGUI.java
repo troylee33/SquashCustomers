@@ -169,8 +169,8 @@ public class MainGUI extends JFrame {
         // Use a custom row renderer, to display a correct customer text
         this.customerList.setCellRenderer(new CustomerCellRenderer());
 
-        this.customerList.setFixedCellWidth(198);
-        this.customerList.setMaximumSize(new Dimension(200, 300));
+        this.customerList.setFixedCellWidth(256);
+        this.customerList.setMaximumSize(new Dimension(280, 340));
         this.customerList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.customerList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         this.customerList.setVisibleRowCount(150);
@@ -228,8 +228,8 @@ public class MainGUI extends JFrame {
         // The list goes into a scrollable container
         JScrollPane customerListScroller = new JScrollPane(this.customerList);
         customerListScroller.setAlignmentY(SwingConstants.NORTH);
-        customerListScroller.setPreferredSize(new Dimension(220, 400));
-        customerListScroller.setMaximumSize(new Dimension(220, 400));
+        customerListScroller.setPreferredSize(new Dimension(280, 400));
+        customerListScroller.setMaximumSize(new Dimension(280, 400));
 
         InvoicesTable invoicesTable = new InvoicesTable(null);
 
@@ -241,7 +241,7 @@ public class MainGUI extends JFrame {
         JPanel customerAreaPanel = new JPanel();
         customerAreaPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 16));
         customerAreaPanel.setAlignmentY(SwingConstants.NORTH);
-        customerAreaPanel.setSize(new Dimension(540, 420));
+        customerAreaPanel.setSize(new Dimension(500, 420));
         customerAreaPanel.add(customerListScroller);
         customerAreaPanel.add(this.customerMasterPanel);
 

@@ -289,6 +289,9 @@ public class ExcelHandler {
                 // If no subscriptions, write a red warning info row about this
                 InvoiceRow noSubscriptionsRow = this.invoiceSheet.createNextRow();
 
+                // Skip through first cell, that's just the padding cell
+                noSubscriptionsRow.createNextCell();
+
                 String warningMessage = " OBS: Det finns inga abonnemang att fakturera!";
                 InvoiceCell warningTextCell = noSubscriptionsRow.createNextCell();
                 warningTextCell.setCellValue(warningMessage);

@@ -13,6 +13,7 @@ import se.osdsquash.common.SquashUtil;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.SubscriptionType;
+import se.osdsquash.xml.jaxb.SubscriptionsType;
 
 /**
  * Holds different validator classes and helper methods
@@ -49,26 +50,31 @@ public abstract class ValidatorHelper {
                     continue;
                 }
 
-                for (SubscriptionType existingSubscription : subscriptions) {
+                SubscriptionsType existingSubscriptions = customer.getSubscriptions();
+                if (existingSubscriptions != null) {
+                    for (SubscriptionType existingSubscription : existingSubscriptions
+                        .getSubscription()) {
 
-                    if (existingSubscription.getWeekday().equals(subscription.getWeekday())
-                        && existingSubscription.getTrackNumber() == subscription.getTrackNumber()
-                        && existingSubscription
-                            .getStartTime()
-                            .equals(subscription.getStartTime())) {
+                        if (existingSubscription.getWeekday().equals(subscription.getWeekday())
+                            && existingSubscription.getTrackNumber() == subscription
+                                .getTrackNumber()
+                            && existingSubscription
+                                .getStartTime()
+                                .equals(subscription.getStartTime())) {
 
-                        return "Abonnemangstiden "
-                            + SquashUtil.weekdayTypeToString(existingSubscription.getWeekday())
-                            + " "
-                            + SquashUtil
-                                .getTrackTimeFromCalendar(existingSubscription.getStartTime())
-                            + " på bana "
-                            + existingSubscription.getTrackNumber()
-                            + " är redan upptagen av "
-                            + customer.getCustomerInfo().getCustomerNumber()
-                            + " ("
-                            + customer.getCustomerInfo().getFirstname()
-                            + ")";
+                            return "Abonnemangstiden "
+                                + SquashUtil.weekdayTypeToString(existingSubscription.getWeekday())
+                                + " "
+                                + SquashUtil
+                                    .getTrackTimeFromCalendar(existingSubscription.getStartTime())
+                                + " på bana "
+                                + existingSubscription.getTrackNumber()
+                                + " är redan upptagen av "
+                                + customer.getCustomerInfo().getCustomerNumber()
+                                + " ("
+                                + customer.getCustomerInfo().getFirstname()
+                                + ")";
+                        }
                     }
                 }
             }

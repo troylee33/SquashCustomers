@@ -440,7 +440,7 @@ public class XmlRepository {
 
     /**
      * Generates invoice files for all customers for a given period
-     * and saves everything at the save time.
+     * and saves everything at the same time.
      * 
      * @return The invoice creation result
      */

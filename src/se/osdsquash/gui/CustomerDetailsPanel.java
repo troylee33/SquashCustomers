@@ -470,23 +470,23 @@ public class CustomerDetailsPanel extends JPanel {
         this.fornamnTextField.setInputVerifier(fornamnVerifier);
         this.inputsWithVerifiers.add(this.fornamnTextField);
 
-        InputVerifier streetVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
+        /*InputVerifier streetVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
             "Obligatoriska uppgifter",
             mainGui.getValidationErrorTextLabel());
         this.gatuAdressTextField.setInputVerifier(streetVerifier);
         this.inputsWithVerifiers.add(this.gatuAdressTextField);
-
+        
         InputVerifier postNrVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
             "Obligatoriska uppgifter",
             mainGui.getValidationErrorTextLabel());
         this.postNrTextField.setInputVerifier(postNrVerifier);
         this.inputsWithVerifiers.add(this.postNrTextField);
-
+        
         InputVerifier cityVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
             "Obligatoriska uppgifter",
             mainGui.getValidationErrorTextLabel());
         this.ortTextField.setInputVerifier(cityVerifier);
-        this.inputsWithVerifiers.add(this.ortTextField);
+        this.inputsWithVerifiers.add(this.ortTextField);*/
     }
 
     // Enables/disables mailing functions, if customer have an e-mail or not.

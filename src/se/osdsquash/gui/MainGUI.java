@@ -835,6 +835,14 @@ public class MainGUI extends JFrame {
                 + ")";
             label.setText(customerText);
 
+            // Mark non subscribers, or payment missings
+            if (customerType.getSubscriptions() == null
+                || customerType.getSubscriptions().getSubscription().isEmpty()) {
+                label.setFont(
+                    new Font(label.getFont().getName(), Font.ITALIC, label.getFont().getSize()));
+                label.setForeground(Color.DARK_GRAY);
+                label.setToolTipText("Abonnemang saknas");
+            }
             if (paymentOverdue) {
                 label.setForeground(Color.RED);
                 label.setToolTipText("Det finns obetalda fakturor");

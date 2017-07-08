@@ -173,7 +173,7 @@ public class MainGUI extends JFrame {
         this.customerList.setMaximumSize(new Dimension(200, 300));
         this.customerList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.customerList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        this.customerList.setVisibleRowCount(32);
+        this.customerList.setVisibleRowCount(150);
 
         // Add a list selection listener, so we can monitor customer switch
         this.customerList.setSelectionModel(new DefaultListSelectionModel() {

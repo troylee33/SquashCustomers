@@ -16,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -73,6 +74,7 @@ public class CustomerDetailsPanel extends JPanel {
     // Tables holding the subscriptions and invoices
     private SubscriptionsTable subscriptionsTable;
     private InvoicesTable invoicesTable;
+    private JTextArea customerNotesText;
 
     private JButton saveButton;
 
@@ -84,11 +86,12 @@ public class CustomerDetailsPanel extends JPanel {
      * 
      * @param subscriptionsTable Reference to the subscriptions
      * @param invoicesTable Reference to the invoices
-     * @param mainGUI The parent "owner" panel
+     * @param customerNotes Reference to the customer common text area
      */
     protected CustomerDetailsPanel(
         SubscriptionsTable subscriptionsTable,
-        InvoicesTable invoicesTable) {
+        InvoicesTable invoicesTable,
+        JTextArea customerNotesText) {
 
         super();
         this.dirtyMarker = new DirtyMarker();
@@ -97,6 +100,8 @@ public class CustomerDetailsPanel extends JPanel {
         this.xmlRepository = XmlRepository.getInstance();
         this.subscriptionsTable = subscriptionsTable;
         this.invoicesTable = invoicesTable;
+        this.customerNotesText = customerNotesText;
+
         this.initPanel();
     }
 
@@ -241,6 +246,8 @@ public class CustomerDetailsPanel extends JPanel {
                 customerInfo.setStreet(CustomerDetailsPanel.this.gatuAdressTextField.getText());
                 customerInfo.setTelephone(CustomerDetailsPanel.this.telefonTextField.getText());
 
+                customerInfo.setNotes(CustomerDetailsPanel.this.customerNotesText.getText());
+
                 // Simply take what's in the subscriptions table and set that
                 List<SubscriptionType> subscriptionsFromTable = CustomerDetailsPanel.this.subscriptionsTable
                     .getSubscriptions();
@@ -310,8 +317,17 @@ public class CustomerDetailsPanel extends JPanel {
                     .addDocumentListener(CustomerDetailsPanel.this.dirtyMarker);
             } else if (component instanceof JCheckBox) {
                 ((JCheckBox) component).addChangeListener(CustomerDetailsPanel.this.dirtyMarker);
+            } else if (component instanceof JTextArea) {
+                ((JTextArea) component)
+                    .getDocument()
+                    .addDocumentListener(CustomerDetailsPanel.this.dirtyMarker);
             }
         }
+
+        // Common notes text area
+        this.customerNotesText
+            .getDocument()
+            .addDocumentListener(CustomerDetailsPanel.this.dirtyMarker);
 
         // The subscriptions table
         this.subscriptionsTable.getSubscriptionsTableModel().addTableModelListener(
@@ -363,6 +379,8 @@ public class CustomerDetailsPanel extends JPanel {
         this.ortTextField.setText(customerInfo.getCity());
         this.telefonTextField.setText(customerInfo.getTelephone());
         this.eMailTextField.setText(customerInfo.getEmail());
+
+        this.customerNotesText.setText(customerInfo.getNotes());
 
         this.kundNrTextField.requestFocus();
 
@@ -461,16 +479,23 @@ public class CustomerDetailsPanel extends JPanel {
                     ((JCheckBox) component).setSelected(false);
                 }
                 ((JCheckBox) component).setEnabled(enableFields);
+            } else if (component instanceof JTextArea) {
+                if (clearValues) {
+                    ((JTextArea) component).setText("");
+                }
+                ((JTextArea) component).setEnabled(enableFields);
             }
         }
 
-        // The tables are not "added" to this panel, we have references to them:
+        // These components are not "added" to this panel, we have references to them:
         if (clearValues) {
             this.subscriptionsTable.clearSubscriptions();
             this.invoicesTable.clearInvoices();
+            this.customerNotesText.setText("");
         }
         this.subscriptionsTable.setEnabled(enableFields);
         this.invoicesTable.setEnabled(enableFields);
+        this.customerNotesText.setEnabled(enableFields);
 
         // Repaint the tables to make sure they are updated
         this.subscriptionsTable.repaint();
@@ -497,6 +522,8 @@ public class CustomerDetailsPanel extends JPanel {
             mainGui.getValidationErrorTextLabel());
         this.fornamnTextField.setInputVerifier(fornamnVerifier);
         this.inputsWithVerifiers.add(this.fornamnTextField);
+
+        // --- Don't require post adress: ---
 
         /*InputVerifier streetVerifier = new ValidatorHelper.ValueMandatoryJTextFieldVerifier(
             "Obligatoriska uppgifter",

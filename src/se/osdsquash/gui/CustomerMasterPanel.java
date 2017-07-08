@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -39,6 +40,7 @@ public class CustomerMasterPanel extends JPanel {
     private CustomerDetailsPanel customerDetailsPanel;
     private SubscriptionsTable subscriptionsTable;
     private InvoicesTable invoicesTable;
+    private JTextArea customerNotesTextArea;
 
     private XmlRepository xmlRepository;
 
@@ -67,10 +69,13 @@ public class CustomerMasterPanel extends JPanel {
         // We only have a reference to the invoices, we don't draw it within this panel
         this.invoicesTable = invoicesTable;
 
+        this.customerNotesTextArea = new JTextArea(5, 21);
+
         // Add customer details first, aligned to left
         this.customerDetailsPanel = new CustomerDetailsPanel(
             this.subscriptionsTable,
-            this.invoicesTable);
+            this.invoicesTable,
+            this.customerNotesTextArea);
         this.add(this.customerDetailsPanel);
 
         // Hack to get some horizontal space
@@ -168,6 +173,21 @@ public class CustomerMasterPanel extends JPanel {
 
         subscriptionsPanel.add(this.deleteSubscriptionButton);
 
+        // Hack to cause a line break:
+        subscriptionsPanel.add(new JLabel("             "));
+        subscriptionsPanel.add(new JLabel("             "));
+        subscriptionsPanel.add(new JLabel("             "));
+        subscriptionsPanel.add(new JLabel("             "));
+
+        // Notes for special customers:
+        subscriptionsPanel.add(new JLabel("Speciella noteringar:"));
+        this.customerNotesTextArea.setLineWrap(true);
+        this.customerNotesTextArea.setMinimumSize(new Dimension(310, 100));
+        this.customerNotesTextArea.setMaximumSize(new Dimension(310, 100));
+
+        JScrollPane customerNotesScrollPane = new JScrollPane(this.customerNotesTextArea);
+        subscriptionsPanel.add(customerNotesScrollPane);
+
         // Draw the subscriptions as one panel to the right
         this.add(subscriptionsPanel);
 
@@ -185,6 +205,7 @@ public class CustomerMasterPanel extends JPanel {
         this.invoicesTable.setEnabled(enable);
         this.addSubscriptionButton.setEnabled(enable);
         this.deleteSubscriptionButton.setEnabled(enable);
+        this.customerNotesTextArea.setEnabled(enable);
     }
 
     // Enables/disables mailing functions, if customer have an e-mail or not.

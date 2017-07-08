@@ -442,9 +442,10 @@ public class XmlRepository {
      * Generates invoice files for all customers for a given period
      * and saves everything at the same time.
      * 
+     * @param nextPeriod True if to use next subscription period, or false for the current one
      * @return The invoice creation result
      */
-    public synchronized InvoiceResults generateAndStoreInvoices() {
+    public synchronized InvoiceResults generateAndStoreInvoices(boolean nextPeriod) {
 
         List<String> invoiceFilenames = new ArrayList<>();
         List<String> customersWithoutSubscriptions = new ArrayList<>();
@@ -452,7 +453,7 @@ public class XmlRepository {
         ExcelHandler excelHandler = new ExcelHandler(this);
         for (CustomerType customer : this.getAllCustomers()) {
             InvoiceType invoice = excelHandler
-                .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE);
+                .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE, nextPeriod);
             invoiceFilenames.add(invoice.getRelativeFilePath());
 
             // Period is null if there is no subscription

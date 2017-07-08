@@ -61,10 +61,11 @@ public class ExcelHandler {
      * 
      * @param customer A valid customer to create invoice for
      * @param dueDays Nr of due days from now, when invoice must be paid
+     * @param nextPeriod True if to use NEXT period, otherwise current one
      * 
      * @return The invoice meta-data object
      */
-    public InvoiceType createInvoiceFile(CustomerType customer, int dueDays) {
+    public InvoiceType createInvoiceFile(CustomerType customer, int dueDays, boolean nextPeriod) {
 
         CustomerInfoType customerInfo = customer.getCustomerInfo();
         int invoiceNr = this.xmlRepository.getNewInvoiceNr();
@@ -271,9 +272,8 @@ public class ExcelHandler {
             // Loop subscriptions and write track cost rows
             double totalPrice = 0d;
 
-            // This gets us the next, upcoming subscription period.
-            // We assume all invoices are for the next period:
-            SubscriptionPeriod nextPeriod = new SubscriptionPeriod(true);
+            // This gets us the correct subscription period
+            SubscriptionPeriod period = new SubscriptionPeriod(nextPeriod);
 
             // First an empty row in the table...
             InvoiceRow firstTableRow = this.invoiceSheet.createNextPaddedRow();
@@ -343,9 +343,9 @@ public class ExcelHandler {
                         trackPeriodAndPriceRow.createNextCell();
 
                         String trackPeriodText = "  Gäller perioden "
-                            + nextPeriod.getStartDayString()
+                            + period.getStartDayString()
                             + " till "
-                            + nextPeriod.getEndDayString();
+                            + period.getEndDayString();
 
                         trackPeriodAndPriceRow.createNextCell().setCellValue(trackPeriodText);
                         trackPeriodAndPriceRow.createNextCellPadded();
@@ -509,7 +509,7 @@ public class ExcelHandler {
             invoice.setDueDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
 
             if (hasSubscriptions) {
-                gregorialCal.setTimeInMillis(nextPeriod.getStartDay().getTimeInMillis());
+                gregorialCal.setTimeInMillis(period.getStartDay().getTimeInMillis());
                 invoice.setPeriodStartDate(datatypeFactory.newXMLGregorianCalendar(gregorialCal));
             }
 

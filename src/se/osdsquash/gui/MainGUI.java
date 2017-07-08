@@ -443,25 +443,27 @@ public class MainGUI extends JFrame {
                     MainGUI.this.printInfoText("Det finns inga kunder!", true, true);
                 } else {
 
+                    String currentPeriodString = new SubscriptionPeriod(false).getPeriodString();
                     String nextPeriodString = new SubscriptionPeriod(true).getPeriodString();
 
                     int dialogResult = JOptionPane.showConfirmDialog(
                         MainGUI.this,
-                        "Vill du generera fakturafiler för alla kunder"
-                            + "\n"
-                            + "för perioden "
+                        "Vill du generera fakturafiler för alla kunder för KOMMANDE period, "
                             + nextPeriodString
-                            + "?",
+                            + "?"
+                            + "\nOm nej, så används NUVARANDE period, "
+                            + currentPeriodString,
                         "Skapa fakturor",
-                        JOptionPane.YES_NO_OPTION);
+                        JOptionPane.YES_NO_CANCEL_OPTION);
 
-                    if (dialogResult != JOptionPane.YES_OPTION) {
+                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
                         return;
                     }
 
                     // Execute the invoice creator in a new thread
                     // and with a waiting indicator:
-                    MainGUI.this.runInvoiceCreatorWithProgressBar();
+                    MainGUI.this
+                        .runInvoiceCreatorWithProgressBar(dialogResult == JOptionPane.YES_OPTION);
                 }
             }
         });
@@ -580,7 +582,7 @@ public class MainGUI extends JFrame {
     }
 
     // Handles the whole invoice creation execution
-    private void runInvoiceCreatorWithProgressBar() {
+    private void runInvoiceCreatorWithProgressBar(boolean nextPeriod) {
 
         // Prepare a progress indicator dialog
         final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturor...", true);
@@ -605,7 +607,9 @@ public class MainGUI extends JFrame {
         waitingDialog.setLocationRelativeTo(MainGUI.this);
 
         // Start new invoice creator worker, e.g. in a new thread
-        InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable(waitingDialog);
+        InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable(
+            waitingDialog,
+            nextPeriod);
         invoiceCreator.execute();
 
         // Important to display the (blocking) progress bar after work is started.
@@ -690,9 +694,11 @@ public class MainGUI extends JFrame {
 
         private StringBuilder filesResult;
         private final JDialog waitingDialog;
+        private final boolean nextPeriod;
 
-        protected InvoiceCreatorRunnable(JDialog waitingDialog) {
+        protected InvoiceCreatorRunnable(JDialog waitingDialog, boolean nextPeriod) {
             this.waitingDialog = waitingDialog;
+            this.nextPeriod = nextPeriod;
         }
 
         // Returns the invoice creation results
@@ -707,7 +713,7 @@ public class MainGUI extends JFrame {
             this.filesResult = new StringBuilder(1024);
 
             InvoiceResults invoiceFileResults = MainGUI.this.xmlRepository
-                .generateAndStoreInvoices();
+                .generateAndStoreInvoices(this.nextPeriod);
 
             List<String> allFilenames = invoiceFileResults.getAllInvoiceFilenames();
             List<String> emptyInvoiceCustomers = invoiceFileResults.getEmptyInvoiceCustomers();

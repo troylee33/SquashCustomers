@@ -41,7 +41,6 @@
 			<xs:element name="Telephone" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="Notes" type="xs:string" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="CreateEmptyInvoice" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	

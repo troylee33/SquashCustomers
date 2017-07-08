@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,7 +40,6 @@ public class CustomerMasterPanel extends JPanel {
     private CustomerDetailsPanel customerDetailsPanel;
     private SubscriptionsTable subscriptionsTable;
     private InvoicesTable invoicesTable;
-    private JCheckBox createEmptyInvoiceCheckbox;
 
     private JLabel customerNotesLabel;
     private JTextArea customerNotesTextArea;
@@ -75,15 +73,12 @@ public class CustomerMasterPanel extends JPanel {
 
         this.customerNotesLabel = new JLabel("Speciella noteringar:");
         this.customerNotesTextArea = new JTextArea(5, 21);
-        this.createEmptyInvoiceCheckbox = new JCheckBox("Skapa tom faktura om ab. saknas", false);
-
         // Add customer details first, aligned to left
         this.customerDetailsPanel = new CustomerDetailsPanel(
             this.subscriptionsTable,
             this.invoicesTable,
             this.customerNotesLabel,
-            this.customerNotesTextArea,
-            this.createEmptyInvoiceCheckbox);
+            this.customerNotesTextArea);
         this.add(this.customerDetailsPanel);
 
         // Hack to get some horizontal space
@@ -105,7 +100,7 @@ public class CustomerMasterPanel extends JPanel {
             new Font("Arial", Font.PLAIN, 12),
             Color.DARK_GRAY);
         subscriptionsScrollPane.setBorder(subscriptionsBorder);
-        subscriptionsScrollPane.setPreferredSize(new Dimension(240, 150));
+        subscriptionsScrollPane.setPreferredSize(new Dimension(240, 110));
 
         subscriptionsPanel.add(subscriptionsScrollPane);
 
@@ -181,18 +176,9 @@ public class CustomerMasterPanel extends JPanel {
 
         subscriptionsPanel.add(this.deleteSubscriptionButton);
 
-        // Hack to cause a line break:
-        subscriptionsPanel.add(new JLabel("         "));
-        subscriptionsPanel.add(new JLabel("         "));
-
-        // Marker to always create an "empty" (custom) invoice for this customer,
-        // when there is no standard subscription.
-        subscriptionsPanel.add(this.createEmptyInvoiceCheckbox);
-
-        subscriptionsPanel.add(new JLabel("             "));
-        subscriptionsPanel.add(new JLabel("             "));
-        subscriptionsPanel.add(new JLabel("             "));
-        subscriptionsPanel.add(new JLabel("             "));
+        // Hack to cause line breaks:
+        subscriptionsPanel.add(new JLabel("                                          "));
+        subscriptionsPanel.add(new JLabel("  "));
 
         // Notes for special customers:
         subscriptionsPanel.add(this.customerNotesLabel);
@@ -221,7 +207,6 @@ public class CustomerMasterPanel extends JPanel {
         this.addSubscriptionButton.setEnabled(enable);
         this.deleteSubscriptionButton.setEnabled(enable);
         this.customerNotesTextArea.setEnabled(enable);
-        this.createEmptyInvoiceCheckbox.setEnabled(enable);
     }
 
     // Enables/disables mailing functions, if customer have an e-mail or not.

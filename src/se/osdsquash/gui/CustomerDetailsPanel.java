@@ -256,7 +256,7 @@ public class CustomerDetailsPanel extends JPanel {
                         .getCustomer(CustomerDetailsPanel.this.customerUUID);
 
                     // If no special price before, but there is now - give a notice about it
-                    if (customer.getCustomerInfo().getSubscriptionPrice() != null
+                    if (customer.getCustomerInfo().getSubscriptionPrice() == null
                         && specialPrice != null) {
                         specialPriceNotice = true;
                     }

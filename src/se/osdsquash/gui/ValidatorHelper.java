@@ -158,19 +158,19 @@ public abstract class ValidatorHelper {
     }
 
     /**
-     * Input validator for a mandatory integer/numerical-only text field.
+     * Input validator for an OPTIONAL integer/numerical-only text field.
      */
-    protected static final class NumericalJTextFieldVerifier extends InputVerifier {
+    protected static final class OptionalIntegerJTextFieldVerifier extends InputVerifier {
 
         private String labelName;
         private JLabel messageOutput;
 
         /**
          * Creates the verifier
-         * @param labelName The display name of the property/input field to require a value for
+         * @param labelName The display name of the property/input field
          * @param messageOutput A field to write the validation error to, if error
          */
-        protected NumericalJTextFieldVerifier(String labelName, JLabel messageOutput) {
+        protected OptionalIntegerJTextFieldVerifier(String labelName, JLabel messageOutput) {
             this.labelName = labelName;
             this.messageOutput = messageOutput;
         }
@@ -181,20 +181,27 @@ public abstract class ValidatorHelper {
             JTextField textField = (JTextField) input;
             String inputText = textField.getText();
 
-            // Check validity by try parsing to an integer
-            try {
-                Integer.parseInt(inputText);
+            // Check validity - only if we have a value - by try parsing to an integer
+            if (inputText != null && inputText.trim().length() > 0) {
+                try {
+                    Integer.parseInt(inputText);
 
-                // All ok here, the parsing went fine
+                    // All ok here, the parsing went fine
+                    this.messageOutput.setText("");
+                    input.setBackground(DEFAULT_COLOR);
+                    return true;
+
+                } catch (NumberFormatException e) {
+                    input.setBackground(INVALID_COLOR);
+                    this.messageOutput
+                        .setText("Fel: " + this.labelName + " måste anges med endast siffror");
+                    return false;
+                }
+            } else {
+                // All ok, since there is no value
                 this.messageOutput.setText("");
                 input.setBackground(DEFAULT_COLOR);
                 return true;
-
-            } catch (NumberFormatException e) {
-                input.setBackground(INVALID_COLOR);
-                this.messageOutput
-                    .setText("Fel: " + this.labelName + " måste anges med endast siffror");
-                return false;
             }
         }
     }

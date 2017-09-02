@@ -72,8 +72,10 @@ public class MainGUI extends JFrame {
 
     private final JLabel validationErrorLabel = new JLabel(" ");
     private final JLabel infoLabel = new JLabel(" ");
+    private final JLabel noticeLabel = new JLabel(" ");
 
-    private static final Color INFO_MESSAGE_COLOR = new Color(120, 65, 30);
+    private static final Color INFO_MESSAGE_COLOR = new Color(35, 122, 40);
+    private static final Color NOTICE_MESSAGE_COLOR = new Color(234, 125, 65);
 
     // The list of customers data model and list:
     private DefaultListModel<CustomerType> customerListModel;
@@ -156,8 +158,8 @@ public class MainGUI extends JFrame {
         // --------------------------------------------------------------------------------------
 
         // The customer list label
-        final JLabel procJavaUrlLabel = new JLabel("     Kunder");
-        components.add(procJavaUrlLabel);
+        final JLabel customerListHeaderLabel = new JLabel("     Kunder");
+        components.add(customerListHeaderLabel);
 
         // Load the customer list, which is a list box with single selection mode
         this.customerListModel = new DefaultListModel<>();
@@ -228,8 +230,8 @@ public class MainGUI extends JFrame {
         // The list goes into a scrollable container
         JScrollPane customerListScroller = new JScrollPane(this.customerList);
         customerListScroller.setAlignmentY(SwingConstants.NORTH);
-        customerListScroller.setPreferredSize(new Dimension(280, 400));
-        customerListScroller.setMaximumSize(new Dimension(280, 400));
+        customerListScroller.setPreferredSize(new Dimension(280, 410));
+        customerListScroller.setMaximumSize(new Dimension(280, 410));
 
         InvoicesTable invoicesTable = new InvoicesTable(null);
 
@@ -241,7 +243,7 @@ public class MainGUI extends JFrame {
         JPanel customerAreaPanel = new JPanel();
         customerAreaPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 16));
         customerAreaPanel.setAlignmentY(SwingConstants.NORTH);
-        customerAreaPanel.setSize(new Dimension(500, 420));
+        customerAreaPanel.setSize(new Dimension(500, 460));
         customerAreaPanel.add(customerListScroller);
         customerAreaPanel.add(this.customerMasterPanel);
 
@@ -272,6 +274,14 @@ public class MainGUI extends JFrame {
         this.infoLabel.setMaximumSize(new Dimension(380, 32));
         this.infoLabel.setPreferredSize(new Dimension(380, 32));
         messagesPanel.add(this.infoLabel);
+
+        this.noticeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.noticeLabel.setForeground(Color.BLUE);
+        this.noticeLabel.setSize(380, 32); // X, Y
+        this.noticeLabel.setMinimumSize(new Dimension(380, 32));
+        this.noticeLabel.setMaximumSize(new Dimension(380, 32));
+        this.noticeLabel.setPreferredSize(new Dimension(380, 32));
+        messagesPanel.add(this.noticeLabel);
 
         // Add the messages to the left
         messagesAndInvoicesPanel.add(messagesPanel);
@@ -357,7 +367,10 @@ public class MainGUI extends JFrame {
             public void actionPerformed(ActionEvent event) {
 
                 if (MainGUI.this.customerList.isSelectionEmpty()) {
-                    MainGUI.this.printInfoText("Du måste välja en kund att radera", true, true);
+                    MainGUI.this.printInfoText(
+                        "Du måste välja en kund att radera",
+                        TextFormatLevel.Error,
+                        true);
                 } else {
                     int dialogResult = JOptionPane.showConfirmDialog(
                         MainGUI.this,
@@ -376,7 +389,7 @@ public class MainGUI extends JFrame {
                     MainGUI.this.xmlRepository.deleteCustomer(
                         UUID.fromString(customer.getCustomerInfo().getCustomerUUID()));
 
-                    MainGUI.this.printInfoText("Kund raderad", false, true);
+                    MainGUI.this.printInfoText("Kund raderad", TextFormatLevel.Info, true);
                 }
             }
         });
@@ -398,15 +411,24 @@ public class MainGUI extends JFrame {
             public void actionPerformed(ActionEvent event) {
 
                 if (MainGUI.this.customerList.isSelectionEmpty()) {
-                    MainGUI.this.printInfoText("Du måste välja en kund att maila", true, true);
+                    MainGUI.this.printInfoText(
+                        "Du måste välja en kund att maila",
+                        TextFormatLevel.Error,
+                        true);
                 } else {
                     CustomerType customer = MainGUI.this.customerList.getSelectedValue();
                     String eMail = customer.getCustomerInfo().getEmail();
                     if (SquashUtil.isSet(eMail)) {
-                        MainGUI.this.printInfoText("Mail-programmet startar...", false, true);
+                        MainGUI.this.printInfoText(
+                            "Mail-programmet startar...",
+                            TextFormatLevel.Info,
+                            true);
                         new MailHandler().createMailDraft(eMail, null, false);
                     } else {
-                        MainGUI.this.printInfoText("Kunden saknar e-postadress", true, true);
+                        MainGUI.this.printInfoText(
+                            "Kunden saknar e-postadress",
+                            TextFormatLevel.Error,
+                            true);
                     }
                 }
             }
@@ -441,7 +463,8 @@ public class MainGUI extends JFrame {
                 MainGUI.this.customerMasterPanel.clearCustomerDirty();
 
                 if (MainGUI.this.customerListModel.isEmpty()) {
-                    MainGUI.this.printInfoText("Det finns inga kunder!", true, true);
+                    MainGUI.this
+                        .printInfoText("Det finns inga kunder!", TextFormatLevel.Error, true);
                 } else {
 
                     String currentPeriodString = new SubscriptionPeriod(false).getPeriodString();
@@ -622,38 +645,47 @@ public class MainGUI extends JFrame {
         waitingDialog.setVisible(true);
     }
 
-    // Sets an info text, either as error marked or just info.
+    // Different text formats, depending of severity level
+    protected enum TextFormatLevel {
+        Info, Notice, Error;
+    }
+
+    // Shows a text message, with different formatting depending of level.
     // The text can be shown as a short notice, or permanent.
-    protected void printInfoText(String text, boolean errorText, boolean shortNotice) {
-        if (errorText) {
-            this.infoLabel.setForeground(Color.RED);
+    protected void printInfoText(String text, TextFormatLevel level, boolean fadeOut) {
+
+        // Notice goes to a different label - so it can co-exist with info label
+        JLabel label = (TextFormatLevel.Notice.equals(level)) ? this.noticeLabel : this.infoLabel;
+
+        if (TextFormatLevel.Info.equals(level)) {
+            label.setForeground(INFO_MESSAGE_COLOR);
+        } else if (TextFormatLevel.Notice.equals(level)) {
+            // Notice goes to a different label - which can co-exist with info label
+            label.setForeground(NOTICE_MESSAGE_COLOR);
+        } else if (TextFormatLevel.Error.equals(level)) {
+            label.setForeground(Color.RED);
         } else {
-            this.infoLabel.setForeground(INFO_MESSAGE_COLOR);
+            label.setForeground(INFO_MESSAGE_COLOR);
         }
 
         if (!SquashUtil.isSet(text)) {
             text = "   ";
         }
 
-        this.infoLabel.setText(text);
+        label.setText(text);
 
-        // If notice, clear the text in 5 seconds...
-        if (shortNotice) {
-            javax.swing.Timer timer = new javax.swing.Timer(5000, new ActionListener() {
+        // If fade out, clear the text in 6 seconds...
+        if (fadeOut) {
+            javax.swing.Timer timer = new javax.swing.Timer(6000, new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    MainGUI.this.infoLabel.setText("   ");
+                    label.setText("   ");
                 }
             });
             timer.setRepeats(false);
             timer.start();
         }
-    }
-
-    // Returns the label where all info messages are printed to
-    protected JLabel getInfoTextLabel() {
-        return this.infoLabel;
     }
 
     // Sets an error text

@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.gui.MainGUI.TextFormatLevel;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
@@ -69,6 +70,11 @@ public class CustomerDetailsPanel extends JPanel {
     private JLabel eMailLabel;
     private JTextField eMailTextField;
 
+    // A special subscription price will override 
+    // standard price in the invoice, for this customer:
+    private JLabel specialPriceLabel;
+    private JTextField specialPriceTextField;
+
     private List<JComponent> inputsWithVerifiers;
 
     // Tables holding the subscriptions and invoices
@@ -107,8 +113,8 @@ public class CustomerDetailsPanel extends JPanel {
     private void initPanel() {
 
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.setMinimumSize(new Dimension(580, 400));
-        this.setMaximumSize(new Dimension(580, 400));
+        this.setMinimumSize(new Dimension(580, 440));
+        this.setMaximumSize(new Dimension(580, 440));
 
         SpringLayout springLayout = new SpringLayout();
         this.setLayout(springLayout);
@@ -159,6 +165,11 @@ public class CustomerDetailsPanel extends JPanel {
         this.eMailTextField = new CustomerTextField("");
         this.add(this.eMailTextField);
 
+        this.specialPriceLabel = new JLabel("Eget ab.pris: ");
+        this.add(this.specialPriceLabel);
+        this.specialPriceTextField = new CustomerTextField("");
+        this.add(this.specialPriceTextField);
+
         // Empty "separator" row:
         this.add(new JLabel(" "));
         this.add(new JLabel(" "));
@@ -186,7 +197,7 @@ public class CustomerDetailsPanel extends JPanel {
                         CustomerDetailsPanel.this,
                         "Kunden sparades inte eftersom det finns fel:"
                             + "\n"
-                            + "Obligatoriska uppgifter saknas.",
+                            + "Uppgifter saknas eller är felaktigt angivna.",
                         "Ogiltiga uppgifter",
                         JOptionPane.ERROR_MESSAGE);
                     return;
@@ -217,19 +228,39 @@ public class CustomerDetailsPanel extends JPanel {
                 CustomerType customer;
                 boolean newCustomer;
 
+                boolean specialPriceNotice = false;
+                Integer specialPrice;
+                if (CustomerDetailsPanel.this.specialPriceTextField.getText() != null
+                    && CustomerDetailsPanel.this.specialPriceTextField.getText().length() > 0) {
+                    specialPrice = Integer
+                        .parseInt(CustomerDetailsPanel.this.specialPriceTextField.getText());
+                } else {
+                    specialPrice = null;
+                }
+
                 if (CustomerDetailsPanel.this.customerUUID == null) {
-
                     newCustomer = true;
-
                     customer = CustomerDetailsPanel.this.xmlRepository.getNewCustomer();
                     CustomerDetailsPanel.this.customerUUID = UUID.randomUUID();
                     customer.getCustomerInfo().setCustomerUUID(
                         CustomerDetailsPanel.this.customerUUID.toString());
 
+                    // Give a notice about special price
+                    if (customer.getCustomerInfo().getSubscriptionPrice() != null
+                        && specialPrice != null) {
+                        specialPriceNotice = true;
+                    }
+
                 } else {
                     newCustomer = false;
                     customer = CustomerDetailsPanel.this.xmlRepository
                         .getCustomer(CustomerDetailsPanel.this.customerUUID);
+
+                    // If no special price before, but there is now - give a notice about it
+                    if (customer.getCustomerInfo().getSubscriptionPrice() != null
+                        && specialPrice != null) {
+                        specialPriceNotice = true;
+                    }
                 }
 
                 // Read all input fields and set values to the customer object
@@ -243,6 +274,7 @@ public class CustomerDetailsPanel extends JPanel {
                 customerInfo.setLastname(CustomerDetailsPanel.this.efternamnTextField.getText());
                 customerInfo.setPostalCode(CustomerDetailsPanel.this.postNrTextField.getText());
                 customerInfo.setStreet(CustomerDetailsPanel.this.gatuAdressTextField.getText());
+                customerInfo.setSubscriptionPrice(specialPrice);
                 customerInfo.setTelephone(CustomerDetailsPanel.this.telefonTextField.getText());
 
                 customerInfo.setNotes(CustomerDetailsPanel.this.customerNotesText.getText());
@@ -276,7 +308,14 @@ public class CustomerDetailsPanel extends JPanel {
                 // Update email buttons enable/disable for the whole program
                 MainGUI.getInstance().toggleEmailFunction();
 
-                MainGUI.getInstance().printInfoText(saveMessage, false, true);
+                MainGUI.getInstance().printInfoText(saveMessage, TextFormatLevel.Info, true);
+
+                if (specialPriceNotice) {
+                    MainGUI.getInstance().printInfoText(
+                        "NOTERA att eget ab.pris är satt!",
+                        TextFormatLevel.Notice,
+                        true);
+                }
 
                 CustomerDetailsPanel.this.dirtyMarker.setClean();
             }
@@ -290,7 +329,7 @@ public class CustomerDetailsPanel extends JPanel {
         // NOTE: The above components much be even with the nr of rows and columns here:
         SpringLayoutUtil.makeGrid(
             this,
-            11, // Rows
+            12, // Rows
             2, // Cols
             10, // X location
             10, // Y location
@@ -374,10 +413,14 @@ public class CustomerDetailsPanel extends JPanel {
         this.fornamnTextField.setText(customerInfo.getFirstname());
         this.efternamnTextField.setText(customerInfo.getLastname());
         this.gatuAdressTextField.setText(customerInfo.getStreet());
-        this.postNrTextField.setText(String.valueOf(customerInfo.getPostalCode()));
+        this.postNrTextField.setText(customerInfo.getPostalCode());
         this.ortTextField.setText(customerInfo.getCity());
         this.telefonTextField.setText(customerInfo.getTelephone());
         this.eMailTextField.setText(customerInfo.getEmail());
+
+        if (customerInfo.getSubscriptionPrice() != null) {
+            this.specialPriceTextField.setText(String.valueOf(customerInfo.getSubscriptionPrice()));
+        }
 
         this.customerNotesText.setText(customerInfo.getNotes());
         this.kundNrTextField.requestFocus();
@@ -521,6 +564,12 @@ public class CustomerDetailsPanel extends JPanel {
             mainGui.getValidationErrorTextLabel());
         this.fornamnTextField.setInputVerifier(fornamnVerifier);
         this.inputsWithVerifiers.add(this.fornamnTextField);
+
+        InputVerifier specialPriceVerifier = new ValidatorHelper.OptionalIntegerJTextFieldVerifier(
+            "Eget ab.pris",
+            mainGui.getValidationErrorTextLabel());
+        this.specialPriceTextField.setInputVerifier(specialPriceVerifier);
+        this.inputsWithVerifiers.add(this.specialPriceTextField);
 
         // --- Don't require post adress: ---
 

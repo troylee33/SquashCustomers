@@ -31,6 +31,7 @@ import javax.swing.table.TableColumn;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.gui.MainGUI.TextFormatLevel;
 import se.osdsquash.mail.MailHandler;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.InvoiceStatusType;
@@ -124,7 +125,7 @@ public class InvoicesTable extends JTable {
                             } else {
                                 MainGUI.getInstance().printInfoText(
                                     "Fakturan kan inte mailas: Inga fakturauppgifter hittades för denna rad",
-                                    true,
+                                    TextFormatLevel.Error,
                                     true);
                             }
 
@@ -136,7 +137,7 @@ public class InvoicesTable extends JTable {
                             if (!SquashUtil.isSet(InvoicesTable.this.customerInfo.getEmail())) {
                                 MainGUI.getInstance().printInfoText(
                                     "Det finns ingen E-post angiven",
-                                    true,
+                                    TextFormatLevel.Error,
                                     true);
                                 return;
                             }
@@ -144,14 +145,14 @@ public class InvoicesTable extends JTable {
                             if (invoice != null) {
                                 MainGUI.getInstance().printInfoText(
                                     "Mail-programmet startar...",
-                                    false,
+                                    TextFormatLevel.Info,
                                     true);
                                 new MailHandler()
                                     .createMailDraft("adress", invoice.getRelativeFilePath(), true);
                             } else {
                                 MainGUI.getInstance().printInfoText(
                                     "Fakturan kan inte mailas: Inga fakturauppgifter hittades för denna rad",
-                                    true,
+                                    TextFormatLevel.Error,
                                     true);
                             }
                         }

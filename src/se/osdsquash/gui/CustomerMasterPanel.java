@@ -20,6 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import se.osdsquash.common.SquashProperties;
 import se.osdsquash.common.SquashUtil;
+import se.osdsquash.gui.MainGUI.TextFormatLevel;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerType;
 import se.osdsquash.xml.jaxb.SubscriptionType;
@@ -167,9 +168,10 @@ public class CustomerMasterPanel extends JPanel {
                         .removeSubscription(selectedIndex);
 
                 } else {
-                    MainGUI
-                        .getInstance()
-                        .printInfoText("Ingen abonnemangsrad markerad", true, true);
+                    MainGUI.getInstance().printInfoText(
+                        "Ingen abonnemangsrad markerad",
+                        TextFormatLevel.Error,
+                        true);
                 }
             }
         });

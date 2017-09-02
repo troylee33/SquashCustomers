@@ -87,7 +87,8 @@ public class ExcelHandler {
             docCoreProperties.setTitle("Faktura");
             docCoreProperties.setCreator(SquashProperties.CLUB_NAME);
 
-            this.invoiceSheet.setColumnWidth(0, 3 * 256); // The width must be given as 'nr of character x 256'
+            // The width must be given as 'nr of character x 256'
+            this.invoiceSheet.setColumnWidth(0, 3 * 256);
             this.invoiceSheet.setColumnWidth(1, 44 * 256);
             this.invoiceSheet.setColumnWidth(2, 13 * 256);
             this.invoiceSheet.setColumnWidth(3, 14 * 256);

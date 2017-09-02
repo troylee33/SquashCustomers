@@ -87,7 +87,8 @@ public class MainGUI extends JFrame {
     private final JButton newCustomerButton = new JButton("Ny Kund");
     private final JButton deleteCustomerButton = new JButton("Radera Kund");
     private final JButton mailToCustomerButton = new JButton("Maila Kund");
-    private final JButton generateInvoicesButton = new JButton("Skapa Fakturor");
+    private final JButton createCustomerInvoiceButton = new JButton("Skapa faktura");
+    private final JButton generateAllInvoicesButton = new JButton("Skapa alla fakturor");
 
     private static final MainGUI INSTANCE = new MainGUI();
 
@@ -434,16 +435,67 @@ public class MainGUI extends JFrame {
             }
         });
 
+        functionButtonsPanel.add(this.createEmptyRow());
+
+        this.createCustomerInvoiceButton.setToolTipText("Skapa en faktura för denna kund");
+        this.createCustomerInvoiceButton.setMinimumSize(new Dimension(130, 22));
+        this.createCustomerInvoiceButton.setMaximumSize(new Dimension(130, 22));
+        functionButtonsPanel.add(this.createCustomerInvoiceButton);
+
+        this.createCustomerInvoiceButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                if (MainGUI.this.customerList.isSelectionEmpty()) {
+                    MainGUI.this
+                        .printInfoText("Du måste välja en kund", TextFormatLevel.Error, true);
+                } else {
+
+                    MainGUI.this.customerMasterPanel.clearCustomerDirty();
+
+                    String currentPeriodString = new SubscriptionPeriod(false).getPeriodString();
+                    String nextPeriodString = new SubscriptionPeriod(true).getPeriodString();
+
+                    int dialogResult = JOptionPane.showConfirmDialog(
+                        MainGUI.this,
+                        "Vill du skapa en faktura för KOMMANDE period, "
+                            + nextPeriodString
+                            + "?"
+                            + "\nOm nej, så används NUVARANDE period, "
+                            + currentPeriodString,
+                        "Skapa faktura för kund",
+                        JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
+                        return;
+                    }
+
+                    UUID customerID = UUID.fromString(
+                        MainGUI.this.customerList
+                            .getSelectedValue()
+                            .getCustomerInfo()
+                            .getCustomerUUID());
+
+                    // Execute the invoice creator in a new thread
+                    // and with a waiting indicator:
+                    MainGUI.this.runInvoiceCreatorWithProgressBar(
+                        dialogResult == JOptionPane.YES_OPTION,
+                        customerID);
+                }
+            }
+        });
+
         functionButtonsPanel.add(this.createWiderEmptyRow());
         functionButtonsPanel.add(this.createWiderEmptyRow());
 
-        this.generateInvoicesButton
+        this.generateAllInvoicesButton
             .setToolTipText("Skapa fakturor för alla kunder för nästkommande abonnemangsperiod");
-        this.generateInvoicesButton.setMinimumSize(new Dimension(130, 22));
-        this.generateInvoicesButton.setMaximumSize(new Dimension(130, 22));
-        functionButtonsPanel.add(this.generateInvoicesButton);
+        this.generateAllInvoicesButton.setMinimumSize(new Dimension(180, 22));
+        this.generateAllInvoicesButton.setMaximumSize(new Dimension(180, 22));
+        functionButtonsPanel.add(this.generateAllInvoicesButton);
 
-        this.generateInvoicesButton.addActionListener(new ActionListener() {
+        this.generateAllInvoicesButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -472,7 +524,7 @@ public class MainGUI extends JFrame {
 
                     int dialogResult = JOptionPane.showConfirmDialog(
                         MainGUI.this,
-                        "Vill du generera fakturafiler för alla kunder för KOMMANDE period, "
+                        "Vill du generera fakturafiler för ALLA kunder för KOMMANDE period, "
                             + nextPeriodString
                             + "?"
                             + "\nOm nej, så används NUVARANDE period, "
@@ -486,8 +538,9 @@ public class MainGUI extends JFrame {
 
                     // Execute the invoice creator in a new thread
                     // and with a waiting indicator:
-                    MainGUI.this
-                        .runInvoiceCreatorWithProgressBar(dialogResult == JOptionPane.YES_OPTION);
+                    MainGUI.this.runInvoiceCreatorWithProgressBar(
+                        dialogResult == JOptionPane.YES_OPTION,
+                        null);
                 }
             }
         });
@@ -609,11 +662,12 @@ public class MainGUI extends JFrame {
         }
     }
 
-    // Handles the whole invoice creation execution
-    private void runInvoiceCreatorWithProgressBar(boolean nextPeriod) {
+    // Handles the whole invoice creation execution.
+    // If customerNr is null, invoices are created for all customers.
+    private void runInvoiceCreatorWithProgressBar(boolean nextPeriod, UUID customerID) {
 
         // Prepare a progress indicator dialog
-        final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturor...", true);
+        final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar fakturaunderlag...", true);
 
         waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         waitingDialog.setSize(300, 160);
@@ -637,7 +691,8 @@ public class MainGUI extends JFrame {
         // Start new invoice creator worker, e.g. in a new thread
         InvoiceCreatorRunnable invoiceCreator = new InvoiceCreatorRunnable(
             waitingDialog,
-            nextPeriod);
+            nextPeriod,
+            customerID);
         invoiceCreator.execute();
 
         // Important to display the (blocking) progress bar after work is started.
@@ -732,10 +787,15 @@ public class MainGUI extends JFrame {
         private StringBuilder filesResult;
         private final JDialog waitingDialog;
         private final boolean nextPeriod;
+        private final UUID customerID;
 
-        protected InvoiceCreatorRunnable(JDialog waitingDialog, boolean nextPeriod) {
+        protected InvoiceCreatorRunnable(
+            JDialog waitingDialog,
+            boolean nextPeriod,
+            UUID customerID) {
             this.waitingDialog = waitingDialog;
             this.nextPeriod = nextPeriod;
+            this.customerID = customerID;
         }
 
         // Returns the invoice creation results
@@ -746,42 +806,62 @@ public class MainGUI extends JFrame {
         @Override
         protected String doInBackground() throws Exception {
 
-            // Loop all customers and generate invoices as Excel-files
             this.filesResult = new StringBuilder(1024);
 
-            InvoiceResults invoiceFileResults = MainGUI.this.xmlRepository
-                .generateAndStoreInvoices(this.nextPeriod);
+            // Loop all customers and generate invoices as Excel-files
+            if (this.customerID == null) {
 
-            List<String> allFilenames = invoiceFileResults.getAllInvoiceFilenames();
-            List<String> emptyInvoiceCustomers = invoiceFileResults.getEmptyInvoiceCustomers();
+                InvoiceResults invoiceFileResults = MainGUI.this.xmlRepository
+                    .generateAndStoreInvoices(this.nextPeriod);
 
-            this.filesResult
-                .append("Dessa " + allFilenames.size() + " fakturafiler har skapats:\n\n");
+                List<String> allFilenames = invoiceFileResults.getAllInvoiceFilenames();
+                List<String> emptyInvoiceCustomers = invoiceFileResults.getEmptyInvoiceCustomers();
 
-            Iterator<String> filenameIterator = allFilenames.iterator();
-            while (filenameIterator.hasNext()) {
-                String fullFilename = filenameIterator.next();
-                this.filesResult.append(SquashUtil.getFilenameFromPath(fullFilename));
-                if (filenameIterator.hasNext()) {
-                    this.filesResult.append("\n");
-                }
-            }
+                this.filesResult
+                    .append("Dessa " + allFilenames.size() + " fakturafiler har skapats:\n\n");
 
-            if (!emptyInvoiceCustomers.isEmpty()) {
-                this.filesResult.append("\n");
-                this.filesResult.append("\n");
-                this.filesResult.append("\n");
-                this.filesResult.append(
-                    "OBS: Dessa "
-                        + emptyInvoiceCustomers.size()
-                        + " kunders faktura saknar abonnemang:\n\n");
-
-                Iterator<String> customerIterator = emptyInvoiceCustomers.iterator();
-                while (customerIterator.hasNext()) {
-                    this.filesResult.append(customerIterator.next());
-                    if (customerIterator.hasNext()) {
+                Iterator<String> filenameIterator = allFilenames.iterator();
+                while (filenameIterator.hasNext()) {
+                    String fullFilename = filenameIterator.next();
+                    this.filesResult.append(SquashUtil.getFilenameFromPath(fullFilename));
+                    if (filenameIterator.hasNext()) {
                         this.filesResult.append("\n");
                     }
+                }
+
+                if (!emptyInvoiceCustomers.isEmpty()) {
+                    this.filesResult.append("\n");
+                    this.filesResult.append("\n");
+                    this.filesResult.append("\n");
+                    this.filesResult.append(
+                        "OBS: Dessa "
+                            + emptyInvoiceCustomers.size()
+                            + " kunders faktura saknar abonnemang:\n\n");
+
+                    Iterator<String> customerIterator = emptyInvoiceCustomers.iterator();
+                    while (customerIterator.hasNext()) {
+                        this.filesResult.append(customerIterator.next());
+                        if (customerIterator.hasNext()) {
+                            this.filesResult.append("\n");
+                        }
+                    }
+                }
+
+                // Create for single customer
+            } else {
+
+                InvoiceResults invoiceFileResult = MainGUI.this.xmlRepository
+                    .generateAndStoreSingleInvoice(this.nextPeriod, this.customerID);
+
+                String filename = invoiceFileResult.getAllInvoiceFilenames().get(0);
+                this.filesResult.append("Fakturafil har skapats:\n");
+                this.filesResult.append(SquashUtil.getFilenameFromPath(filename) + "\n");
+
+                if (!invoiceFileResult.getEmptyInvoiceCustomers().isEmpty()) {
+                    String noSubscriptionsErrorMsg = invoiceFileResult
+                        .getEmptyInvoiceCustomers()
+                        .get(0);
+                    this.filesResult.append("\nOBS: " + noSubscriptionsErrorMsg);
                 }
             }
 

@@ -439,6 +439,37 @@ public class XmlRepository {
     }
 
     /**
+     * Generates a single invoice file for a customer for a given period
+     * and saves it at the same time. The result is always one single invoice.
+     * 
+     * @param nextPeriod True if to use next subscription period, or false for the current one
+     * @param customerUUID Customer's ID
+     * @return The invoice creation result
+     */
+    public synchronized InvoiceResults generateAndStoreSingleInvoice(
+        boolean nextPeriod,
+        UUID customerUUID) {
+
+        List<String> invoiceFilenameSingleton = new ArrayList<>(1);
+        List<String> customersWithoutSubscriptionSingleton = new ArrayList<>(1);
+
+        ExcelHandler excelHandler = new ExcelHandler(this);
+        CustomerType customer = this.getCustomer(customerUUID);
+        InvoiceType invoice = excelHandler
+            .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE, nextPeriod);
+        invoiceFilenameSingleton.add(invoice.getRelativeFilePath());
+
+        // Period is null if there is no subscription
+        if (invoice.getPeriodStartDate() == null) {
+            customersWithoutSubscriptionSingleton.add("Kunden har inga abonnemang");
+        }
+
+        this.saveRepository();
+
+        return new InvoiceResults(invoiceFilenameSingleton, customersWithoutSubscriptionSingleton);
+    }
+
+    /**
      * Generates invoice files for all customers for a given period
      * and saves everything at the same time.
      * 

@@ -114,8 +114,9 @@ public class InvoiceCell implements Cell {
      * 
      * @param bold True if to set bold font style
      * @param italic True if to set italic font style
+     * @param centerAlign True to align text in the center
      */
-    protected void applyFontStyles(boolean bold, boolean italic) {
+    protected void applyFontStyles(boolean bold, boolean italic, boolean centerAlign) {
 
         XSSFWorkbook currentWorkbook = this.cell.getSheet().getWorkbook();
 
@@ -124,6 +125,9 @@ public class InvoiceCell implements Cell {
         font.setBold(bold);
         font.setItalic(italic);
         style.setFont(font);
+        if (centerAlign) {
+            style.setAlignment(CellStyle.ALIGN_CENTER);
+        }
 
         this.cell.setCellStyle(style);
     }

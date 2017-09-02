@@ -206,11 +206,11 @@ public class ExcelHandler {
 
             InvoiceCell yourReferenceCell = referencesRow.createNextCell();
             yourReferenceCell.setCellValue("Er referens:");
-            yourReferenceCell.applyFontStyles(true, true);
+            yourReferenceCell.applyFontStyles(true, true, false);
 
             InvoiceCell ourReferenceCell = referencesRow.createNextCell();
             ourReferenceCell.setCellValue("Vår referens:");
-            ourReferenceCell.applyFontStyles(true, true);
+            ourReferenceCell.applyFontStyles(true, true, false);
 
             InvoiceRow nameRow = this.invoiceSheet.createNextPaddedRow();
             nameRow.createNextCell().setCellValue(
@@ -251,14 +251,14 @@ public class ExcelHandler {
 
             InvoiceCell descriptionCell = trackTableHeaderRow.createNextCell();
             descriptionCell.setCellValue("  Beskrivning");
-            descriptionCell.applyFontStyles(true, false);
+            descriptionCell.applyFontStyles(true, false, false);
 
             // Skip one cell...
             trackTableHeaderRow.createNextCellPadded();
 
             InvoiceCell ammountCell = trackTableHeaderRow.createNextCell();
             ammountCell.setCellValue("          Belopp");
-            ammountCell.applyFontStyles(true, false);
+            ammountCell.applyFontStyles(true, false, false);
 
             // Add border around the header cell range
             String trackHeaderRowArea = trackTableHeaderRow.getCell(1).getAddress().formatAsString()
@@ -433,14 +433,14 @@ public class ExcelHandler {
                 .format(dueCal.getTime());
 
             InvoiceCell paymentInfo2Cell = ammountToPayRow.createNextCell();
-            paymentInfo2Cell.applyFontStyles(true, false);
+            paymentInfo2Cell.applyFontStyles(true, false, false);
 
             paymentInfo2Cell.setCellValue("Förfallodag " + dueDateString);
             paymentInfo2Cell.setAlignment(CellStyle.ALIGN_CENTER);
 
             InvoiceCell ammountToPayTextCell = ammountToPayRow.createNextCell();
             ammountToPayTextCell.setCellValue("  Att betala");
-            ammountToPayTextCell.applyFontStyles(true, false);
+            ammountToPayTextCell.applyFontStyles(true, false, false);
 
             InvoiceCell totalAmmountCell = ammountToPayRow.createNextCell();
             totalAmmountCell.setCurrencyFormat(totalPrice, true, true);
@@ -457,7 +457,7 @@ public class ExcelHandler {
 
             InvoiceCell paymentInfo3Cell = markPaymentRow.createNextCell();
             paymentInfo3Cell.setCellValue("Märk betalningen med FakturaNr!");
-            paymentInfo3Cell.setAlignment(CellStyle.ALIGN_CENTER);
+            paymentInfo3Cell.applyFontStyles(true, false, true);
 
             // Write the workbook to a new file
             // ------------------------------------------------------------------------------------

@@ -415,12 +415,11 @@ public class ExcelHandler {
             paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
             paymentInfoCell.setAlignment(CellStyle.ALIGN_CENTER);
 
-            // TODO: Check if there IS moms to set ?!?!?!?!
-            double momsValue = 0d;
-
+            // Moms is not used!
+            /**double momsValue = 0d;
             momsRow.createNextCell().setCellValue("  Varav moms");
             InvoiceCell momsValueCell = momsRow.createNextCell();
-            momsValueCell.setCurrencyFormat(momsValue, true, false);
+            momsValueCell.setCurrencyFormat(momsValue, true, false);*/
 
             // Write the row with the total ammount to pay
             InvoiceRow ammountToPayRow = this.invoiceSheet.createNextRow();

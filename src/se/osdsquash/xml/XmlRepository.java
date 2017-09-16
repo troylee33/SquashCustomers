@@ -439,6 +439,30 @@ public class XmlRepository {
     }
 
     /**
+     * Finds a customer by given invoice nr, if any
+     * 
+     * @param invoiceNr Invoice number
+     * @return The customer belonging to given invoice, null if not found
+     */
+    public CustomerType getCustomerByInvoiceNr(int invoiceNr) {
+
+        // This is never null, since we always initialize the repository.
+        CustomersType customersType = this.customersJaxbXml.getValue();
+
+        for (CustomerType customer : customersType.getCustomer()) {
+            if (customer.getInvoices() != null) {
+                for (InvoiceType invoice : customer.getInvoices().getInvoice()) {
+                    if (invoiceNr == invoice.getInvoiceNumber()) {
+                        return customer;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Generates a single invoice file for a customer for a given period
      * and saves it at the same time. The result is always one single invoice.
      * 

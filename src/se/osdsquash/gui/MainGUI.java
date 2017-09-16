@@ -158,9 +158,63 @@ public class MainGUI extends JFrame {
         // -----------------------------  CREATE CUSTOMER COMPONENTS  ---------------------------
         // --------------------------------------------------------------------------------------
 
+        // Top row with labels and buttons
+        JPanel topRowPanel = new JPanel();
+        topRowPanel.setLayout(new BoxLayout(topRowPanel, BoxLayout.X_AXIS));
+
         // The customer list label
         final JLabel customerListHeaderLabel = new JLabel("     Kunder");
-        components.add(customerListHeaderLabel);
+        customerListHeaderLabel.setFont(
+            new Font(
+                customerListHeaderLabel.getFont().getName(),
+                Font.BOLD,
+                customerListHeaderLabel.getFont().getSize()));
+        topRowPanel.add(customerListHeaderLabel);
+
+        topRowPanel.add(Box.createRigidArea(new Dimension(120, 5)));
+
+        final JButton searchButton = new JButton(" Sök FakturaNr... ");
+        searchButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                String searchInput = JOptionPane.showInputDialog(
+                    MainGUI.this,
+                    "FakturaNr att söka efter:",
+                    "Sökning",
+                    JOptionPane.PLAIN_MESSAGE);
+
+                int invoiceNr = -1;
+                try {
+                    invoiceNr = Integer.parseInt(searchInput);
+                } catch (Exception ex) {
+                    // Not a number...
+                }
+
+                // Go ahead and search among invoices
+                if (invoiceNr >= 0) {
+                    CustomerType customer = MainGUI.this.xmlRepository
+                        .getCustomerByInvoiceNr(invoiceNr);
+                    if (customer != null) {
+
+                        // Unselect any previous selected customer and select the match
+                        MainGUI.this.customerList.clearSelection();
+                        MainGUI.this.customerList.setSelectedValue(customer, true);
+
+                        MainGUI.this.printInfoText("Faktura hittat", TextFormatLevel.Info, true);
+                        return;
+                    }
+                }
+
+                MainGUI.this.printInfoText("Ingen sökträff", TextFormatLevel.Error, true);
+                return;
+            }
+        });
+
+        topRowPanel.add(searchButton);
+
+        components.add(topRowPanel);
 
         // Load the customer list, which is a list box with single selection mode
         this.customerListModel = new DefaultListModel<>();
@@ -643,11 +697,14 @@ public class MainGUI extends JFrame {
     // Adds a customer to the list
     protected void addCustomerToList(CustomerType customer) {
         this.customerListModel.addElement(customer);
+        this.customerList.setSelectedValue(customer, true);
     }
 
     // Repaints the customer list
     protected void repaintCustomerList() {
+        int selectedIndex = this.customerList.getSelectedIndex();
         this.customerList.repaint();
+        this.customerList.setSelectedIndex(selectedIndex);
     }
 
     // Toggles all mail functions on/off for customer, if there is an email

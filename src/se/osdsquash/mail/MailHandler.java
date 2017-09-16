@@ -203,10 +203,7 @@ public class MailHandler {
             messageBuilder.append("Vänligen notera betalningsinstruktionerna i fakturafilen.");
             messageBuilder.append("\n");
             messageBuilder.append("\n");
-            messageBuilder.append("Lycka till med squashen!");
-            messageBuilder.append("\n");
-            messageBuilder.append("\n");
-            messageBuilder.append("Med vänlig hälsning");
+            messageBuilder.append("Lycka till med squashen, hälsningar");
             messageBuilder.append("\n");
             messageBuilder.append(SquashProperties.INVOICE_NAME);
             messageBuilder.append("\n");

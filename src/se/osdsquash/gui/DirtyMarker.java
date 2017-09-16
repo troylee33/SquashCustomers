@@ -9,6 +9,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import se.osdsquash.gui.InvoicesTable.InvoiceTableModel;
+
 /**
  * Synchronized class that can listen and track GUI component changes
  * becoming "dirty",  e.g. modified and unsaved, otherwise "clean".
@@ -86,6 +88,17 @@ public class DirtyMarker implements DocumentListener, ChangeListener, TableModel
     // ------------------------------------------------------------
     @Override
     public void tableChanged(TableModelEvent e) {
+
+        // Hack to prevent an invoice deletion to mark customer dirty.
+        // Such a delete doesn't need a Save, it is already done.
+        if (e.getType() == TableModelEvent.DELETE
+            && e.getSource().getClass().equals(InvoiceTableModel.class)) {
+            if (this.debugMode) {
+                System.out.println(
+                    "tableChanged of type InvoiceTableModel DELETE called, ignoring dirty marking");
+            }
+            return;
+        }
         this.setDirty();
         if (this.debugMode) {
             System.out.println("tableChanged called");

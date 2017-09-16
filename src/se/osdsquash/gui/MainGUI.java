@@ -437,12 +437,19 @@ public class MainGUI extends JFrame {
                         return;
                     }
 
+                    // Ignore any changes since we are deleting anyway
+                    MainGUI.this.customerMasterPanel.clearCustomerDirty();
+
                     // Remove customer from repository and GUI list
                     CustomerType customer = MainGUI.this.customerList.getSelectedValue();
                     MainGUI.this.customerListModel
                         .remove(MainGUI.this.customerList.getSelectedIndex());
                     MainGUI.this.xmlRepository.deleteCustomer(
                         UUID.fromString(customer.getCustomerInfo().getCustomerUUID()));
+
+                    // Unselect and clear everything
+                    MainGUI.this.customerList.clearSelection();
+                    MainGUI.this.customerMasterPanel.clearCustomer();
 
                     MainGUI.this.printInfoText("Kund raderad", TextFormatLevel.Info, true);
                 }

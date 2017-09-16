@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -231,7 +232,7 @@ public class XmlRepository {
     }
 
     /**
-     * Returns all the Customers
+     * Returns all the Customers (in a copied list)
      * @return The customers, empty list if none
      */
     public List<CustomerType> getAllCustomers() {
@@ -244,25 +245,31 @@ public class XmlRepository {
     }
 
     /**
-     * Deletes a customer, if present and persists the change
+     * Deletes a customer and persists the change
+     * 
      * @param customerUUID Customer UUID
+     * @throws IllegalArgumentException If customer not found
      */
     public synchronized void deleteCustomer(UUID customerUUID) {
 
-        // Look for the customer's index...
-        int listIndex = -1;
-        for (CustomerType customer : this.getAllCustomers()) {
+        // Look for the customer
+        Iterator<CustomerType> customersIterator = this.customersJaxbXml
+            .getValue()
+            .getCustomer()
+            .iterator();
+
+        while (customersIterator.hasNext()) {
+            CustomerType customer = customersIterator.next();
             if (customer.getCustomerInfo().getCustomerUUID().equals(customerUUID.toString())) {
-                break;
+
+                // This deletes from underlying XML list
+                customersIterator.remove();
+                this.saveRepository();
+                return;
             }
-            listIndex++;
         }
 
-        //...and delete if we found it, then save the XML
-        if (listIndex != -1) {
-            this.getAllCustomers().remove(listIndex);
-            this.saveRepository();
-        }
+        throw new IllegalArgumentException("Hittade inte kund med ID " + customerUUID.toString());
     }
 
     /**
@@ -386,6 +393,58 @@ public class XmlRepository {
         InvoicesType invoicesType = customer.getInvoices();
         invoicesType.getInvoice().clear();
         invoicesType.getInvoice().addAll(invoices);
+    }
+
+    /**
+     * Deletes an invoice from a customer and persists the change.
+     * If the actual invoice file is found, that is also deleted.
+     * 
+     * @param invoiceNr The number of the invoice to delete
+     * @throws IllegalArgumentException if invoice is not found
+     */
+    public synchronized void deleteInvoice(int invoiceNr) {
+
+        // This is never null, since we always initialize the repository.
+        CustomersType customersType = this.customersJaxbXml.getValue();
+
+        // Loop customer and their invoices
+        for (CustomerType customer : customersType.getCustomer()) {
+            if (customer.getInvoices() != null) {
+                Iterator<InvoiceType> invoiceIterator = customer
+                    .getInvoices()
+                    .getInvoice()
+                    .iterator();
+                while (invoiceIterator.hasNext()) {
+                    InvoiceType invoice = invoiceIterator.next();
+                    if (invoiceNr == invoice.getInvoiceNumber()) {
+
+                        // This deletes from underlying XML list
+                        invoiceIterator.remove();
+                        this.saveRepository();
+
+                        // Try to delete file
+                        File invoiceFile = new File(invoice.getRelativeFilePath());
+                        if (invoiceFile.isFile()) {
+                            try {
+                                invoiceFile.delete();
+                            } catch (Exception ex) {
+                                // Just log file deletion failure...
+                                logger.log(
+                                    "Varning: Fel uppstod vid radering av fakturafil: "
+                                        + invoiceFile.getAbsolutePath()
+                                        + ". Felmeddelande: "
+                                        + ex.getMessage(),
+                                    true);
+                            }
+                        }
+
+                        return;
+                    }
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Hittade inte faktura med nr " + invoiceNr);
     }
 
     /**

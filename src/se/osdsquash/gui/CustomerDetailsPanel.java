@@ -294,6 +294,9 @@ public class CustomerDetailsPanel extends JPanel {
                 CustomerDetailsPanel.this.xmlRepository.saveCustomer(customer);
                 String saveMessage;
 
+                // Clear dirty marker before setting this customer in the list
+                CustomerDetailsPanel.this.dirtyMarker.setClean();
+
                 // We must add the new customer to the customer list...
                 if (newCustomer) {
                     MainGUI.getInstance().addCustomerToList(customer);
@@ -316,6 +319,7 @@ public class CustomerDetailsPanel extends JPanel {
                         true);
                 }
 
+                // Setting customer in the list seems to make something dirty, clean that
                 CustomerDetailsPanel.this.dirtyMarker.setClean();
             }
         });

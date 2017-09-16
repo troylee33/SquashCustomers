@@ -33,6 +33,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.gui.MainGUI.TextFormatLevel;
 import se.osdsquash.mail.MailHandler;
+import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.InvoiceStatusType;
 import se.osdsquash.xml.jaxb.InvoiceType;
@@ -86,12 +87,16 @@ public class InvoicesTable extends JTable {
 
         TableColumn filenameColumn = super.getColumnModel()
             .getColumn(TableColumnEnum.FILENAME.index);
-        filenameColumn.setMaxWidth(410);
+        filenameColumn.setMaxWidth(310);
         filenameColumn.setCellRenderer(new InvoiceCellRenderer());
 
         TableColumn mailColumn = super.getColumnModel().getColumn(TableColumnEnum.MAIL.index);
-        mailColumn.setMaxWidth(40);
+        mailColumn.setMaxWidth(38);
         mailColumn.setCellRenderer(new InvoiceCellRenderer());
+
+        TableColumn deleteColumn = super.getColumnModel().getColumn(TableColumnEnum.DELETE.index);
+        deleteColumn.setMaxWidth(38);
+        deleteColumn.setCellRenderer(new InvoiceCellRenderer());
 
         // Use a combobox editor when editing the invoice status
         {
@@ -105,7 +110,7 @@ public class InvoicesTable extends JTable {
             this.invoiceStatusEditor = new DefaultCellEditor(statusesComboBox);
         }
 
-        // The filename & mail cells are clickable
+        // The filename, mail and delete cells are clickable
         super.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -155,6 +160,43 @@ public class InvoicesTable extends JTable {
                                     TextFormatLevel.Error,
                                     true);
                             }
+
+                            // Delete invoice row
+                        } else if (selectedColumn == TableColumnEnum.DELETE.index) {
+                            InvoiceType invoice = ((InvoiceTableModel) InvoicesTable.this
+                                .getModel()).getInvoices().get(selectedRow);
+
+                            if (invoice != null) {
+
+                                int dialogResult = JOptionPane.showConfirmDialog(
+                                    InvoicesTable.this,
+                                    "Vill du verkligen radera fakturan?",
+                                    "Radera?",
+                                    JOptionPane.YES_NO_OPTION);
+
+                                if (dialogResult != JOptionPane.YES_OPTION) {
+                                    return;
+                                }
+
+                                // Perform the delete and remove the row
+                                XmlRepository
+                                    .getInstance()
+                                    .deleteInvoice(invoice.getInvoiceNumber());
+
+                                InvoicesTable.this
+                                    .getInvoicesTableModel()
+                                    .removeInvoice(selectedRow);
+
+                                MainGUI.getInstance().printInfoText(
+                                    "Faktura raderad",
+                                    TextFormatLevel.Info,
+                                    true);
+                            } else {
+                                MainGUI.getInstance().printInfoText(
+                                    "Fakturan kan inte raderas, raden verkar vara tom!",
+                                    TextFormatLevel.Error,
+                                    true);
+                            }
                         }
                     }
                 }
@@ -166,12 +208,13 @@ public class InvoicesTable extends JTable {
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {
 
-        // Set hand cursor for filename and mail links, otherwise standard cursor
+        // Set hand cursor for action links, otherwise standard cursor
         Point point = e.getPoint();
         int column = InvoicesTable.this.columnAtPoint(point);
         int row = InvoicesTable.this.rowAtPoint(point);
-        if ((TableColumnEnum.FILENAME.index == column || TableColumnEnum.MAIL.index == column)
-            && row >= 0) {
+        if ((TableColumnEnum.FILENAME.index == column
+            || TableColumnEnum.MAIL.index == column
+            || TableColumnEnum.DELETE.index == column) && row >= 0) {
             InvoicesTable.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             JLabel labelRenderer = (JLabel) InvoicesTable.this.getCellRenderer(row, column);
             labelRenderer.setText("<html><u>)" + labelRenderer.getText() + "</u></html>");
@@ -230,10 +273,12 @@ public class InvoicesTable extends JTable {
 
         private String[] columnNames = TableColumnEnum.getNames();
 
+        // These must match the column enum list
         private static final Class<?>[] COLUMN_CLASSES = new Class[]{
             String.class,
             Integer.class,
             XMLGregorianCalendar.class,
+            String.class,
             String.class,
             String.class};
 
@@ -293,6 +338,8 @@ public class InvoicesTable extends JTable {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.MAIL.index) {
                 // No edit allowed!
+            } else if (columnIndex == TableColumnEnum.DELETE.index) {
+                // No edit allowed!
             } else if (columnIndex == TableColumnEnum.DUE_DATE.index) {
                 // No edit allowed!
             } else if (columnIndex == TableColumnEnum.STATUS.index) {
@@ -345,6 +392,8 @@ public class InvoicesTable extends JTable {
                     return SquashUtil.getFilenameFromPath(invoice.getRelativeFilePath());
                 case MAIL :
                     return "Mail";
+                case DELETE :
+                    return "Radera";
                 case STATUS :
                     return SquashUtil.invoiceStatusTypeToString(invoice.getInvoiceStatus());
                 default :
@@ -357,7 +406,7 @@ public class InvoicesTable extends JTable {
     private static enum TableColumnEnum {
 
         STATUS(0, "Status"), INVOICE_NR(1, "FakturaNr"), DUE_DATE(2, "Förfaller"), FILENAME(3,
-                "Filnamn"), MAIL(4, "Mail");
+                "Filnamn"), MAIL(4, "Mail"), DELETE(5, "Radera");
 
         private TableColumnEnum(int index, String name) {
             this.index = index;
@@ -501,7 +550,17 @@ public class InvoicesTable extends JTable {
                     label.setToolTipText("Kundens E-mail måste anges");
                     label.setForeground(Color.LIGHT_GRAY);
                 }
+            } else if (column == TableColumnEnum.DELETE.index) {
 
+                InvoiceType invoice = ((InvoiceTableModel) table.getModel()).getInvoices().get(row);
+                if (invoice != null) {
+                    // Set the font style as a link to delete this invoice
+                    label.setEnabled(true);
+                    label.setText("<html><u>Radera</u></html>");
+                    label.setToolTipText("Radera fakturan");
+                    label.setForeground(Color.BLUE);
+                    return label;
+                }
             }
 
             return label;

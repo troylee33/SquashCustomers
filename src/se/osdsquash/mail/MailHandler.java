@@ -12,9 +12,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -27,7 +24,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
 
 import se.osdsquash.common.SquashProperties;
-import se.osdsquash.common.SquashUtil;
 import se.osdsquash.logger.SquashLogger;
 
 /**
@@ -93,9 +89,10 @@ public class MailHandler {
             } else {
                 // If we have an attachment, it gets a bit more complex:
                 // We must create and store a mail file, then open that file which will
-                // cause the default mail program to pick it up, with the attachment prepared.
+                // cause the default mail program to pick it up, with the attachment.
 
-                if (!new File(attachmentPath).isFile()) {
+                File attachmentFile = new File(attachmentPath);
+                if (!attachmentFile.isFile()) {
                     JOptionPane.showMessageDialog(
                         null,
                         "Fakturafilen kunde inte hittas: " + attachmentPath,
@@ -122,11 +119,9 @@ public class MailHandler {
                 multipart.addBodyPart(messageBodyPart);
 
                 // Add another part, which is the attachment
-                messageBodyPart = new MimeBodyPart();
-                DataSource fileSource = new FileDataSource(attachmentPath);
-                messageBodyPart.setDataHandler(new DataHandler(fileSource));
-                messageBodyPart.setFileName(SquashUtil.getFilenameFromPath(attachmentPath));
-                multipart.addBodyPart(messageBodyPart);
+                MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+                attachmentBodyPart.attachFile(attachmentFile);
+                multipart.addBodyPart(attachmentBodyPart);
 
                 // Complete the message
                 message.setContent(multipart);

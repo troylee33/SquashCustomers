@@ -41,7 +41,7 @@
 		<pathelement location="${poi.lib.dir}/poi-ooxml-3.14-20160307.jar" />
 		<pathelement location="${poi.lib.dir}/poi-ooxml-schemas-3.14-20160307.jar" />
 		<pathelement location="${poi.lib.dir}/ooxml-lib/xmlbeans-2.6.0.jar" />
-		<pathelement location="${lib.dir}/javax.mail.jar" />
+		<pathelement location="${lib.dir}/javax.mail-1.6.0.jar" />
 	</path>
 	
 	<target name="create.package" description="Compiles and creates the application jar">
@@ -103,7 +103,7 @@
 				<include name="se/**/*.gif"/>
 			</fileset>
 			<zipgroupfileset dir="${poi.lib.dir}" includes="**/*.jar" />
-			<zipgroupfileset dir="${lib.dir}" includes="javax.mail.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="javax.mail-1.6.0.jar" />
 		</jar>
 		
 		<!-- 5. Also create a Mac OS X application package based on the jar -->

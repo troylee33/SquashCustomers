@@ -354,8 +354,11 @@ public class ExcelHandler {
                         trackPeriodAndPriceRow.createNextCell().setCellValue(trackPeriodText);
                         trackPeriodAndPriceRow.createNextCellPadded();
 
+                        // Use custom override price, if any
                         double trackPrice;
-                        if (customerInfo.isCompany()) {
+                        if (customerInfo.getSubscriptionPrice() != null) {
+                            trackPrice = customerInfo.getSubscriptionPrice().intValue();
+                        } else if (customerInfo.isCompany()) {
                             trackPrice = SquashProperties.TRACK_PRICE_COMPANY;
                         } else {
                             trackPrice = SquashProperties.TRACK_PRICE_PERSON;

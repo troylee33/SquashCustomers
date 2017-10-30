@@ -421,7 +421,9 @@ public class CustomerDetailsPanel extends JPanel {
         this.telefonTextField.setText(customerInfo.getTelephone());
         this.eMailTextField.setText(customerInfo.getEmail());
 
-        if (customerInfo.getSubscriptionPrice() != null) {
+        if (customerInfo.getSubscriptionPrice() == null) {
+            this.specialPriceTextField.setText(null);
+        } else {
             this.specialPriceTextField.setText(String.valueOf(customerInfo.getSubscriptionPrice()));
         }
 

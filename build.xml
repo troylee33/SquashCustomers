@@ -3,9 +3,9 @@
 
 <!-- The project build file for Ostersund SquashCustomers. 
      Some how-to-run info:
-     Just run the Ant target to package the program into a runnable jar.
-	 Just run the Jar with Java 8. All data will be stored under the squashdata-folder, parallel to the jar.
-	 In the data folder, there is an XML file for all the customers and all the invoice files.
+     Run the Ant target to package the program into a runnable jar.
+	 Execute the Jar with Java 8. All data will be stored under the squashdata-folder, parallel to the jar.
+	 In the data folder, there is an XML file holding all the customers and all the invoice files.
 -->
 <project name="SquashCustomers" default="create.package">
 	

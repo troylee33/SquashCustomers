@@ -553,8 +553,8 @@ public class XmlRepository {
     }
 
     /**
-     * Generates invoice files for all customers for a given period
-     * and saves everything at the same time.
+     * Generates invoice files for all customers having a subscription 
+     * for a given period and saves everything at the same time.
      * 
      * @param nextPeriod True if to use next subscription period, or false for the current one
      * @return The invoice creation result
@@ -566,12 +566,10 @@ public class XmlRepository {
 
         ExcelHandler excelHandler = new ExcelHandler(this);
         for (CustomerType customer : this.getAllCustomers()) {
-            InvoiceType invoice = excelHandler
-                .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE, nextPeriod);
-            invoiceFilenames.add(invoice.getRelativeFilePath());
 
-            // Period is null if there is no subscription
-            if (invoice.getPeriodStartDate() == null) {
+            // Only process subscriptions
+            if (customer.getSubscriptions() == null
+                || customer.getSubscriptions().getSubscription().isEmpty()) {
 
                 CustomerInfoType customerInfo = customer.getCustomerInfo();
                 String customerLabel = String.valueOf(customerInfo.getCustomerNumber())
@@ -584,6 +582,14 @@ public class XmlRepository {
                         : " " + customerInfo.getLastname())
                     + ")";
                 customersWithoutSubscriptions.add(customerLabel);
+
+                continue;
+
+            } else {
+
+                InvoiceType invoice = excelHandler
+                    .createInvoiceFile(customer, SquashProperties.INVOICE_DAYS_DUE, nextPeriod);
+                invoiceFilenames.add(invoice.getRelativeFilePath());
             }
         }
 

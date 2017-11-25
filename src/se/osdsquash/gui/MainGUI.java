@@ -585,7 +585,7 @@ public class MainGUI extends JFrame {
 
                     int dialogResult = JOptionPane.showConfirmDialog(
                         MainGUI.this,
-                        "Vill du generera fakturafiler för ALLA kunder för KOMMANDE period, "
+                        "Vill du generera fakturafiler för abonnemang för KOMMANDE period, "
                             + nextPeriodString
                             + "?"
                             + "\nOm nej, så används NUVARANDE period, "
@@ -898,17 +898,9 @@ public class MainGUI extends JFrame {
                     this.filesResult.append("\n");
                     this.filesResult.append("\n");
                     this.filesResult.append(
-                        "OBS: Dessa "
+                        "Det finns "
                             + emptyInvoiceCustomers.size()
-                            + " kunders faktura saknar abonnemang:\n\n");
-
-                    Iterator<String> customerIterator = emptyInvoiceCustomers.iterator();
-                    while (customerIterator.hasNext()) {
-                        this.filesResult.append(customerIterator.next());
-                        if (customerIterator.hasNext()) {
-                            this.filesResult.append("\n");
-                        }
-                    }
+                            + " kunder utan abonnemang/faktura.\n\n");
                 }
 
                 // Create for single customer

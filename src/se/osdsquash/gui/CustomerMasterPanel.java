@@ -49,6 +49,7 @@ public class CustomerMasterPanel extends JPanel {
 
     private JButton addSubscriptionButton;
     private JButton deleteSubscriptionButton;
+    private JButton addFlexSubscriptionButton;
 
     protected CustomerMasterPanel(InvoicesTable invoicesTable) {
 
@@ -178,8 +179,49 @@ public class CustomerMasterPanel extends JPanel {
 
         subscriptionsPanel.add(this.deleteSubscriptionButton);
 
+        this.addFlexSubscriptionButton = new JButton("Flex");
+        this.addFlexSubscriptionButton.setToolTipText("Lägg till flextid");
+        this.addFlexSubscriptionButton.setEnabled(false);
+        this.addFlexSubscriptionButton.setMinimumSize(new Dimension(80, 22));
+        this.addFlexSubscriptionButton.setMaximumSize(new Dimension(80, 22));
+
+        this.addFlexSubscriptionButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                int dialogResult = JOptionPane.showConfirmDialog(
+                    CustomerMasterPanel.this,
+                    "Vill du lägga till en flextid (valfri tid och bana 1 gång/vecka)?",
+                    "Flexibel abonnemangstid?",
+                    JOptionPane.YES_NO_OPTION);
+
+                if (dialogResult != JOptionPane.YES_OPTION) {
+                    // Abort...
+                    return;
+                }
+
+                // Create a flexible subscription
+                SubscriptionType newSubscription = CustomerMasterPanel.this.xmlRepository
+                    .getNewSubscription();
+                newSubscription.setFlexTime(Boolean.TRUE);
+
+                CustomerMasterPanel.this.subscriptionsTable
+                    .getSubscriptionsTableModel()
+                    .addSubscription(newSubscription);
+
+                CustomerMasterPanel.this.subscriptionsTable.repaint();
+            }
+        });
+
+        subscriptionsPanel.add(this.addFlexSubscriptionButton);
+
         // Hack to cause line breaks:
-        subscriptionsPanel.add(new JLabel("                                          "));
+        subscriptionsPanel.add(new JLabel("  "));
+        subscriptionsPanel.add(new JLabel("  "));
+        subscriptionsPanel.add(new JLabel("              "));
+        subscriptionsPanel.add(new JLabel("              "));
+        subscriptionsPanel.add(new JLabel("  "));
         subscriptionsPanel.add(new JLabel("  "));
 
         // Notes for special customers:
@@ -208,6 +250,7 @@ public class CustomerMasterPanel extends JPanel {
         this.invoicesTable.setEnabled(enable);
         this.addSubscriptionButton.setEnabled(enable);
         this.deleteSubscriptionButton.setEnabled(enable);
+        this.addFlexSubscriptionButton.setEnabled(enable);
         this.customerNotesTextArea.setEnabled(enable);
     }
 

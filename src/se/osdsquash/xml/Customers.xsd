@@ -48,7 +48,7 @@
 	<xs:complexType name="SubscriptionsType">
 		<xs:annotation>
 			<xs:documentation>One subscription is for a certain track, on a certain weekday and time (always one hour).
-					One customer may have multiple subscriptions.</xs:documentation>
+					Can be a flex-time as well, without a fixed track and time. One customer may have multiple subscriptions.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="Subscription" type="SubscriptionType" minOccurs="0" maxOccurs="unbounded"/>
@@ -58,8 +58,9 @@
 	<xs:complexType name="SubscriptionType">
 		<xs:sequence>
 			<xs:element name="TrackNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="Weekday" type="WeekdayType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="StartTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Weekday" type="WeekdayType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="StartTime" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FlexTime" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	

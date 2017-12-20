@@ -89,7 +89,7 @@ public class ExcelHandler {
 
             // The width must be given as 'nr of character x 256'
             this.invoiceSheet.setColumnWidth(0, 3 * 256);
-            this.invoiceSheet.setColumnWidth(1, 44 * 256);
+            this.invoiceSheet.setColumnWidth(1, 42 * 256);
             this.invoiceSheet.setColumnWidth(2, 13 * 256);
             this.invoiceSheet.setColumnWidth(3, 14 * 256);
             this.invoiceSheet.setDefaultColumnWidth(10);
@@ -322,14 +322,20 @@ public class ExcelHandler {
                         // Skip through first cell, that's just the padding cell
                         trackInfoRow.createNextCell();
 
-                        // Write a text like "Abbonemang bana 1, Torsdagar, kl 19:00"
-                        String trackInfoText = "  Abonnemang bana "
-                            + subscription.getTrackNumber()
-                            + ", "
-                            + SquashUtil.weekdayTypeToString(subscription.getWeekday())
-                            + "ar"
-                            + " kl "
-                            + SquashUtil.getTrackTimeFromCalendar(subscription.getStartTime());
+                        // Write a text like "Abbonemang bana 1, Torsdagar, kl 19:00".
+                        // If flextime, just write a static description text.
+                        String trackInfoText;
+                        if (subscription.isFlexTime()) {
+                            trackInfoText = "  " + SquashUtil.SPECIAL_SUBSCRIPTION_TEXT;
+                        } else {
+                            trackInfoText = "  Abonnemang bana "
+                                + subscription.getTrackNumber()
+                                + ", "
+                                + SquashUtil.weekdayTypeToString(subscription.getWeekday())
+                                + "ar"
+                                + " kl "
+                                + SquashUtil.getTrackTimeFromCalendar(subscription.getStartTime());
+                        }
 
                         InvoiceCell trackInfoCell = trackInfoRow.createNextCell();
 

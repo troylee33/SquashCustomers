@@ -9,7 +9,6 @@ import java.util.Calendar;
 public class SubscriptionPeriod {
 
     private static final String DAY_FORMAT = "yyyy-MM-dd";
-
     private Calendar startDay;
     private Calendar endDay;
 

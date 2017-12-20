@@ -26,6 +26,8 @@ public class SquashKunder {
             @Override
             public void uncaughtException(Thread thread, Throwable error) {
 
+                error.printStackTrace();
+
                 logger.log("Oväntat fel i programmet, felmeddelande: " + error.getMessage(), error);
 
                 JOptionPane.showMessageDialog(

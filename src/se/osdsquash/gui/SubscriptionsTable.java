@@ -53,7 +53,7 @@ public class SubscriptionsTable extends JTable {
 
         // All cell values are selected through combo boxes, define those editors:
         {
-            final Vector<String> trackOptions = new Vector<String>();
+            final Vector<String> trackOptions = new Vector<>();
             for (Integer trackNr : SquashUtil.getAllTracks()) {
                 trackOptions.addElement(String.valueOf(trackNr));
             }
@@ -62,7 +62,7 @@ public class SubscriptionsTable extends JTable {
         }
 
         {
-            final Vector<String> weekdayOptions = new Vector<String>();
+            final Vector<String> weekdayOptions = new Vector<>();
             for (WeekdayType weekdayType : WeekdayType.values()) {
                 String weekdayString = SquashUtil.weekdayTypeToString(weekdayType);
                 weekdayOptions.addElement(weekdayString);
@@ -72,7 +72,7 @@ public class SubscriptionsTable extends JTable {
         }
 
         {
-            final Vector<String> startTimeOptions = new Vector<String>();
+            final Vector<String> startTimeOptions = new Vector<>();
             for (String startTime : SquashUtil.getAllStartTimes()) {
                 startTimeOptions.addElement(startTime);
             }
@@ -165,9 +165,14 @@ public class SubscriptionsTable extends JTable {
             return this.subscriptions;
         }
 
-        // All cells can be edited
+        // All cells can be edited EXCEPT the flexible subscription rows
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
+
+            SubscriptionType subscription = this.subscriptions.get(rowIndex);
+            if (subscription != null && Boolean.TRUE.equals(subscription.isFlexTime())) {
+                return false;
+            }
             return true;
         }
 
@@ -223,6 +228,21 @@ public class SubscriptionsTable extends JTable {
 
             SubscriptionType subscription = this.subscriptions.get(row);
             TableColumnEnum tableColumn = TableColumnEnum.fromIndex(col);
+
+            // Special case if flextime
+            if (Boolean.TRUE.equals(subscription.isFlexTime())) {
+                switch (tableColumn) {
+                    case TRACK_NR :
+                        return "-";
+                    case WEEKDAY :
+                        return "[Flextid]";
+                    case START_TIME :
+                        return "-";
+                    default :
+                        return null;
+                }
+            }
+
             switch (tableColumn) {
                 case TRACK_NR :
                     return String.valueOf(subscription.getTrackNumber());

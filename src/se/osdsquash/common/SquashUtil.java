@@ -31,6 +31,11 @@ public abstract class SquashUtil {
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
     /**
+     * Description for the "flex time subscription, e.g. free time once a week"
+     */
+    public static final String SPECIAL_SUBSCRIPTION_TEXT = "Valfri tidsbokning 1 gång/vecka";
+
+    /**
      * Converts an XML weekday type to a Swedish string
      * @param weekdayType XML type
      * @return A presentation string for the weekday

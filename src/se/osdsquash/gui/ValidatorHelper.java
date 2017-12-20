@@ -55,6 +55,11 @@ public abstract class ValidatorHelper {
                     for (SubscriptionType existingSubscription : existingSubscriptions
                         .getSubscription()) {
 
+                        // Flextimes are not validated
+                        if (Boolean.TRUE.equals(existingSubscription.isFlexTime())) {
+                            continue;
+                        }
+
                         if (existingSubscription.getWeekday().equals(subscription.getWeekday())
                             && existingSubscription.getTrackNumber() == subscription
                                 .getTrackNumber()

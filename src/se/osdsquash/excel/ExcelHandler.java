@@ -325,7 +325,7 @@ public class ExcelHandler {
                         // Write a text like "Abbonemang bana 1, Torsdagar, kl 19:00".
                         // If flextime, just write a static description text.
                         String trackInfoText;
-                        if (subscription.isFlexTime()) {
+                        if (Boolean.TRUE.equals(subscription.isFlexTime())) {
                             trackInfoText = "  " + SquashUtil.SPECIAL_SUBSCRIPTION_TEXT;
                         } else {
                             trackInfoText = "  Abonnemang bana "
@@ -536,6 +536,8 @@ public class ExcelHandler {
 
         } catch (IOException exception) {
             throw new RuntimeException(exception);
+        } catch (Exception exception2) {
+            throw new RuntimeException(exception2);
 
             // Resource cleanup:
         } finally {

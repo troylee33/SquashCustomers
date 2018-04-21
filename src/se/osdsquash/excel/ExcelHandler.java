@@ -558,6 +558,198 @@ public class ExcelHandler {
         }
     }
 
+    /**
+     * Generates a list of all customer and their subscriptions.
+     * 
+     * @param includeNonSubscribers True if to include customers without any subscription
+     * 
+     * @return The file path to the created Excel file
+     */
+    public String createCustomerList(boolean includeNonSubscribers) {
+
+        // Create a new Excel workbook having one sheet
+        this.excelWorkbook = new InvoiceExcelWorkbook();
+        this.invoiceSheet = this.excelWorkbook.getInvoiceSheet();
+
+        // Set some generic options
+        POIXMLProperties.CoreProperties docCoreProperties = this.excelWorkbook
+            .getProperties()
+            .getCoreProperties();
+        docCoreProperties.setTitle("Kundlista");
+        docCoreProperties.setCreator(SquashProperties.CLUB_NAME);
+
+        // The width must be given as 'nr of character x 256'
+        this.invoiceSheet.setColumnWidth(0, 3 * 256); // Blank
+        this.invoiceSheet.setColumnWidth(1, 30 * 256); // Name
+        this.invoiceSheet.setColumnWidth(2, 10 * 256); // Company marker
+        this.invoiceSheet.setColumnWidth(3, 30 * 256); // Address
+        this.invoiceSheet.setColumnWidth(4, 30 * 256); // E-mail
+        this.invoiceSheet.setColumnWidth(5, 17 * 256); // Phone
+        this.invoiceSheet.setColumnWidth(6, 36 * 256); // Subscription(s)
+        this.invoiceSheet.setColumnWidth(7, 80 * 256); // Notes
+        this.invoiceSheet.setDefaultColumnWidth(10);
+        this.invoiceSheet.setDefaultRowHeightInPoints(15);
+        this.invoiceSheet.setDisplayGridlines(true);
+        this.invoiceSheet.setZoom(100);
+
+        // First of all, add some empty space
+        this.invoiceSheet.createNextPaddedRow();
+
+        // First add column descriptions
+        InvoiceRow headerRow = this.invoiceSheet.createNextPaddedRow();
+
+        // Create a larger font
+        XSSFFont fontHeader = this.excelWorkbook.createFont();
+        fontHeader.setFontHeightInPoints((short) 12);
+        fontHeader.setBold(true);
+        XSSFCellStyle largeFontStyleHeader = this.excelWorkbook.createCellStyle();
+        largeFontStyleHeader.setFont(fontHeader);
+
+        InvoiceCell nameHeaderCell = headerRow.createNextCell();
+        nameHeaderCell.setCellValue("Namn");
+        nameHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell companyHeaderCell = headerRow.createNextCell();
+        companyHeaderCell.setCellValue("Företag?");
+        companyHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell addressHeaderCell = headerRow.createNextCell();
+        addressHeaderCell.setCellValue("Adress");
+        addressHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell emailHeaderCell = headerRow.createNextCell();
+        emailHeaderCell.setCellValue("E-post");
+        emailHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell phonenumberHeaderCell = headerRow.createNextCell();
+        phonenumberHeaderCell.setCellValue("Telefonnr");
+        phonenumberHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell subscriptionsHeaderCell = headerRow.createNextCell();
+        subscriptionsHeaderCell.setCellValue("Abonnemang");
+        subscriptionsHeaderCell.setCellStyle(largeFontStyleHeader);
+        InvoiceCell notesHeaderCell = headerRow.createNextCell();
+        notesHeaderCell.setCellValue("Noteringar");
+        notesHeaderCell.setCellStyle(largeFontStyleHeader);
+
+        FileOutputStream fileOutput = null;
+        try {
+            // Loop all customers and generate the Excel list
+            Iterator<CustomerType> customersIterator = this.xmlRepository
+                .getAllCustomers()
+                .iterator();
+            while (customersIterator.hasNext()) {
+
+                CustomerType customer = customersIterator.next();
+
+                CustomerInfoType customerInfo = customer.getCustomerInfo();
+
+                SubscriptionsType subscriptions = customer.getSubscriptions();
+                if (subscriptions == null || subscriptions.getSubscription().isEmpty()) {
+                    if (includeNonSubscribers) {
+                        // Include!
+                    } else {
+                        continue;
+                    }
+                }
+
+                InvoiceRow customerRow = this.invoiceSheet.createNextPaddedRow();
+                customerRow.setHeightInPoints(22);
+
+                // Start with the customer info
+                // ------------------------------------------------------------------------------------
+
+                InvoiceCell nameCell = customerRow.createNextCell();
+                nameCell
+                    .setCellValue(customerInfo.getFirstname() + " " + customerInfo.getLastname());
+
+                InvoiceCell companyCell = customerRow.createNextCell();
+                companyCell.setCellValue((customerInfo.isCompany() ? "Ja" : "Nej"));
+
+                String fullAddress = customerInfo.getStreet()
+                    + (SquashUtil.isSet(customerInfo.getPostalCode())
+                        ? (" " + customerInfo.getPostalCode())
+                        : "")
+                    + (SquashUtil.isSet(customerInfo.getCity())
+                        ? (" " + customerInfo.getCity())
+                        : "");
+                InvoiceCell addressCell = customerRow.createNextCell();
+                addressCell.setCellValue(fullAddress);
+
+                InvoiceCell emailCell = customerRow.createNextCell();
+                emailCell.setCellValue(customerInfo.getEmail());
+
+                InvoiceCell phonenumberCell = customerRow.createNextCell();
+                phonenumberCell.setCellValue(customerInfo.getTelephone());
+
+                // Add subscription(s)
+                // ------------------------------------------------------------------------------------
+
+                if (subscriptions != null) {
+                    StringBuffer subscriptionsString = new StringBuffer();
+
+                    Iterator<SubscriptionType> subscriptionsIterator = subscriptions
+                        .getSubscription()
+                        .iterator();
+                    while (subscriptionsIterator.hasNext()) {
+                        SubscriptionType subscription = subscriptionsIterator.next();
+
+                        if (Boolean.TRUE.equals(subscription.isFlexTime())) {
+                            subscriptionsString.append("Flexabonnemang");
+                        } else {
+                            subscriptionsString
+                                .append(SquashUtil.weekdayTypeToString(subscription.getWeekday()));
+                            subscriptionsString.append(" "
+                                + SquashUtil.getTrackTimeFromCalendar(subscription.getStartTime()));
+                            subscriptionsString.append(", bana " + subscription.getTrackNumber());
+                        }
+
+                        if (subscriptionsIterator.hasNext()) {
+                            subscriptionsString.append(".   ");
+                        }
+                    }
+
+                    InvoiceCell subscriptionsCell = customerRow.createNextCell();
+                    subscriptionsCell.setCellValue(subscriptionsString.toString());
+                }
+
+                InvoiceCell notesCell = customerRow.createNextCell();
+                notesCell.setCellValue(customerInfo.getNotes());
+            }
+
+            // Write the file
+            File currentInvoicesDir = new File(XmlRepository.INVOICES_DIR_PATH);
+
+            StringBuilder filePath = new StringBuilder();
+            filePath.append(currentInvoicesDir.getPath());
+            filePath.append("/");
+            filePath.append("Kundlista_");
+            filePath.append(new SimpleDateFormat(INVOICE_FILE_TIMESTAMP_FORMAT).format(new Date()));
+            filePath.append(".xlsx");
+            fileOutput = new FileOutputStream(filePath.toString(), false);
+            this.excelWorkbook.write(fileOutput);
+
+            return filePath.toString();
+
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        } catch (Exception exception2) {
+            throw new RuntimeException(exception2);
+
+            // Resource cleanup:
+        } finally {
+            if (fileOutput != null) {
+                try {
+                    fileOutput.close();
+                } catch (Exception ex) {
+                    //Ignore this...
+                }
+            }
+            if (this.excelWorkbook != null) {
+                try {
+                    this.excelWorkbook.close();
+                } catch (Exception ex) {
+                    //Ignore this...
+                }
+            }
+        }
+    }
+
     // Adds a black border around a cell area, can also be once cell only
     private void addBorder(String cellRangeSpan, boolean thinnerBorder) {
 

@@ -44,6 +44,7 @@ import javax.swing.border.TitledBorder;
 
 import se.osdsquash.common.SquashUtil;
 import se.osdsquash.common.SubscriptionPeriod;
+import se.osdsquash.excel.ExcelHandler;
 import se.osdsquash.mail.MailHandler;
 import se.osdsquash.xml.InvoiceResults;
 import se.osdsquash.xml.XmlRepository;
@@ -89,6 +90,7 @@ public class MainGUI extends JFrame {
     private final JButton mailToCustomerButton = new JButton("Maila Kund");
     private final JButton createCustomerInvoiceButton = new JButton("Skapa faktura");
     private final JButton generateAllInvoicesButton = new JButton("Skapa alla fakturor");
+    private final JButton exportCustomersButton = new JButton("Exportera kundlista");
 
     private static final MainGUI INSTANCE = new MainGUI();
 
@@ -547,8 +549,7 @@ public class MainGUI extends JFrame {
             }
         });
 
-        functionButtonsPanel.add(this.createWiderEmptyRow());
-        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createEmptyRow());
 
         this.generateAllInvoicesButton
             .setToolTipText("Skapa fakturor för alla kunder för nästkommande abonnemangsperiod");
@@ -606,9 +607,55 @@ public class MainGUI extends JFrame {
             }
         });
 
-        functionButtonsPanel.add(this.createWiderEmptyRow());
-        functionButtonsPanel.add(this.createWiderEmptyRow());
-        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createEmptyRow());
+
+        this.exportCustomersButton.setToolTipText("Skapa Excel-fil för alla kunder");
+        this.exportCustomersButton.setMinimumSize(new Dimension(180, 22));
+        this.exportCustomersButton.setMaximumSize(new Dimension(180, 22));
+        functionButtonsPanel.add(this.exportCustomersButton);
+
+        this.exportCustomersButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                if (MainGUI.this.customerMasterPanel.isCustomerDirty()) {
+                    int dialogResult = JOptionPane.showConfirmDialog(
+                        MainGUI.this,
+                        "Det finns osparade kunduppgifter! Vill du verkligen fortsätta?",
+                        "Varning",
+                        JOptionPane.YES_NO_OPTION);
+
+                    if (dialogResult != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                MainGUI.this.customerMasterPanel.clearCustomerDirty();
+
+                if (MainGUI.this.customerListModel.isEmpty()) {
+                    MainGUI.this
+                        .printInfoText("Det finns inga kunder!", TextFormatLevel.Error, true);
+                } else {
+
+                    int dialogResult = JOptionPane.showConfirmDialog(
+                        MainGUI.this,
+                        "Vill du inkludera kunder utan abonnemang?",
+                        "Exportera kundlista",
+                        JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
+                        return;
+                    }
+
+                    // Execute the export job in a new thread
+                    // and with a waiting indicator:
+                    MainGUI.this
+                        .runCustomerExportWithProgressBar(dialogResult == JOptionPane.YES_OPTION);
+                }
+            }
+        });
+
         functionButtonsPanel.add(this.createWiderEmptyRow());
 
         // Info button
@@ -758,6 +805,42 @@ public class MainGUI extends JFrame {
             nextPeriod,
             customerID);
         invoiceCreator.execute();
+
+        // Important to display the (blocking) progress bar after work is started.
+        // The worker thread will close it when done.
+        waitingDialog.setVisible(true);
+    }
+
+    // Handles the whole customer export execution.
+    private void runCustomerExportWithProgressBar(boolean includeNonSubscribers) {
+
+        // Prepare a progress indicator dialog
+        final JDialog waitingDialog = new JDialog(MainGUI.this, "Skapar kundlista...", true);
+
+        waitingDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        waitingDialog.setSize(300, 160);
+        waitingDialog.setBackground(Color.WHITE);
+
+        URL spinnerImageUrl = this
+            .getClass()
+            .getClassLoader()
+            .getResource("se/osdsquash/gui/Spinner.gif");
+        JLabel imageLabel = new JLabel(new ImageIcon(spinnerImageUrl));
+        imageLabel.setBackground(Color.WHITE);
+        imageLabel.setOpaque(true);
+        imageLabel.setMinimumSize(new Dimension(70, 70));
+        imageLabel.setMaximumSize(new Dimension(70, 70));
+
+        waitingDialog.add(BorderLayout.CENTER, imageLabel);
+
+        waitingDialog.setResizable(false);
+        waitingDialog.setLocationRelativeTo(MainGUI.this);
+
+        // Start new export worker, e.g. in a new thread
+        CustomerExportRunnable customerExporter = new CustomerExportRunnable(
+            waitingDialog,
+            includeNonSubscribers);
+        customerExporter.execute();
 
         // Important to display the (blocking) progress bar after work is started.
         // The worker thread will close it when done.
@@ -948,6 +1031,64 @@ public class MainGUI extends JFrame {
 
                 JScrollPane resultsScroller = new JScrollPane(resultText);
                 resultsScroller.setPreferredSize(new Dimension(460, 500));
+                resultsScroller.setBorder(BorderFactory.createEmptyBorder(20, 20, 6, 20));
+
+                // Show the results from the execution
+                JOptionPane.showMessageDialog(
+                    MainGUI.this,
+                    resultsScroller,
+                    "Resultat",
+                    JOptionPane.PLAIN_MESSAGE);
+
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        }
+    }
+
+    // Swing thread that executes the customer export task
+    protected class CustomerExportRunnable extends SwingWorker<String, String> {
+
+        private String fileResult;
+        private final JDialog waitingDialog;
+        private final boolean includeNonSubscribers;
+
+        protected CustomerExportRunnable(JDialog waitingDialog, boolean includeNonSubscribers) {
+            this.waitingDialog = waitingDialog;
+            this.includeNonSubscribers = includeNonSubscribers;
+        }
+
+        // Returns the file path of the created file
+        protected String getResultMessage() {
+            return this.fileResult.toString();
+        }
+
+        @Override
+        protected String doInBackground() throws Exception {
+
+            // Generate the Excel file
+            this.fileResult = new ExcelHandler(MainGUI.this.xmlRepository)
+                .createCustomerList(this.includeNonSubscribers);
+
+            return this.fileResult;
+        }
+
+        @Override
+        protected void done() {
+
+            try {
+                this.waitingDialog.setVisible(false);
+
+                JTextArea resultText = new JTextArea(
+                    "Kundlista har skapat på följande plats:\n" + this.fileResult);
+                resultText.setEditable(false);
+                resultText.setLineWrap(true);
+                resultText.setWrapStyleWord(true);
+                resultText.setMinimumSize(new Dimension(400, 160));
+                resultText.setMaximumSize(new Dimension(500, 200));
+
+                JScrollPane resultsScroller = new JScrollPane(resultText);
+                resultsScroller.setPreferredSize(new Dimension(460, 200));
                 resultsScroller.setBorder(BorderFactory.createEmptyBorder(20, 20, 6, 20));
 
                 // Show the results from the execution

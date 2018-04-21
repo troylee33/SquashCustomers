@@ -33,7 +33,7 @@ public abstract class SquashUtil {
     /**
      * Description for the "flex time subscription, e.g. free time once a week"
      */
-    public static final String SPECIAL_SUBSCRIPTION_TEXT = "Valfri tidsbokning 1 gång/vecka";
+    public static final String SPECIAL_SUBSCRIPTION_TEXT = "Valfri tidsbokning 1 gång per vecka";
 
     /**
      * Converts an XML weekday type to a Swedish string

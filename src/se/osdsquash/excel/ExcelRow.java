@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
- * Invoice Row class. Using a wrapped XSSFRow.
+ * Excel Row class. Using a wrapped XSSFRow.
  * 
  * <p>
  * This row can create new cells like the iterator pattern
@@ -23,14 +23,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * cell creation from left to right.
  * </p>
  */
-public class InvoiceRow implements Row {
+public class ExcelRow implements Row {
 
     // Initialize this before the first cell, which is 0
     private int cellColumnIndex = -1;
 
     private XSSFRow row;
 
-    protected InvoiceRow(XSSFRow row) {
+    protected ExcelRow(XSSFRow row) {
         this.row = row;
     }
 
@@ -50,19 +50,19 @@ public class InvoiceRow implements Row {
      * Creates a new cell by incrementing the row's cell index
      * @return A new cell
      */
-    protected InvoiceCell createNextCell() {
+    protected ExcelCell createNextCell() {
         XSSFCell newCell = this.row.createCell(++this.cellColumnIndex);
-        return new InvoiceCell(newCell);
+        return new ExcelCell(newCell);
     }
 
     /**
      * Adds an empty padding cell as the next cell
      * @return A new cell, having some whitespaces as value
      */
-    protected InvoiceCell createNextCellPadded() {
+    protected ExcelCell createNextCellPadded() {
         XSSFCell cell = this.row.createCell(++this.cellColumnIndex);
         cell.setCellValue("    ");
-        return new InvoiceCell(cell);
+        return new ExcelCell(cell);
     }
 
     // -------------------  BELOW ARE DELEGATE METHODS FOR THE WRAPPED ROW -------------------

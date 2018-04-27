@@ -48,8 +48,8 @@ public class ExcelHandler {
 
     private XmlRepository xmlRepository;
 
-    private InvoiceExcelWorkbook excelWorkbook;
-    private InvoiceSheet invoiceSheet;
+    private ExcelWorkbook excelWorkbook;
+    private ExcelSheet excelSheet;
 
     public ExcelHandler(XmlRepository xmlRepository) {
         this.xmlRepository = xmlRepository;
@@ -77,8 +77,8 @@ public class ExcelHandler {
             // ------------------------------------------------------------------------------------
 
             // Create a new workbook having one sheet
-            this.excelWorkbook = new InvoiceExcelWorkbook();
-            this.invoiceSheet = this.excelWorkbook.getInvoiceSheet();
+            this.excelWorkbook = new ExcelWorkbook("Faktura");
+            this.excelSheet = this.excelWorkbook.getExcelSheet();
 
             // Set some generic options
             POIXMLProperties.CoreProperties docCoreProperties = this.excelWorkbook
@@ -88,20 +88,20 @@ public class ExcelHandler {
             docCoreProperties.setCreator(SquashProperties.CLUB_NAME);
 
             // The width must be given as 'nr of character x 256'
-            this.invoiceSheet.setColumnWidth(0, 3 * 256);
-            this.invoiceSheet.setColumnWidth(1, 42 * 256);
-            this.invoiceSheet.setColumnWidth(2, 13 * 256);
-            this.invoiceSheet.setColumnWidth(3, 14 * 256);
-            this.invoiceSheet.setDefaultColumnWidth(10);
-            this.invoiceSheet.setDefaultRowHeightInPoints(15);
-            this.invoiceSheet.setDisplayGridlines(false);
-            this.invoiceSheet.setZoom(100);
+            this.excelSheet.setColumnWidth(0, 3 * 256);
+            this.excelSheet.setColumnWidth(1, 42 * 256);
+            this.excelSheet.setColumnWidth(2, 13 * 256);
+            this.excelSheet.setColumnWidth(3, 14 * 256);
+            this.excelSheet.setDefaultColumnWidth(10);
+            this.excelSheet.setDefaultRowHeightInPoints(15);
+            this.excelSheet.setDisplayGridlines(false);
+            this.excelSheet.setZoom(100);
 
-            XSSFDrawing sheetDrawing = this.invoiceSheet.createDrawingPatriarch();
+            XSSFDrawing sheetDrawing = this.excelSheet.createDrawingPatriarch();
 
             // First of all, add some empty space
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
             // Create a larger font
             XSSFFont font = this.excelWorkbook.createFont();
@@ -110,26 +110,26 @@ public class ExcelHandler {
             XSSFCellStyle largeFontStyle = this.excelWorkbook.createCellStyle();
             largeFontStyle.setFont(font);
 
-            InvoiceRow clubnameAndInvoiceNrRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow clubnameAndInvoiceNrRow = this.excelSheet.createNextPaddedRow();
             clubnameAndInvoiceNrRow.setHeightInPoints(22);
 
             // Start with the club logo and invoice nr
             // ------------------------------------------------------------------------------------
 
-            InvoiceCell logoCell = clubnameAndInvoiceNrRow.createNextCell();
+            ExcelCell logoCell = clubnameAndInvoiceNrRow.createNextCell();
             logoCell.setCellStyle(largeFontStyle);
             logoCell.setCellValue(SquashProperties.CLUB_NAME);
             clubnameAndInvoiceNrRow.createNextCell();
 
             // Right align last cell here
-            InvoiceCell invoiceNrCell = clubnameAndInvoiceNrRow.createNextCell();
+            ExcelCell invoiceNrCell = clubnameAndInvoiceNrRow.createNextCell();
             invoiceNrCell.setAlignment(CellStyle.ALIGN_CENTER);
             invoiceNrCell.setCellValue("FakturaNr:  " + invoiceNr);
 
             // Now add club's org.nr and current date
             // ------------------------------------------------------------------------------------
 
-            InvoiceRow orgNrAndDateRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow orgNrAndDateRow = this.excelSheet.createNextPaddedRow();
 
             orgNrAndDateRow
                 .createNextCell()
@@ -141,18 +141,18 @@ public class ExcelHandler {
             // Right align last cell here
             String invoiceDate = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(invoiceCreationCal.getTime());
-            InvoiceCell invoiceDateCell = orgNrAndDateRow.createNextCell();
+            ExcelCell invoiceDateCell = orgNrAndDateRow.createNextCell();
             invoiceDateCell.setAlignment(CellStyle.ALIGN_CENTER);
             invoiceDateCell.setCellValue("Datum:  " + invoiceDate);
 
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
             // Add the "Faktura" text
             // ------------------------------------------------------------------------------------
 
-            InvoiceRow fakturaTextRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow fakturaTextRow = this.excelSheet.createNextPaddedRow();
 
             XSSFFont fontFaktura = this.excelWorkbook.createFont();
             fontFaktura.setFontHeightInPoints((short) 15);
@@ -160,7 +160,7 @@ public class ExcelHandler {
             fontFaktura.setItalic(true);
             XSSFCellStyle fakturaFontStyle = this.excelWorkbook.createCellStyle();
             fakturaFontStyle.setFont(fontFaktura);
-            InvoiceCell fakturaCell = fakturaTextRow.createNextCell();
+            ExcelCell fakturaCell = fakturaTextRow.createNextCell();
             fakturaCell.setCellValue("FAKTURA");
             fakturaCell.setCellStyle(fakturaFontStyle);
 
@@ -171,16 +171,16 @@ public class ExcelHandler {
                 300 /* X end position, relative from the cell top left corner */,
                 300 /* Y end position, relative from the cell top left corner */,
                 1 /* Which column index to draw from, e.g. starting cell */,
-                this.invoiceSheet
+                this.excelSheet
                     .currentRowIndex() /* Which row index to draw from, e.g. starting cell */,
                 4 /* Which column index to draw to */,
-                this.invoiceSheet.currentRowIndex()) /* Which row index to draw to */;
+                this.excelSheet.currentRowIndex()) /* Which row index to draw to */;
 
             XSSFSimpleShape lineShape = sheetDrawing.createSimpleShape(clientAnchorLine1);
             lineShape.setLineStyleColor(220, 220, 220);
             lineShape.setLineWidth(2);
             lineShape.setShapeType(ShapeTypes.LINE);
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
             // This draws a line just below the "Faktura" text
             XSSFClientAnchor clientAnchorLine2 = sheetDrawing.createAnchor(
@@ -189,75 +189,75 @@ public class ExcelHandler {
                 300 /* X end position, relative from the cell top left corner */,
                 300 /* Y end position, relative from the cell top left corner */,
                 1 /* Which column index to draw from, e.g. starting cell */,
-                this.invoiceSheet
+                this.excelSheet
                     .currentRowIndex() /* Which row index to draw from, e.g. starting cell */,
                 4 /* Which column index to draw to */,
-                this.invoiceSheet.currentRowIndex()) /* Which row index to draw to */;
+                this.excelSheet.currentRowIndex()) /* Which row index to draw to */;
 
             XSSFSimpleShape lineShape2 = sheetDrawing.createSimpleShape(clientAnchorLine2);
             lineShape2.setLineStyleColor(220, 220, 220);
             lineShape2.setLineWidth(2);
             lineShape2.setShapeType(ShapeTypes.LINE);
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
             // Add customer and club info. The left box is the customer, the right one is the club.
             // ------------------------------------------------------------------------------------
 
-            InvoiceRow referencesRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow referencesRow = this.excelSheet.createNextPaddedRow();
 
-            InvoiceCell yourReferenceCell = referencesRow.createNextCell();
+            ExcelCell yourReferenceCell = referencesRow.createNextCell();
             yourReferenceCell.setCellValue("Er referens:");
             yourReferenceCell.applyFontStyles(true, true, false);
 
-            InvoiceCell ourReferenceCell = referencesRow.createNextCell();
+            ExcelCell ourReferenceCell = referencesRow.createNextCell();
             ourReferenceCell.setCellValue("Vår referens:");
             ourReferenceCell.applyFontStyles(true, true, false);
 
-            InvoiceRow nameRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow nameRow = this.excelSheet.createNextPaddedRow();
             nameRow.createNextCell().setCellValue(
                 customerInfo.getFirstname() + " " + customerInfo.getLastname());
             nameRow.createNextCell().setCellValue(SquashProperties.INVOICE_NAME);
 
-            InvoiceRow adressRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow adressRow = this.excelSheet.createNextPaddedRow();
             adressRow.createNextCell().setCellValue(customerInfo.getStreet());
             adressRow.createNextCell().setCellValue(SquashProperties.INVOICE_STREET);
 
-            InvoiceRow cityRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow cityRow = this.excelSheet.createNextPaddedRow();
             cityRow.createNextCell().setCellValue(
                 customerInfo.getPostalCode() + " " + customerInfo.getCity());
             cityRow.createNextCell().setCellValue(SquashProperties.INVOICE_CITY);
 
-            InvoiceRow phoneRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow phoneRow = this.excelSheet.createNextPaddedRow();
             phoneRow.createNextCell().setCellValue(customerInfo.getTelephone());
             phoneRow.createNextCell().setCellValue(SquashProperties.INVOICE_PHONE);
 
-            InvoiceRow emailRow = this.invoiceSheet.createNextPaddedRow();
-            InvoiceCell emailCell1 = emailRow.createNextCell();
+            ExcelRow emailRow = this.excelSheet.createNextPaddedRow();
+            ExcelCell emailCell1 = emailRow.createNextCell();
             emailCell1.setCellValue(customerInfo.getEmail());
             emailCell1.applyEmailLink();
 
-            InvoiceCell emailCell2 = emailRow.createNextCell();
+            ExcelCell emailCell2 = emailRow.createNextCell();
             emailCell2.setCellValue(SquashProperties.INVOICE_EMAIL);
             emailCell2.applyEmailLink();
 
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
             // Write the the track subscription(s) table, e.g. the invoice specification
             // ------------------------------------------------------------------------------------
 
-            InvoiceRow trackTableHeaderRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow trackTableHeaderRow = this.excelSheet.createNextPaddedRow();
 
-            InvoiceCell descriptionCell = trackTableHeaderRow.createNextCell();
+            ExcelCell descriptionCell = trackTableHeaderRow.createNextCell();
             descriptionCell.setCellValue("  Beskrivning");
             descriptionCell.applyFontStyles(true, false, false);
 
             // Skip one cell...
             trackTableHeaderRow.createNextCellPadded();
 
-            InvoiceCell ammountCell = trackTableHeaderRow.createNextCell();
+            ExcelCell ammountCell = trackTableHeaderRow.createNextCell();
             ammountCell.setCellValue("          Belopp");
             ammountCell.applyFontStyles(true, false, false);
 
@@ -277,8 +277,8 @@ public class ExcelHandler {
             SubscriptionPeriod period = new SubscriptionPeriod(nextPeriod);
 
             // First an empty row in the table...
-            InvoiceRow firstTableRow = this.invoiceSheet.createNextPaddedRow();
-            InvoiceCell firstTableCell = firstTableRow.createNextCellPadded();
+            ExcelRow firstTableRow = this.excelSheet.createNextPaddedRow();
+            ExcelCell firstTableCell = firstTableRow.createNextCellPadded();
             String trackTableStartCellName = firstTableCell.getAddress().formatAsString();
 
             boolean hasSubscriptions;
@@ -288,13 +288,13 @@ public class ExcelHandler {
                 hasSubscriptions = false;
 
                 // If no subscriptions, write a red warning info row about this
-                InvoiceRow noSubscriptionsRow = this.invoiceSheet.createNextRow();
+                ExcelRow noSubscriptionsRow = this.excelSheet.createNextRow();
 
                 // Skip through first cell, that's just the padding cell
                 noSubscriptionsRow.createNextCell();
 
                 String warningMessage = " OBS: Det finns inga abonnemang att fakturera!";
-                InvoiceCell warningTextCell = noSubscriptionsRow.createNextCell();
+                ExcelCell warningTextCell = noSubscriptionsRow.createNextCell();
                 warningTextCell.setCellValue(warningMessage);
 
                 XSSFCellStyle warningCellStyle = this.excelWorkbook.createCellStyle();
@@ -317,7 +317,7 @@ public class ExcelHandler {
 
                     // Write a track info row
                     {
-                        InvoiceRow trackInfoRow = this.invoiceSheet.createNextRow();
+                        ExcelRow trackInfoRow = this.excelSheet.createNextRow();
 
                         // Skip through first cell, that's just the padding cell
                         trackInfoRow.createNextCell();
@@ -337,7 +337,7 @@ public class ExcelHandler {
                                 + SquashUtil.getTrackTimeFromCalendar(subscription.getStartTime());
                         }
 
-                        InvoiceCell trackInfoCell = trackInfoRow.createNextCell();
+                        ExcelCell trackInfoCell = trackInfoRow.createNextCell();
 
                         trackInfoCell.setCellValue(trackInfoText);
 
@@ -347,7 +347,7 @@ public class ExcelHandler {
 
                     // Write another row with the track period and the price
                     {
-                        InvoiceRow trackPeriodAndPriceRow = this.invoiceSheet.createNextRow();
+                        ExcelRow trackPeriodAndPriceRow = this.excelSheet.createNextRow();
 
                         // Skip through first cell, that's just the padding cell
                         trackPeriodAndPriceRow.createNextCell();
@@ -370,30 +370,30 @@ public class ExcelHandler {
                             trackPrice = SquashProperties.TRACK_PRICE_PERSON;
                         }
 
-                        InvoiceCell trackPriceCell = trackPeriodAndPriceRow.createNextCell();
+                        ExcelCell trackPriceCell = trackPeriodAndPriceRow.createNextCell();
                         trackPriceCell.setCurrencyFormat(trackPrice, true, false);
 
                         totalPrice += trackPrice;
                     }
 
                     // One empty row between track rows
-                    this.invoiceSheet.createNextPaddedRow();
+                    this.excelSheet.createNextPaddedRow();
                 }
             }
 
             // Add some blank rows, to better match the A4 paper height
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
-            this.invoiceSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
+            this.excelSheet.createNextPaddedRow();
 
-            InvoiceRow lastTrackTableRow = this.invoiceSheet.createNextPaddedRow();
+            ExcelRow lastTrackTableRow = this.excelSheet.createNextPaddedRow();
 
             lastTrackTableRow.createNextCellPadded();
             lastTrackTableRow.createNextCellPadded();
-            InvoiceCell lastTrackTableCell = lastTrackTableRow.createNextCellPadded();
+            ExcelCell lastTrackTableCell = lastTrackTableRow.createNextCellPadded();
 
             // Add a border around the subscriptions table
             String trackTableCellRange = trackTableStartCellName
@@ -406,21 +406,21 @@ public class ExcelHandler {
             // ------------------------------------------------------------------------------------
 
             // Write the sum row
-            InvoiceRow sumRow = this.invoiceSheet.createNextRow();
+            ExcelRow sumRow = this.excelSheet.createNextRow();
             sumRow.createNextCellPadded();
             sumRow.createNextCellPadded();
 
-            InvoiceCell sumTextCell = sumRow.createNextCell();
+            ExcelCell sumTextCell = sumRow.createNextCell();
             sumTextCell.setCellValue("  Summa");
 
-            InvoiceCell sumValueCell = sumRow.createNextCell();
+            ExcelCell sumValueCell = sumRow.createNextCell();
             sumValueCell.setCurrencyFormat(totalPrice, true, false);
 
             // Write the "moms" row, along with payment instructions box
-            InvoiceRow momsRow = this.invoiceSheet.createNextRow();
+            ExcelRow momsRow = this.excelSheet.createNextRow();
             momsRow.createNextCellPadded();
 
-            InvoiceCell paymentInfoCell = momsRow.createNextCell();
+            ExcelCell paymentInfoCell = momsRow.createNextCell();
             paymentInfoCell.setCellValue("Bankgiro: " + SquashProperties.CLUB_BG_NR);
             paymentInfoCell.setAlignment(CellStyle.ALIGN_CENTER);
 
@@ -431,7 +431,7 @@ public class ExcelHandler {
             momsValueCell.setCurrencyFormat(momsValue, true, false);*/
 
             // Write the row with the total ammount to pay
-            InvoiceRow ammountToPayRow = this.invoiceSheet.createNextRow();
+            ExcelRow ammountToPayRow = this.excelSheet.createNextRow();
             ammountToPayRow.createNextCellPadded();
 
             // Add the payment due date (no time parts), relative from "now", just below the BG nr
@@ -441,17 +441,17 @@ public class ExcelHandler {
             String dueDateString = new SimpleDateFormat(INVOICE_CREATION_DATE_FORMAT)
                 .format(dueCal.getTime());
 
-            InvoiceCell paymentInfo2Cell = ammountToPayRow.createNextCell();
+            ExcelCell paymentInfo2Cell = ammountToPayRow.createNextCell();
             paymentInfo2Cell.applyFontStyles(true, false, false);
 
             paymentInfo2Cell.setCellValue("Förfallodag " + dueDateString);
             paymentInfo2Cell.setAlignment(CellStyle.ALIGN_CENTER);
 
-            InvoiceCell ammountToPayTextCell = ammountToPayRow.createNextCell();
+            ExcelCell ammountToPayTextCell = ammountToPayRow.createNextCell();
             ammountToPayTextCell.setCellValue("  Att betala");
             ammountToPayTextCell.applyFontStyles(true, false, false);
 
-            InvoiceCell totalAmmountCell = ammountToPayRow.createNextCell();
+            ExcelCell totalAmmountCell = ammountToPayRow.createNextCell();
             totalAmmountCell.setCurrencyFormat(totalPrice, true, true);
 
             // Add border around the sum area
@@ -461,10 +461,10 @@ public class ExcelHandler {
             this.addBorder(sumRange, true);
 
             // Write a row with payment marking info
-            InvoiceRow markPaymentRow = this.invoiceSheet.createNextRow();
+            ExcelRow markPaymentRow = this.excelSheet.createNextRow();
             markPaymentRow.createNextCellPadded();
 
-            InvoiceCell paymentInfo3Cell = markPaymentRow.createNextCell();
+            ExcelCell paymentInfo3Cell = markPaymentRow.createNextCell();
             paymentInfo3Cell.setCellValue("Märk betalningen med FakturaNr!");
             paymentInfo3Cell.applyFontStyles(true, false, true);
 
@@ -568,8 +568,8 @@ public class ExcelHandler {
     public String createCustomerList(boolean includeNonSubscribers) {
 
         // Create a new Excel workbook having one sheet
-        this.excelWorkbook = new InvoiceExcelWorkbook();
-        this.invoiceSheet = this.excelWorkbook.getInvoiceSheet();
+        this.excelWorkbook = new ExcelWorkbook("Kunder");
+        this.excelSheet = this.excelWorkbook.getExcelSheet();
 
         // Set some generic options
         POIXMLProperties.CoreProperties docCoreProperties = this.excelWorkbook
@@ -579,24 +579,24 @@ public class ExcelHandler {
         docCoreProperties.setCreator(SquashProperties.CLUB_NAME);
 
         // The width must be given as 'nr of character x 256'
-        this.invoiceSheet.setColumnWidth(0, 3 * 256); // Blank
-        this.invoiceSheet.setColumnWidth(1, 30 * 256); // Name
-        this.invoiceSheet.setColumnWidth(2, 10 * 256); // Company marker
-        this.invoiceSheet.setColumnWidth(3, 30 * 256); // Address
-        this.invoiceSheet.setColumnWidth(4, 30 * 256); // E-mail
-        this.invoiceSheet.setColumnWidth(5, 17 * 256); // Phone
-        this.invoiceSheet.setColumnWidth(6, 36 * 256); // Subscription(s)
-        this.invoiceSheet.setColumnWidth(7, 80 * 256); // Notes
-        this.invoiceSheet.setDefaultColumnWidth(10);
-        this.invoiceSheet.setDefaultRowHeightInPoints(15);
-        this.invoiceSheet.setDisplayGridlines(true);
-        this.invoiceSheet.setZoom(100);
+        this.excelSheet.setColumnWidth(0, 3 * 256); // Blank
+        this.excelSheet.setColumnWidth(1, 30 * 256); // Name
+        this.excelSheet.setColumnWidth(2, 10 * 256); // Company marker
+        this.excelSheet.setColumnWidth(3, 30 * 256); // Address
+        this.excelSheet.setColumnWidth(4, 30 * 256); // E-mail
+        this.excelSheet.setColumnWidth(5, 17 * 256); // Phone
+        this.excelSheet.setColumnWidth(6, 36 * 256); // Subscription(s)
+        this.excelSheet.setColumnWidth(7, 80 * 256); // Notes
+        this.excelSheet.setDefaultColumnWidth(10);
+        this.excelSheet.setDefaultRowHeightInPoints(15);
+        this.excelSheet.setDisplayGridlines(true);
+        this.excelSheet.setZoom(100);
 
         // First of all, add some empty space
-        this.invoiceSheet.createNextPaddedRow();
+        this.excelSheet.createNextPaddedRow();
 
         // First add column descriptions
-        InvoiceRow headerRow = this.invoiceSheet.createNextPaddedRow();
+        ExcelRow headerRow = this.excelSheet.createNextPaddedRow();
 
         // Create a larger font
         XSSFFont fontHeader = this.excelWorkbook.createFont();
@@ -605,25 +605,25 @@ public class ExcelHandler {
         XSSFCellStyle largeFontStyleHeader = this.excelWorkbook.createCellStyle();
         largeFontStyleHeader.setFont(fontHeader);
 
-        InvoiceCell nameHeaderCell = headerRow.createNextCell();
+        ExcelCell nameHeaderCell = headerRow.createNextCell();
         nameHeaderCell.setCellValue("Namn");
         nameHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell companyHeaderCell = headerRow.createNextCell();
+        ExcelCell companyHeaderCell = headerRow.createNextCell();
         companyHeaderCell.setCellValue("Företag?");
         companyHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell addressHeaderCell = headerRow.createNextCell();
+        ExcelCell addressHeaderCell = headerRow.createNextCell();
         addressHeaderCell.setCellValue("Adress");
         addressHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell emailHeaderCell = headerRow.createNextCell();
+        ExcelCell emailHeaderCell = headerRow.createNextCell();
         emailHeaderCell.setCellValue("E-post");
         emailHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell phonenumberHeaderCell = headerRow.createNextCell();
+        ExcelCell phonenumberHeaderCell = headerRow.createNextCell();
         phonenumberHeaderCell.setCellValue("Telefonnr");
         phonenumberHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell subscriptionsHeaderCell = headerRow.createNextCell();
+        ExcelCell subscriptionsHeaderCell = headerRow.createNextCell();
         subscriptionsHeaderCell.setCellValue("Abonnemang");
         subscriptionsHeaderCell.setCellStyle(largeFontStyleHeader);
-        InvoiceCell notesHeaderCell = headerRow.createNextCell();
+        ExcelCell notesHeaderCell = headerRow.createNextCell();
         notesHeaderCell.setCellValue("Noteringar");
         notesHeaderCell.setCellStyle(largeFontStyleHeader);
 
@@ -640,25 +640,26 @@ public class ExcelHandler {
                 CustomerInfoType customerInfo = customer.getCustomerInfo();
 
                 SubscriptionsType subscriptions = customer.getSubscriptions();
-                if (subscriptions == null || subscriptions.getSubscription().isEmpty()) {
-                    if (includeNonSubscribers) {
-                        // Include!
-                    } else {
-                        continue;
-                    }
+                if (subscriptions != null && (!subscriptions.getSubscription().isEmpty())) {
+                    // Always include
+                } else if (includeNonSubscribers) {
+                    // Include this non-subscriber
+                } else {
+                    // Skip this non-subscriber
+                    continue;
                 }
 
-                InvoiceRow customerRow = this.invoiceSheet.createNextPaddedRow();
+                ExcelRow customerRow = this.excelSheet.createNextPaddedRow();
                 customerRow.setHeightInPoints(22);
 
                 // Start with the customer info
                 // ------------------------------------------------------------------------------------
 
-                InvoiceCell nameCell = customerRow.createNextCell();
+                ExcelCell nameCell = customerRow.createNextCell();
                 nameCell
                     .setCellValue(customerInfo.getFirstname() + " " + customerInfo.getLastname());
 
-                InvoiceCell companyCell = customerRow.createNextCell();
+                ExcelCell companyCell = customerRow.createNextCell();
                 companyCell.setCellValue((customerInfo.isCompany() ? "Ja" : "Nej"));
 
                 String fullAddress = customerInfo.getStreet()
@@ -668,13 +669,13 @@ public class ExcelHandler {
                     + (SquashUtil.isSet(customerInfo.getCity())
                         ? (" " + customerInfo.getCity())
                         : "");
-                InvoiceCell addressCell = customerRow.createNextCell();
+                ExcelCell addressCell = customerRow.createNextCell();
                 addressCell.setCellValue(fullAddress);
 
-                InvoiceCell emailCell = customerRow.createNextCell();
+                ExcelCell emailCell = customerRow.createNextCell();
                 emailCell.setCellValue(customerInfo.getEmail());
 
-                InvoiceCell phonenumberCell = customerRow.createNextCell();
+                ExcelCell phonenumberCell = customerRow.createNextCell();
                 phonenumberCell.setCellValue(customerInfo.getTelephone());
 
                 // Add subscription(s)
@@ -704,19 +705,19 @@ public class ExcelHandler {
                         }
                     }
 
-                    InvoiceCell subscriptionsCell = customerRow.createNextCell();
+                    ExcelCell subscriptionsCell = customerRow.createNextCell();
                     subscriptionsCell.setCellValue(subscriptionsString.toString());
                 }
 
-                InvoiceCell notesCell = customerRow.createNextCell();
+                ExcelCell notesCell = customerRow.createNextCell();
                 notesCell.setCellValue(customerInfo.getNotes());
             }
 
             // Write the file
-            File currentInvoicesDir = new File(XmlRepository.INVOICES_DIR_PATH);
+            File currentDataDir = new File(XmlRepository.DATA_DIR_PATH);
 
             StringBuilder filePath = new StringBuilder();
-            filePath.append(currentInvoicesDir.getPath());
+            filePath.append(currentDataDir.getPath());
             filePath.append("/");
             filePath.append("Kundlista_");
             filePath.append(new SimpleDateFormat(INVOICE_FILE_TIMESTAMP_FORMAT).format(new Date()));
@@ -757,9 +758,9 @@ public class ExcelHandler {
 
         // The range is given as the format "A1:B4"
         CellRangeAddress cellRange = CellRangeAddress.valueOf(cellRangeSpan);
-        RegionUtil.setBorderBottom(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
-        RegionUtil.setBorderLeft(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
-        RegionUtil.setBorderRight(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
-        RegionUtil.setBorderTop(borderStyle, cellRange, this.invoiceSheet, this.excelWorkbook);
+        RegionUtil.setBorderBottom(borderStyle, cellRange, this.excelSheet, this.excelWorkbook);
+        RegionUtil.setBorderLeft(borderStyle, cellRange, this.excelSheet, this.excelWorkbook);
+        RegionUtil.setBorderRight(borderStyle, cellRange, this.excelSheet, this.excelWorkbook);
+        RegionUtil.setBorderTop(borderStyle, cellRange, this.excelSheet, this.excelWorkbook);
     }
 }

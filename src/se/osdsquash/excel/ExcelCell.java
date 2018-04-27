@@ -31,14 +31,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 /**
  * Invoice Cell class. Using a wrapped XSSFCell, since one can't extend the XSSFCell class!
  */
-public class InvoiceCell implements Cell {
+public class ExcelCell implements Cell {
 
     private static final Locale SWE_LOCALE = new Locale("sv", "SE");
     private static final String EXCEL_CURRENCY_FORMAT = "# ##0,00 kr";
 
     private XSSFCell cell;
 
-    protected InvoiceCell(XSSFCell cell) {
+    protected ExcelCell(XSSFCell cell) {
         this.cell = cell;
     }
 

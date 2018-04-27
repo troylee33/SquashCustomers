@@ -49,7 +49,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
- * Invoice Row class. Using a wrapped XSSFSheet.
+ * Excel Row class. Using a wrapped XSSFSheet.
  * 
  * <p>
  * This sheet can create new rows like the iterator pattern
@@ -57,14 +57,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  * row creation from top to bottom.
  * </p>
  */
-public class InvoiceSheet implements Sheet {
+public class ExcelSheet implements Sheet {
 
     // Initialize this before the first row, which is 0
     private int rowIndex = -1;
 
     private XSSFSheet sheet;
 
-    protected InvoiceSheet(XSSFSheet sheet) {
+    protected ExcelSheet(XSSFSheet sheet) {
         this.sheet = sheet;
     }
 
@@ -80,17 +80,17 @@ public class InvoiceSheet implements Sheet {
      * Creates a new row by incrementing the sheet's row index
      * @return A new row
      */
-    protected InvoiceRow createNextRow() {
+    protected ExcelRow createNextRow() {
         XSSFRow row = this.sheet.createRow(++this.rowIndex);
-        return new InvoiceRow(row);
+        return new ExcelRow(row);
     }
 
     /**
      * Adds a new row as the next row, already having one left padding column added
      * @return A new row, having one cell already
      */
-    protected InvoiceRow createNextPaddedRow() {
-        InvoiceRow row = this.createNextRow();
+    protected ExcelRow createNextPaddedRow() {
+        ExcelRow row = this.createNextRow();
         row.createNextCell().setCellValue("    ");
         return row;
     }

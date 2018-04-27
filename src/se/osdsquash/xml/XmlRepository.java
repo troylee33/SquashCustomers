@@ -57,7 +57,11 @@ public class XmlRepository {
 
     private static final String XSD_SCHEMA_PATH = "se/osdsquash/xml/Customers.xsd";
 
-    private static final String DATA_DIR_PATH;
+    /**
+     * Path to the data directory
+     */
+    public static final String DATA_DIR_PATH;
+
     private static final String BACKUPS_DIR_PATH;
     private static final String XML_STORAGE_FILE_PATH;
 

@@ -56,6 +56,7 @@ public class SpringLayoutUtil {
                     + exc.getMessage());
         }
 
+        @SuppressWarnings("unused")
         Spring xPadSpring = Spring.constant(xPad);
         Spring yPadSpring = Spring.constant(yPad);
         Spring initialXSpring = Spring.constant(initialX);

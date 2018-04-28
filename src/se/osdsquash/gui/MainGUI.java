@@ -50,6 +50,7 @@ import se.osdsquash.xml.InvoiceResults;
 import se.osdsquash.xml.XmlRepository;
 import se.osdsquash.xml.jaxb.CustomerInfoType;
 import se.osdsquash.xml.jaxb.CustomerType;
+import se.osdsquash.xml.jaxb.SubscriptionsType;
 
 /**
  * The GUI class that presents/interacts - called by the main <code>SquashKunder</code> class.
@@ -88,9 +89,10 @@ public class MainGUI extends JFrame {
     private final JButton newCustomerButton = new JButton("Ny Kund");
     private final JButton deleteCustomerButton = new JButton("Radera Kund");
     private final JButton mailToCustomerButton = new JButton("Maila Kund");
+    private final JButton mailToAllCustomersButton = new JButton("Maila Alla");
     private final JButton createCustomerInvoiceButton = new JButton("Skapa faktura");
     private final JButton generateAllInvoicesButton = new JButton("Skapa alla fakturor");
-    private final JButton exportCustomersButton = new JButton("Exportera kundlista");
+    private final JButton exportCustomersButton = new JButton("Skapa kundlista");
 
     private static final MainGUI INSTANCE = new MainGUI();
 
@@ -500,6 +502,63 @@ public class MainGUI extends JFrame {
 
         functionButtonsPanel.add(this.createEmptyRow());
 
+        this.mailToAllCustomersButton
+            .setToolTipText("Startar ditt mail-program med ett nytt mail till alla kunder");
+        this.mailToAllCustomersButton.setMinimumSize(new Dimension(130, 22));
+        this.mailToAllCustomersButton.setMaximumSize(new Dimension(130, 22));
+        functionButtonsPanel.add(this.mailToAllCustomersButton);
+
+        this.mailToAllCustomersButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+                int dialogResult = JOptionPane.showConfirmDialog(
+                    MainGUI.this,
+                    "Vill du inkludera kunder utan abonnemang abonnemang?",
+                    "Maila kunder",
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+
+                if (dialogResult == JOptionPane.CANCEL_OPTION
+                    || dialogResult == JOptionPane.CLOSED_OPTION) {
+                    return;
+                }
+
+                StringBuffer eMailList = new StringBuffer(64);
+                for (CustomerType customer : MainGUI.this.xmlRepository.getAllCustomers()) {
+
+                    SubscriptionsType subscriptions = customer.getSubscriptions();
+                    String eMail = customer.getCustomerInfo().getEmail();
+
+                    if (subscriptions != null && (!subscriptions.getSubscription().isEmpty())) {
+                        // Include
+                        if (SquashUtil.isSet(eMail)) {
+                            eMailList.append(eMail.trim() + ";");
+                        }
+                    } else if (dialogResult == JOptionPane.YES_OPTION) {
+                        // Include if this was requested
+                        if (SquashUtil.isSet(eMail)) {
+                            eMailList.append(eMail.trim() + ";");
+                        }
+                    } else {
+                        // Skip...
+                        continue;
+                    }
+                }
+
+                if (SquashUtil.isSet(eMailList.toString()) && eMailList.length() > 3) {
+                    MainGUI.this
+                        .printInfoText("Mail-programmet startar...", TextFormatLevel.Info, true);
+                    new MailHandler().createMailDraft(eMailList.toString(), null, false);
+                } else {
+                    MainGUI.this
+                        .printInfoText("Inga kunder att kontakta", TextFormatLevel.Error, true);
+                }
+            }
+        });
+
+        functionButtonsPanel.add(this.createEmptyRow());
+
         this.createCustomerInvoiceButton.setToolTipText("Skapa en faktura för denna kund");
         this.createCustomerInvoiceButton.setMinimumSize(new Dimension(130, 22));
         this.createCustomerInvoiceButton.setMaximumSize(new Dimension(130, 22));
@@ -530,7 +589,8 @@ public class MainGUI extends JFrame {
                         "Skapa faktura för kund",
                         JOptionPane.YES_NO_CANCEL_OPTION);
 
-                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
+                    if (dialogResult == JOptionPane.CANCEL_OPTION
+                        || dialogResult == JOptionPane.CLOSED_OPTION) {
                         return;
                     }
 
@@ -594,7 +654,8 @@ public class MainGUI extends JFrame {
                         "Skapa fakturor",
                         JOptionPane.YES_NO_CANCEL_OPTION);
 
-                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
+                    if (dialogResult == JOptionPane.CANCEL_OPTION
+                        || dialogResult == JOptionPane.CLOSED_OPTION) {
                         return;
                     }
 
@@ -644,7 +705,8 @@ public class MainGUI extends JFrame {
                         "Exportera kundlista",
                         JOptionPane.YES_NO_CANCEL_OPTION);
 
-                    if (dialogResult == JOptionPane.CANCEL_OPTION) {
+                    if (dialogResult == JOptionPane.CANCEL_OPTION
+                        || dialogResult == JOptionPane.CLOSED_OPTION) {
                         return;
                     }
 
@@ -656,7 +718,7 @@ public class MainGUI extends JFrame {
             }
         });
 
-        functionButtonsPanel.add(this.createWiderEmptyRow());
+        functionButtonsPanel.add(this.createEmptyRow());
 
         // Info button
         final StringBuilder infoMessage = new StringBuilder(1024);
@@ -744,6 +806,7 @@ public class MainGUI extends JFrame {
     }
 
     // Creates a filler component, e.g. empty space
+    @SuppressWarnings("unused")
     private JComponent createWiderEmptyRow() {
         return new Box.Filler(new Dimension(48, 10), new Dimension(48, 10), new Dimension(48, 10));
     }

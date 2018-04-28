@@ -38,7 +38,7 @@ public class MailHandler {
     /**
      * Creates a new mail draft and opens it in the default mail program
      * 
-     * @param recipientAddress The customer's address
+     * @param recipientAddress The customer's address, can be many adresses as one string as well
      * @param attachmentPath Optional path and filename to attach to mail, null if no file
      * @param useInvoiceTopic True if to add the invoice text to the mail
      */
@@ -49,6 +49,13 @@ public class MailHandler {
 
         FileOutputStream mailOutputStream = null;
         try {
+            // Trim last separator, if any
+            if (recipientAddress.endsWith((";"))) {
+                recipientAddress = recipientAddress
+                    .substring(0, recipientAddress.length() - 1)
+                    .trim();
+            }
+
             if (attachmentPath == null) {
                 // If no attachment, we can simply open a new mail right away
                 String uriString = String.format(

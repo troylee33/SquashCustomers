@@ -70,27 +70,27 @@ public abstract class SquashProperties {
     /**
      * The first and last name of the person to be the sender of an invoice
      */
-    public static String INVOICE_NAME = "Olle Bergström";
+    public static String INVOICE_NAME = "Olle XXXXXX";
 
     /**
      * The street address to the person to be the sender of an invoice
      */
-    public static String INVOICE_STREET = "Hinderstigen 3";
+    public static String INVOICE_STREET = "XXXXXXXX 3";
 
     /**
      * The postal code and city for the person to be the sender of an invoice
      */
-    public static String INVOICE_CITY = "831 32 Östersund";
+    public static String INVOICE_CITY = "XX XX Östersund";
 
     /**
      * The phone nr to the person to be the sender of an invoice
      */
-    public static String INVOICE_PHONE = "0730-798339";
+    public static String INVOICE_PHONE = "xxxx-xxxxxx";
 
     /**
      * The e-mail to the person to be the sender of an invoice
      */
-    public static String INVOICE_EMAIL = "ollesiphone@gmail.com";
+    public static String INVOICE_EMAIL = "xxxxxxxx@gmail.com";
 
     /**
      * Number of days until invoice payment due, from the day it was sent
